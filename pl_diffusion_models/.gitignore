@@ -1,0 +1,12 @@
+*.pyc
+__pycache__/
+lightning_logs/
+deploy/*
+tmp/*
+wandb/*
+*.log
+*.png
+*.mp4
+work_dirs/
+*.ckpt
+/tools/deploy/*

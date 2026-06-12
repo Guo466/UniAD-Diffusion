@@ -1,0 +1,99 @@
+lit_name: LitMMDiTDiffusionModel
+name: MMDiTDiffusionModel
+future_steps: &future_steps 50
+future_steps_fixed: &future_steps_fixed 150
+planning_interval: &planning_interval 0.2 # 0.2->0.2s
+planning_interval_fixed: &planning_interval_fixed 2 # 2->2m
+model:
+  compile: False
+  future_steps: *future_steps
+  future_steps_fixed: *future_steps_fixed
+  planning_interval: *planning_interval
+  planning_interval_fixed: *planning_interval_fixed
+
+  encoder:
+    name: SceneEncoder
+    hidden_size: 256
+    depth: 1
+    nhead : 8
+    transformer_layers : 4
+    agent_hist_steps : 20
+    ego_hist_steps : 50
+    # n_tgt_knn: 50
+    # dist_limit_tl: 100
+    # use_dynamic_map: False
+    # rope_dim: null # null: no rope 1: 1d rope 2: 2d rope
+    agent_encoder : {
+      "n_agent_cls" : 4,          # 0: ego | 1: pedestrian | 2: vehicle | 3: bike
+      "n_traffic_light_cls" : 6,  # 0: unknown | 1: invalid | 2: off | 3: green | 4: yellow | 5. red
+      "n_car_light_cls" : 4,      # 0: unknown | 1: off | 2: left | 3: right
+      "ego_channel" : 5,          # [x, y, yaw, v_norm, yaw_rate, mask] 
+      "agent_channel" : 10,       # x, y, vx, vy, yaw_cos, yaw_sin, length, width, score, mask
+      "use_agent_history" : True,
+      "use_state_attn_encoder_ego" :  False,
+      "use_state_attn_encoder_agent" :  False,
+      "state_dropout" : 0.0
+    }
+    map_encoder : {
+        "polygon_channel" : 6,
+        "n_color" :  3,     # white, yellow, other
+        "n_laneline_type" :  6, # edge, laneline, centerline, stopline, route, other
+        "n_laneline_style" :  5,    # solid, dash, left_dash_right_solid, left_solid_right_dash, other
+    }
+
+    map_encoder_navi : {
+        "polygon_channel" : 6,#用法和map保持一致
+    }
+
+    map_encoder_route : {
+        "polygon_channel" : 6,# route 仅编码几何; laneInfo 由独立 x_lane 分支编码
+    }
+
+    map_encoder_occ : {
+        "polygon_channel" : 2,
+        "n_type" :  5,     # cx, cy, type, area, angle
+    }
+
+    # NaviLink MAIN_SIDE 最近点：与 dataset navi_link_actions_max_dist_m 对齐（米）
+    navi_link_ms_max_dist_m: 200.0
+    # NaviLink DEDICATED 最近点（对比槽位）；默认与 ms 同尺度
+    navi_link_ded_max_dist_m: 200.0
+
+  decoder:
+    name: DiTDiffusionDecoder
+    hidden_size: 256
+    hidden_size_fix_distance: 256
+    depth: 4
+    depth_fix_distance: 4
+    num_heads: 16
+    hidden_size_in: 256
+    trainStage: 'stage_1'
+    uniform_t: True
+    std_scaler_traj: 1
+    std_scaler_path: 1
+    use_guidance: False
+    use_navi_guidance: True
+    use_obs_guidance: False
+    guidance_config:
+      guidance_start_ratio: 0.2
+      obs_costmap: {resolution: 0.4, i0: 50, j0: 0, r: 0.75, omega: 1.5, inflate: 1.4, 
+                    gmax: 1.0, soft_scale: 1.0, hard_scale: 1.0, }
+      navi_costmap: {gmax: 1.0, soft_scale: 3.0, hard_scale: 10.0,}
+      search_costmap: {resolution: 0.4, i0: 50, j0: 0, r: 2.5, omega: 1.0, inflate: 0.0,
+                       gmax: 1.0, soft_scale: 1.0, hard_scale: 3.0, }
+    use_aux_loss: True   # 置为False则仅flow matching loss生效
+    aux_loss_config:
+      loss_path_scale: 1.0
+      costmap: {resolution: 0.4, i0: 50, j0: 0, r: 1.4}
+      loss_navi_scale: 0.25
+      norm_momentum: 0.9
+      ema_in_state_dict: False
+    future_steps: *future_steps
+    future_steps_fixed: *future_steps_fixed
+    planning_interval: *planning_interval
+    planning_interval_fixed: *planning_interval_fixed
+
+model_param:
+  max_n_agent: 50
+  max_n_laneline: 50
+

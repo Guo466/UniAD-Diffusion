@@ -1,0 +1,61 @@
+# lightning.pytorch==2.4.0
+seed_everything: 42
+# self defined args for fit
+trainer:
+  accelerator: auto  # [gpu,cpu,auto]
+  strategy: ddp  # [auto,ddp]
+  devices: auto
+  num_nodes: 1
+  precision: null
+  fast_dev_run: false
+  max_epochs: 50
+  min_epochs: null
+  max_steps: -1
+  min_steps: null
+  max_time: null
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+  limit_predict_batches: null
+  overfit_batches: 0.0
+  val_check_interval: null
+  check_val_every_n_epoch: 1
+  num_sanity_val_steps: null
+  log_every_n_steps: null
+  enable_checkpointing: null
+  enable_progress_bar: True
+  enable_model_summary: null
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1.0
+  gradient_clip_algorithm: null
+  deterministic: null
+  benchmark: null
+  inference_mode: true
+  use_distributed_sampler: true
+  profiler: null
+  detect_anomaly: false
+  barebones: false
+  plugins: null
+  sync_batchnorm: false
+  reload_dataloaders_every_n_epochs: 0
+  default_root_dir: null
+model:
+  class_path: models.LitMultiTFModel
+  init_args:
+    config: null
+    lr: 0.001
+data:
+  class_path: datasets.LitUnifiedDataset
+  init_args:
+    config: null
+    batch_size: 16
+    num_workers: 32
+optimizer: 
+  class_path: torch.optim.AdamW
+  init_args:
+    lr: 0.0004
+lr_scheduler: 
+  class_path: torch.optim.lr_scheduler.CosineAnnealingLR
+  init_args:
+    T_max: 50
+ckpt_path: null

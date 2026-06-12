@@ -1,0 +1,3 @@
+lr: 0.001
+batch_size: 4
+dataloader_num_workers: 8

@@ -1,0 +1,266 @@
+lit_name: LitDlpDataset
+name: LitDlpDataset
+agent_hist_steps: &agent_hist_steps 20
+ego_hist_steps: &ego_hist_steps 50
+future_steps: &future_steps 50
+future_steps_fixed: &future_steps_fixed 150
+planning_interval: &planning_interval 0.2 # 0.2->0.2s
+planning_interval_fixed: &planning_interval_fixed 2 # 2->2m
+route_gt_steps: &route_gt_steps 100
+cost_map_resolution: &cost_map_resolution 0.2
+n_query_lateral: &n_query_lateral 5     # 横向query数，需要是奇数，保持对称性
+n_query_longi: &n_query_longi 1      # 纵向query数，
+fake_n_longi: &fake_n_longi 10      # 在后处理时repeat longi query使用，在实际把纵向query数改为1后，保持后处理输出的纵向query数不变
+transformer_layers: &transformer_layers 4
+factor_base: &factor_base 1
+factor_tagged: &factor_tagged 0.3
+scene_extract: &scene_extract
+  acc: 1733.14
+  across: 474.81
+  back_obj_coming: 3499.25
+  brake: 2434.69
+  brake2stop: 372.88
+  bus_lane: 85.06
+  close_cut_in_agent: 48.39
+  construction_scene: 192.32
+  cut_in: 80.89
+  cut_in_agent: 3.63
+  cut_out: 46.80
+  deviation_correction: 1.24
+  ego_cut_in: 126.74
+  entering_left_turn_dedicated_lane: 0.22
+  entering_right_turn_dedicated_lane: 4.30
+  front_obj_sudden_brake: 40.09
+  go_straight_brake2stop_intersection: 30.14
+  go_straight_static2move_intersection: 6.06
+  interactive_non_static_turn_left: 50.06
+  interactive_non_static_turn_right: 31.39
+  interactive_static_turn_left: 73.96
+  interactive_static_turn_right: 10.49
+  intersection_lane_keep: 3.21
+  large_curvature_lane_keep: 66.75
+  left_lane_change_effi: 12.62
+  left_lane_change_non_effi: 114.58
+  left_nudge: 1.51
+  left_turn_dedicated_lane: 1.95
+  left_turn_waiting_area: 39.59
+  left_turn_waiting_area_brake2stop_before_stopline: 2.23
+  left_turn_waiting_area_static2move_before_stopline: 0.63
+  low_speed: 21764.39
+  main2secondary: 0.034
+  merge: 13.45
+  narrow_street_driving: 91.28
+  non_interactive_non_static_turn_left: 33.78
+  non_interactive_non_static_turn_right: 25.87
+  non_interactive_static_turn_left: 127.21
+  non_interactive_static_turn_right: 5.27
+  non_intersection_lane_keep: 76.73
+  non_turn_intersection: 112.68
+  opposite: 386.74
+  parked_vehicle: 2080.46
+  ramp_entry: 1.14
+  ramp_exit: 12.79
+  rapid_acc: 14.83
+  rear_preempt: 2.55
+  rear_yield: 23.81
+  right_lane_change_effi: 5.71
+  right_lane_change_non_effi: 70.10
+  right_nudge: 1.29
+  right_turn_dedicated_lane: 10.09
+  roundabout: 9.54
+  secondary2main: 0.054
+  side_street_with_laneline: 619.26
+  side_street_with_laneline_two_way: 5.17
+  side_street_without_laneline: 102.94
+  split: 14.76
+  static: 2936.70
+  static2move: 107.80
+  straight_waiting_area: 5.14
+  straight_waiting_area_brake2stop_before_stopline: 0.25
+  straight_waiting_area_static2move_before_stopline: 0.08
+  turn_left_brake2stop_intersection: 8.80
+  turn_left_static2move_intersection: 9.45
+  turn_out_side_street: 9.95
+  turn_right_brake2stop_intersection: 1.17
+  turn_right_static2move_intersection: 1.06
+  turn_to_side_street: 14.73
+  u_turn: 448.42
+  unprotected_turn_left: 55.73
+
+work_dir: ./
+tmp_data_dir: 
+  - s3://vd-dlp-data-new/qc/14755/batch_total/merge_total/
+date_split_file: # 默认不需要设置，从 data_dir 查找
+factor_base: *factor_base
+scene_extract: *scene_extract
+scene_extract_test: {
+    "test": 1,    
+    "low_speed": 1,
+    "left_lane_change_non_effi": 1,
+    "right_lane_change_non_effi": 1,
+    "left_lane_change_effi": 1,
+    "right_lane_change_effi": 1,
+    "left_nudge": 1,
+    "right_nudge": 1,
+    "non_interactive_non_static_turn_left": 1,
+    "non_interactive_static_turn_left": 1,
+    "interactive_non_static_turn_left": 1,
+    "non_interactive_non_static_turn_right": 1,
+    "non_interactive_static_turn_right": 1,
+    "interactive_non_static_turn_right": 1,
+    "across": 1,
+    "opposite": 1,
+    "cut_in": 1,
+    "cut_out": 1,
+    "cut_in_agent": 1,
+    "front_obj_sudden_brake": 1,
+    "back_obj_coming": 1,
+    "parked_vehicle": 1,
+    "static": 1,
+    "non_intersection_lane_keep": 1,
+    "intersection_lane_keep": 1,
+    "large_curvature_lane_keep": 1,
+    "deviation_correction": 1,
+    "brake": 1,
+    "brake2stop": 1,
+    "acc": 1,
+    "non_turn_intersection": 1,
+    "u_turn": 1,
+    "split": 1,
+    "merge": 1,
+    "roundabout": 1,
+    "side_street_with_laneline": 1,
+    "side_street_with_laneline_two_way": 1,
+    "side_street_without_laneline": 1,
+    "error_issue_data": 1,
+    "issue_data": 1,
+    "issue_data_engaged": 1}
+# tmp_data_dir_test: s3://vd-dlp-data-new/qc/dlp_test/20260227/batch_total/merge_total/
+tmp_data_dir_test: s3://vd-dlp-data-new/qc/14464/batch_total/merge_total/
+date_split_file_test: # 默认不需要设置，从 data_dir 查找
+# mean_std_file: /iag_ad_01/ad/chenyimo/pl_diffusion_models/5139112_mean_std_all.pkl
+# mean_std_file: /mnt/afs/liuzhaoyang1/diffusion_codes/cal_pb0212_v34_mean_std/5139112_mean_std_all.pkl
+mean_std_file: /root/code/334576_mean_std_all.pkl
+cache_target_scenes:
+  - cut_in_agent
+  - deviation_correction
+  - entering_left_turn_dedicated_lane
+  - entering_right_turn_dedicated_lane
+  - go_straight_static2move_intersection
+  - intersection_lane_keep
+  - left_nudge
+  - left_turn_dedicated_lane
+  - left_turn_waiting_area_brake2stop_before_stopline
+  - left_turn_waiting_area_static2move_before_stopline
+  - main2secondary
+  - non_interactive_static_turn_right
+  - ramp_entry
+  - rear_preempt
+  - right_lane_change_effi
+  - roundabout
+  - secondary2main
+  - straight_waiting_area
+  - straight_waiting_area_brake2stop_before_stopline
+  - straight_waiting_area_static2move_before_stopline
+  - turn_left_brake2stop_intersection
+  - turn_left_static2move_intersection
+  - turn_out_side_street
+  - turn_right_brake2stop_intersection
+  - turn_right_static2move_intersection
+
+# JSONL mining 配置：仅使用 jsonl 指定数据训练/测试
+# mining_file / mining_overfit_file: #训练用 jsonl，支持列表，每项格式 "<path>" 或 "<path> <重复次数>"
+#   - /mnt/afs/chenyimo/VD_case/left_turn_valid_1_valid.jsonl
+# 不设 mining_mix_ratio → 纯 mining 模式（仅 jsonl 数据）；设 mining_mix_ratio: N → 混合模式 (1 mining : N normal)
+# mining_file:
+#   - /mnt/afs/chenyimo/VD_case/left_turn_valid_1_valid.jsonl 
+# mining_mix_ratio: 2  # 可选，混合模式时 1份mining:2份normal
+
+# 测试集 jsonl：仅使用 jsonl 指定数据做测试
+mining_file_test:
+  #左转场景
+  # - /mnt/afs/chenyimo/VD_case/left_turn_valid_valid.jsonl
+  #右转场景
+  # - /mnt/afs/chenyimo/VD_case/right_turn_valid_valid.jsonl
+  # 多推荐车道场景
+  # - /mnt/afs/chenyimo/data_process/filter_data_output/merged_multi_rec_lane.jsonl
+  # 环岛
+  # - /mnt/afs/chenyimo/nonavi03/test_data/issue_huandao_selected_dates.jsonl
+  # 主辅路
+  - /mnt/afs/chenyimo/nonavi03/test_data/issues_mainside.jsonl
+# mining_overfit_file_test:
+#   - /path/to/your/test_data.jsonl
+
+load_secondary_index_shards: True
+load_frame_label_shards: True
+enable_occ_checker: False
+enable_occ: True
+max_n_occ_polygon: 80
+max_n_occ_polygon_point: 100
+max_n_occ_polygon_attr: 5
+data_augment: []
+# Hack: 模型输入仅保留一组 navitopo+推荐车道，用于验证单组输入下的模型性能
+retain_single_navi_recommend: True
+retain_single_navi_tol: 0.5
+retain_single_navi_recommend_prob: 0.5
+max_frame: 1e9
+max_n_agent: 50
+max_n_laneline: 50
+laneline_fixed_pts: 200
+agent_hist_step_threshold: 5
+n_feature_laneline_attr: 3
+n_feature_agent_attr: 3
+n_feature_agent_status: 6
+use_guidance: True
+occmap_config: {
+  resolution : 0.4,         # m/cell
+  height : 120,             # piex
+  width : 275,              # piex
+  ego_i0: 60,
+  ego_j0: 25
+}
+costmap_config: {
+  resolution : 0.4,         # m/cell
+  width : 100,              # piex
+  length : 250,             # piex
+  ego_i0: 50,
+  ego_j0: 0
+}
+from_ceph: True
+from_ceph_test: True
+use_datapro_pb: False
+use_tos_data: False
+future_steps: *future_steps
+future_steps_fixed: *future_steps_fixed
+ego_hist_steps: *ego_hist_steps
+agent_hist_steps: *agent_hist_steps
+route_gt_steps: *route_gt_steps
+planning_interval: *planning_interval
+planning_interval_fixed: *planning_interval_fixed
+use_centerline: False
+use_route: True
+use_sdmap: False
+# 这里有点问题，infer的时候route cost会很大。train的时候打出来看是不大的
+route_cost_thre: 50
+bad_sample_retry_mode: enforce  # off | dry_run | enforce
+use_route_laneinfo: True
+n_query_lateral: *n_query_lateral
+n_query_longi: *n_query_longi
+ego_care_normal_laneline: True
+use_new_laneline: True
+use_multiNavi: True
+open_eval_mode: False
+trainStage: 'stage_1'
+  
+contrastive_learning_funcs: Null
+  # - Null
+  # - Null
+overwrite_cache: False
+store_data_in_memory: False
+data_chunk_size: 1
+past_frames_num: 11
+future_frames_num: 80
+current_frame_index: 20
+map_points_sample_interval: 4
+map_points_interp_step: 0.5
+max_points_num: 11

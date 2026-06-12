@@ -1,0 +1,666 @@
+syntax = "proto3";
+
+package senseAD.perception.camera.proto;
+
+// 原始数据，矩阵化之前的所有变量
+// 用于训练时的数据准备和调试
+
+// ==================== Agent 相关消息 ====================
+
+// 2D 点
+message Float2DPoint {
+    float x = 1;
+    float y = 2;
+}
+
+// 2D 轨迹（点数组）
+message Trajectory2D {
+    repeated Float2DPoint points = 1;
+}
+
+message AgentData {
+    // Agent 基本信息（与 JSON 对应）
+    uint64 id = 1;              // track_id
+    int32 cls = 2;              // 类别: 1=PEDESTRIAN, 2=VEHICLE, 3=BIKE
+    
+    // 当前帧位置和速度
+    float x = 3;                // 当前x坐标
+    float y = 4;                // 当前y坐标
+    float z = 5;                // 当前z坐标（高度）
+    float vx = 6;               // 当前x方向速度
+    float vy = 7;               // 当前y方向速度
+    float yaw = 8;              // 当前朝向角
+    float score = 9;            // 当前得分
+    
+    // 历史+未来轨迹数据（点数组格式）
+    Trajectory2D pos = 10;      // 位置轨迹 [[x,y], ...]
+    Trajectory2D velocity = 11; // 速度轨迹 [[vx,vy], ...]
+    repeated float heading = 12;     // 朝向角序列
+    repeated float scores = 13;      // 得分序列
+    repeated bool valid_mask = 14;   // 有效性掩码
+    
+    // Agent 尺寸
+    float size_x = 15;          // 宽度
+    float size_y = 16;          // 长度
+    float size_z = 17;          // 高度
+    
+    // 其他信息
+    bool agent_mask = 18;       // Agent 是否有效
+    uint64 t_ns = 19;           // 时间戳（纳秒）
+    float dist = 20;            // 距离自车的距离
+    
+    // 时间间隔检查（用于轨迹质量评估）
+    repeated int64 time_gaps = 21;   // 每个时间点的时间间隔(纳秒)，与 valid_mask 对应
+    bool has_time_gap_warning = 22;  // 是否存在超过阈值的时间间隔
+
+    // 调试信息：原始历史位置（变换前）
+    message DebugHistoryPosition {
+        repeated float his_pos_x = 1;  // 历史位置x坐标（变换前）
+        repeated float his_pos_y = 2;  // 历史位置y坐标（变换前）
+    }
+    DebugHistoryPosition debug_history_pos = 23;
+}
+
+message FusionAgentData {
+    // Agent 基本信息（与 JSON 对应）
+    uint64 id = 1;              // track_id
+    int32 cls = 2;              // 类别: 1=PEDESTRIAN, 2=VEHICLE, 3=BIKE
+    
+    // 当前帧位置和速度
+    float x = 3;                // 当前x坐标
+    float y = 4;                // 当前y坐标
+    float z = 5;                // 当前z坐标（高度）
+    float vx = 6;               // 当前x方向速度
+    float vy = 7;               // 当前y方向速度
+    float accx = 8;             // 当前x方向加速度
+    float accy = 9;             // 当前y方向加速度
+    float yaw = 10;              // 当前朝向角
+    float cur_yaw_rate = 11;         // 当前航向角速度
+    float score = 12;            // 当前得分
+    
+    // 历史+未来轨迹数据（点数组格式）
+    Trajectory2D pos = 13;      // 位置轨迹 [[x,y], ...]
+    Trajectory2D velocity = 14; // 速度轨迹 [[vx,vy], ...]
+    repeated float heading = 15;     // 朝向角序列
+    repeated float scores = 16;      // 得分序列
+    repeated bool valid_mask = 17;   // 有效性掩码
+    repeated float yaw_rate = 18;    // 横摆角速度序列
+    Trajectory2D acceleration = 19;  // 加速度序列
+    
+    // Agent 尺寸
+    float size_x = 20;          // 宽度
+    float size_y = 21;          // 长度
+    float size_z = 22;          // 高度
+    
+    // 其他信息
+    bool agent_mask = 23;       // Agent 是否有效
+    uint64 t_ns = 24;           // 时间戳（纳秒）
+    float dist = 25;            // 距离自车的距离
+    
+    // 时间间隔检查（用于轨迹质量评估）
+    repeated int64 time_gaps = 26;   // 每个时间点的时间间隔(纳秒)，与 valid_mask 对应
+    bool has_time_gap_warning = 27;  // 是否存在超过阈值的时间间隔
+}
+
+// ==================== GOP 相关消息 ====================
+
+message GopData {
+    uint64 id = 1;         // track_id
+    int32 cls = 2;         // GOP 类别
+    Float2DPoint pos = 3;  // 当前坐标 (x, y)
+    Float2DPoint velocity = 4;  // 当前速度 (vx, vy)
+    float heading = 5;     // 当前朝向角 [-pi, pi]
+    bool gop_mask = 6;     // True 表示有效
+    float size_x = 7;      // width
+    float size_y = 8;      // length
+    float size_z = 9;      // height
+    float dist = 10;       // 与自车的距离
+    float score = 11;      // 当前置信度
+}
+
+// ==================== Laneline 相关消息 ====================
+
+// 车道线采样点 [laneline_sampled_pts, 2]
+message SampledPoints {
+    repeated Float2DPoint points = 1;
+}
+
+// message LanelineSMData {
+//     int32 color = 1;
+//     int32 laneline_style = 2;
+//     int32 laneline_type = 3;
+//     string type = 4;
+//     int32 pts_fixed_num = 5;
+// }
+// 历史版本（25a66323d）结构备份：
+message LanelineSMData {
+    // 采样点
+    SampledPoints sampled_points = 1;
+
+    // 车道线属性: [lane_color, edge_type, laneline_type, other_type]
+    int32 lane_color = 2;
+    int32 edge_type = 3;
+    int32 laneline_type = 4;
+    int32 other_type = 5;
+
+    // 距离自车的距离（用于排序）
+    float distance_to_ego = 6;
+
+    // 类型标记: 0=laneline, 1=centerline, 2=stopline, 3=route
+    int32 element_type = 7;
+
+    // 车道线点序列（与 lanelines 同步输出）
+    repeated Float2DPoint pts_fixed_num = 8;
+
+    // 拟合参数
+    float c0 = 9;
+    float c1 = 10;
+    float c2 = 11;
+    float c3 = 12;
+    float start_x = 13;
+    float end_x = 14;
+    string type = 15;
+
+    // 车道线与车道关系
+    uint64 id = 16;
+    uint64 left_lane_id = 17;
+    uint64 right_lane_id = 18;
+
+    // 车道线样式
+    int32 laneline_style = 19;
+}
+
+message LanelineData {
+    // 采样点
+    SampledPoints sampled_points = 1;
+    
+    // 车道线属性: [lane_color, edge_type, laneline_type, other_type]
+    int32 lane_color = 2;
+    int32 edge_type = 3;
+    int32 laneline_type = 4;
+    int32 other_type = 5;
+    
+    // 距离自车的距离（用于排序）
+    float distance_to_ego = 6;
+    
+    // 类型标记: 0=laneline, 1=centerline, 2=stopline, 3=route
+    int32 element_type = 7;
+    repeated Float2DPoint pts_fixed_num = 8;
+
+    // 拟合参数
+    float c0 = 9;
+    float c1 = 10;
+    float c2 = 11;
+    float c3 = 12;
+    float start_x = 13;
+    float end_x = 14;
+
+    string type = 15;  // 'laneline' / 'centerline' / 'stopline'
+
+    // 车道线样式
+    int32 laneline_style = 16;
+}
+
+// ==================== Centerline 相关消息 ====================
+
+// 红绿灯信息（来自 CrossInfo）
+message TrafficLight {
+    repeated int32 status = 1;      // 灯状态: 0=无效, 1=红, 2=黄, 3=绿
+    repeated int32 node_id = 2;     // 对应节点 ID
+    repeated float countdown = 3;   // 倒计时（秒）
+    repeated float pos_x = 4;
+    repeated float pos_y = 5;
+}
+
+// 路标信息
+message RoadmarkerDetail {
+    int32 marker_type = 1;   // 标线类型
+    float pos_x = 2;
+    float pos_y = 3;
+}
+
+// Centerline Roadmarker 信息（来自 SDMap）
+message CenterlineRoadmarker {
+    repeated RoadmarkerDetail markers = 1;
+}
+
+// Centerline 帧级容器（按时间窗口对齐）
+message CenterlineFrame {
+    int32 time_offset = 1;              // 相对当前帧的偏移（负=历史，0=当前，正=未来）
+    repeated CenterlineData centerlines = 2;
+}
+
+message CenterlineData {
+    // 采样点 [centerline_sampled_pts, 2]
+    SampledPoints sampled_points = 1;
+
+    // 限速信息（默认 255 表示未知）
+    float speed_limit = 2;
+
+    // 红绿灯信息
+    TrafficLight traffic_light = 3;
+
+    // Roadmarker 信息
+    CenterlineRoadmarker centerline_roadmarker = 4;
+
+    // 采样点
+    repeated Float2DPoint pts_fixed_num = 5;
+
+    // 类型 (固定为 "centerline")
+    string type = 6;
+
+    // 相对当前帧的时间偏移（负数=历史，0=当前，正数=未来）
+    int32 time_offset = 7;
+    uint64 id = 8;
+    uint64 left_line_id = 9;
+    uint64 right_line_id = 10;
+    uint64 left_lane_id = 11;
+    uint64 right_lane_id = 12;
+
+    // 车道类型
+    int32 lane_type = 13;
+    // 转向类型
+    int32 turn_type = 14;
+}
+
+// ==================== Ego 相关消息 ====================
+
+// 自车未来轨迹点（time-based）
+message EgoFutureTrajPoint {
+    float pos_x = 1;  // 未来的自车坐标x，normalize到当前时刻的自车坐标系
+    float pos_y = 2;  // 未来的自车坐标y，normalize到当前时刻的自车坐标系
+    float yaw = 3;    // 未来的自车yaw，normalize到当前时刻的自车坐标系
+    float v_x = 4;    // 未来的自车速度x，normalize到当前时刻的自车坐标系
+    float v_y = 5;    // 未来的自车速度y，normalize到当前时刻的自车坐标系
+    float yaw_rate = 6;  // 未来的自车角速度
+    float mask = 7;   // True(1.0)表示该未来轨迹点有效
+}
+
+// 自车未来轨迹（time-based）
+// 未来的自车坐标，normalize到当前时刻的自车坐标系
+message EgoFutureTrajectory {
+    repeated EgoFutureTrajPoint points = 1;
+}
+
+// 自车未来轨迹点（distance-based）
+message EgoFutureFixedDistancePoint {
+    float pos_x = 1;  // 未来的自车坐标x，normalize到当前时刻的自车坐标系
+    float pos_y = 2;  // 未来的自车坐标y，normalize到当前时刻的自车坐标系
+    float yaw = 3;    // 未来的自车yaw，normalize到当前时刻的自车坐标系
+    float v_x = 4;    // 未来的自车速度x，normalize到当前时刻的自车坐标系
+    float v_y = 5;    // 未来的自车速度y，normalize到当前时刻的自车坐标系
+    float yaw_rate = 6;  // 未来的自车角速度
+    uint64 timestamp_ns = 7;  // 时间戳
+    float mask = 8;   // True(1.0)表示该未来轨迹点有效
+}
+
+// 自车未来轨迹（distance-based，100m，间隔10m）
+message EgoFutureFixedDistance {
+    repeated EgoFutureFixedDistancePoint points = 1;
+}
+
+// 方向盘信息
+message Steering {
+    float angle_actual = 1;
+    float angle_command = 2;
+}
+
+// 油门信息
+message Throttle {
+    float pedal_actual = 1;
+    float pedal_command = 2;
+}
+
+// 影响自车车道的红绿灯信息
+message EgoLaneTrafficLight {
+    int32 node_id = 1;
+    int32 status = 2;
+    float countdown = 3;
+    float pos_x = 4;
+    float pos_y = 5;
+    int32 type = 6;
+}
+
+// 红绿灯位置
+message LightPos {
+    float x = 1;
+    float y = 2;
+}
+
+// 3D 点
+message Point3D {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+// 路标详细信息
+message RoadMarkerDetail {
+    int32 type = 1;
+    float x = 2;
+    float y = 3;
+}
+
+// 车道邻居详细信息
+message LaneNeighborDetail {
+    repeated Float2DPoint center_points = 1;
+    repeated int32 light_status = 3;
+    repeated LightPos light_pos = 4;
+    repeated float light_countdown = 5;
+    repeated int32 road_markers = 6;
+    repeated RoadMarkerDetail road_markers_complete = 7;
+    Point3D pos = 8;
+    uint64 id = 9;
+    int32 lane_type = 10;
+}
+
+// 车道拓扑信息（lane_id, next_id, prev_id）
+message LaneTopo {
+    repeated uint64 lane_id = 1;
+    repeated uint64 next_id = 2;
+    repeated uint64 prev_id = 3;
+    repeated LaneNeighborDetail neighbors = 4;
+    map<int32, LaneNeighborDetail> lanes = 5;
+}
+
+message EgoData {
+    // 自车当前状态: [speed, angular_velocity, traffic_light, car_light]
+    float speed = 1;
+    float angular_velocity = 2;
+    float traffic_light = 3;  // 红绿灯状态
+    float car_light = 4;      // 转向灯: 0=off, 1=left, 2=right
+    
+    // 自车运动信息
+    float velocity_x = 5;
+    float velocity_y = 6;
+    float velocity_z = 7;
+    float acceleration_x = 8;
+    float acceleration_y = 9;
+    float acceleration_z = 10;
+
+    // 方向盘
+    Steering steering = 11;
+
+    // 油门
+    Throttle throttle = 12;
+
+    // 自车所在车道限速
+    float egolane_max_speed = 13;
+
+    // 影响自车车道的红绿灯信息
+    repeated EgoLaneTrafficLight egolane_traffic_lights = 14;
+    
+    // 车道拓扑信息
+    LaneTopo lanes_topo = 15;
+
+    // 自车灯光状态（0=直行，1=左转，2=右转）
+    int32 ego_light = 16;
+    int32 map_type = 17; // Edit 缺失
+
+    // 自车未来轨迹（time-based）
+    EgoFutureTrajectory future_traj = 18;
+
+    // 自车未来轨迹（distance-based，100m，间隔10m）
+    EgoFutureFixedDistance future_fixed_dis = 19;
+    uint64 ego_link_id = 20;
+
+    // 影响自车车道的红绿灯（展开形式，便于对齐 JSON）
+    repeated int32 egolane_traffic_lights_status = 21;          // status 列表
+    repeated Float2DPoint egolane_traffic_lights_pos = 22;      // 位置列表
+    repeated int32 egolane_traffic_lights_node_id = 23;         // node_id 列表
+    repeated float egolane_light_countdown = 24;                // 倒计时列表
+    uint64 cur_lane_id = 25;                                    // 当前所在车道ID
+
+    // 横纵向接管信号
+    bool longi_engaged = 26;
+    bool lateral_engaged = 27;
+}
+
+// ==================== Cross 相关消息 ====================
+
+// 点坐标
+message Point2D {
+    float x = 1;
+    float y = 2;
+}
+
+// 中心线点集
+message LaneCenterPoints {
+    repeated Float2DPoint points = 1;
+}
+
+// 停止线
+message StopLine {
+    repeated Point2D points = 1;
+    int32 node_id = 2;
+    bool egolane = 3;  // 是否影响自车车道
+}
+
+// 人行横道
+message Crosswalk {
+    repeated Point3D boundary = 1;
+    bool egolane = 2;  // 是否影响自车车道
+}
+
+message CrossData {
+    // 停止线信息
+    float stop_x = 1;
+    int32 traffic_light_status = 2;
+    
+    // 中心线点集
+    repeated LaneCenterPoints lanecenter_pts = 3;
+    
+    // 停止线点集
+    repeated StopLine stoplines = 4;
+
+    // 人行横道
+    repeated Crosswalk crosswalks = 5;
+}
+
+// ==================== Route 相关消息 ====================
+
+// 导航路径点
+message RoutePoints {
+    repeated Float2DPoint points = 1;
+}
+
+// 距离和动作
+message DistanceAction {
+    float distance = 1;
+    string action = 2;
+    uint32 icon_type = 3;  // 高德导航推荐动作类型 (原始类型uint8)
+}
+
+// 高德导航车道信息（对应 AmapLaneInfo 结构）
+// foreground_lane / background_lane 存储 AmapLaneType 枚举的 uint32 值
+message AmapLaneInfoData {
+    repeated uint32 foreground_lane = 1;  // 前景车道类型列表（AmapLaneType 枚举值）
+    repeated uint32 background_lane = 2;  // 背景车道类型列表（AmapLaneType 枚举值）
+    int64 link_idx = 3;                   // Link 索引（对应 AmapLaneInfo.linkIdx）
+    int64 step_idx = 4;                   // Step 索引（对应 AmapLaneInfo.stepIdx）
+}
+
+message RouteData {
+    // 导航路径点
+    RoutePoints route_points = 1;
+    RoutePoints ego_routing = 2;
+
+    // 距离和动作
+    DistanceAction dis_action = 3;
+
+    // 路径代价（[valid_flag, distance]）
+    repeated float route_cost = 4;
+
+    // 高德导航车道信息（来自 AmapNaviInfo.laneInfo）
+    AmapLaneInfoData amap_lane_info = 5;
+}
+
+// ==================== Occ 相关消息 ====================
+
+// 占用栅格单元
+message OccCell {
+    int32 row = 1;
+    int32 col = 2;
+    uint32 occ_type = 3;
+    uint32 idx_max = 4;
+    uint32 idx_min = 5;
+}
+
+// 占用栅格信息
+message OccInfo {
+    int32 grid_length = 1;
+    int32 grid_width = 2;
+    repeated OccCell cells = 3;
+}
+
+// ==================== Ego Local Pose ====================
+
+// 自车局部位姿（单点）
+message EgoLocalPose {
+    float pos_x = 1;
+    float pos_y = 2;
+    float yaw = 3;
+    float v = 4;
+    float yaw_rate = 5;
+    uint64 timestamp_ns = 6;
+}
+
+message EgoHistoryPoint {
+    float pos_x = 1;
+    float pos_y = 2;
+    float yaw = 3;
+    float v_x = 4;
+    float v_y = 5;
+    float yaw_rate = 6;
+    uint64 timestamp_ns = 7;
+    float mask = 8;
+}
+
+// 配置参数
+message Config {
+    int32 max_n_agent = 1;
+    int32 max_n_laneline = 2;
+    int32 hist_steps = 3;
+    int32 laneline_sampled_pts = 4;
+    int32 agent_status_dim = 5;
+    int32 agent_attrs_dim = 6;
+    int32 laneline_attrs_dim = 7;
+    bool use_route = 8;
+    bool use_sdmap = 9;
+
+    // 新增：历史/未来窗口长度（单位：帧数）
+    int32 history_win = 10;
+    int32 future_win = 11;
+}
+
+// ==================== SDMap Data ====================
+message SDMapLinkID {
+    uint64 raw_id = 1;   
+}
+
+message SDMapLink_Raw {
+    SDMapLinkID link_id = 1;
+    repeated int32 road_kind_types = 2;
+    int32 road_class_type = 3;
+    // 本地坐标系下的几何点（x, y, z）
+    repeated Point3D geo = 4;
+    // 导航动作类型
+    int32 main_action_type = 5;    // 主动作类型
+    int32 assist_action_type = 6;  // 辅助动作类型
+}
+
+// 导航动作信息（从当前位置开始的后续 link 动作）
+message LinkAction {
+    uint64 link_id = 1;              // link ID
+    int32 main_action_type = 2;      // 主动作类型
+    int32 assist_action_type = 3;    // 辅助动作类型
+    float accumulated_dist = 4;      // 累计距离（从当前位置到该 link 终点）
+}
+
+message NaviLinkActions {
+    uint64 current_link_id = 1;           // 当前所在 link ID
+    repeated LinkAction link_actions = 2; // 后续 link 动作列表
+}
+
+message SDMap_Raw {
+    repeated SDMapLink_Raw links = 1;
+    NaviLinkActions navi_link_actions = 2;  // 导航动作信息
+}
+
+// ==================== 主消息 ====================
+
+// DLP 原始数据（主消息）
+message DLPRawData {
+    // 时间戳
+    uint64 timestamp_ns = 1;
+    
+    // Agent原始数据列表
+    repeated AgentData agents = 2;
+    
+    // 车道线/路沿原始数据列表
+    repeated LanelineData lanelines = 3;
+    
+    // 自车数据
+    EgoData ego = 4;
+    
+    // 路口信息
+    CrossData cross = 5;
+    
+    // 路径信息
+    RouteData route = 6;
+    
+    // 配置参数
+    Config config = 7;
+    
+    // 占用栅格信息 (来自 perception_nv_cameras_occ_info)
+    OccInfo occ_info = 8;
+    
+    // 车道线语义信息
+    repeated LanelineSMData lanelines_sm = 9;
+
+    // 中心线数据
+    repeated CenterlineData centerlines = 10;
+
+    // 自车局部位姿（时间窗口：hist+current+future，每个时间步一个点）
+    repeated EgoLocalPose ego_local_pose = 11;
+
+    // 按时间窗口对齐的中心线序列（每帧一组）
+    repeated CenterlineFrame centerline_frames = 12;
+
+    // 导航拓扑车道线数据，对应 JSON 中的 data_laneline_navi_topo
+    repeated NaviTopoLanelineData data_laneline_navi_topo = 13;
+
+    // SDMap相关信息
+    SDMap_Raw data_sdmap = 14;
+
+    // 等时间采样
+    repeated EgoHistoryPoint ego_history_time = 15;
+
+    // 等距离采样
+    repeated EgoHistoryPoint ego_history_distance = 16;
+
+    // 自车全局坐标
+    EgoLocalPose ego_world_pos = 17;
+
+    // FusionAgent原始数据列表
+    repeated FusionAgentData fusion_agents = 18;
+
+    // GOP 原始数据列表
+    repeated GopData gops = 19;
+}
+
+// 车道线导航拓扑信息（来自 navi_topo）
+message NaviTopoLanelineData {
+    uint64 id = 1;                     // 对应中心线 / 车道线 id
+    int32 turn_type = 2;               // 转向类型
+    string type = 3;                   // 类型，通常为 "centerline"
+
+    // 采样点（与 LanelineData.sampled_points 一致）
+    SampledPoints pts_fixed_num = 4;  // 原 JSON 中的 pts_fixed_num 数组
+
+    // 导航拓扑向量 [is_navi_lane, dis2cross, dis2stopline]
+    repeated float navi_topo = 5;
+
+    // Centerline 路标信息（可复用已有 CenterlineRoadmarker 定义）
+    CenterlineRoadmarker centerline_roadmarker = 6;
+}

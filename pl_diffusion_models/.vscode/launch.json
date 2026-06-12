@@ -1,0 +1,88 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Diffusion 预训练 (fit) 1/8 数据",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/launch.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "python": "/root/miniconda3/bin/python",
+            "env": {
+                "CUDA_LAUNCH_BLOCKING": "1"
+            },
+            "args": [
+                "--debug",
+                "True",
+                "fit",
+                "--config",
+                "config/cli_config/diffusion_model_volc_ego_navi_fix_distance_path_oss_dlp.yaml"
+            ]
+        },
+        {
+            "name": "模型推理 (test_dlp)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/test_dlp.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_LAUNCH_BLOCKING": "1",
+                "RANK": "0",
+                "WORLD_SIZE": "1",
+                "LOCAL_RANK": "0",
+                "MASTER_ADDR": "127.0.0.1",
+                "MASTER_PORT": "29500"
+            },
+            "args": [
+                "--config",
+                "config/dataset/LitDiffusionDataset_ego_navi_fix_distance_path_oss_dlp.yaml",
+                "--work_dir",
+                "${workspaceFolder}/output/infer_nomap_base",
+                "--ckpt",
+                "/mnt/afs/liuzhaoyang1/diffusion_codes/dif_55b/lightning_logs/version_1/checkpoints/last.ckpt",
+                "--num_samples",
+                "8",
+                "--sample_steps",
+                "5"
+            ]
+        },
+        {
+            "name": "可视化 path GT vs pred 对比 (infer_visualization)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/infer_visualization.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--work_dir",
+                "${workspaceFolder}/output/infer_nomap_basenew",
+                "--only_path_compare"
+            ]
+        },
+        {
+            "name": "三文件夹 PNG 横向拼接 (concat_images_by_name)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/concat_images_by_name.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "args": [
+                "--dir1",
+                "/mnt/afs/chenyimo/pl_diffusion_models/output/infer_withmap_full/infer",
+                "--dir2",
+                "/mnt/afs/chenyimo/pl_diffusion_models/output/infer_withmap_base/infer",
+                "--dir3",
+                "/mnt/afs/chenyimo/pl_diffusion_models_nomap/output/infer_nomap_base/infer",
+                "--out",
+                "${workspaceFolder}/output/concat_result"
+            ]
+        }
+    ]
+}

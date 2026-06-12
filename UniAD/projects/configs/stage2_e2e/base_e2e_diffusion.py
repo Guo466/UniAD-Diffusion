@@ -23,8 +23,59 @@ _base_ = ["./base_e2e.py"]
 # 覆盖：将 planning_head 替换为 DiffusionPlanningHead
 # =====================================================================================
 
+# =====================================================================================
+# 笔记本单卡 + nuScenes Mini 适配配置
+# =====================================================================================
+
+# ---- Mini 数据集专用 pkl 路径 ----
+_mini_info_root = "data/infos/"
+_mini_data_root  = "data/nuscenes/"
+
+# ---- 合并模型配置：planning_head 替换 + 显存优化（两者必须在同一个 model dict 中！）----
+# 注意：mmcv 配置系统中，同名变量的后一次赋值会完全覆盖前一次，
+#       因此 planning_head 和 显存优化配置必须合并到同一个 model = dict(...)
 model = dict(
-    # 只覆盖 planning_head，其余字段（BEVFormer、TrackHead、MotionHead 等）继承自 base_e2e.py
+    # ==== 显存优化（RTX 4060 Laptop, 7.75 GB）====
+    queue_length=1,     # 只使用当前帧（省去历史帧 BEV 缓存，节省约 1.5 GB）
+    num_query=300,      # track query 从 900 减到 300（节省约 0.5 GB）
+    seg_head=dict(
+        num_query=100,  # 地图分割 query 从 300 减到 100
+        num_things_classes=3,
+        num_stuff_classes=1,
+    ),
+    occ_head=dict(
+        # BEV 特征投影大幅降维（256→64），节省最多显存
+        bev_proj_dim=64,
+        bev_proj_nlayers=1,     # 只用1层卷积投影（原来4层）
+        transformer_decoder=dict(
+            type='DetrTransformerDecoder',
+            return_intermediate=True,
+            num_layers=5,           # 保持5层（需能整除 n_future_blocks=5）
+            transformerlayers=dict(
+                type='DetrTransformerDecoderLayer',
+                attn_cfgs=dict(
+                    type='MultiheadAttention',
+                    embed_dims=64,          # 256→64（主要省显存来源）
+                    num_heads=4,            # 8→4（头数同步减少）
+                    attn_drop=0.0,
+                    proj_drop=0.0,
+                    dropout_layer=None,
+                    batch_first=False),
+                ffn_cfgs=dict(
+                    embed_dims=64,
+                    feedforward_channels=256,   # 2048→256（FFN 是显存大户）
+                    num_fcs=2,
+                    act_cfg=dict(type='ReLU', inplace=True),
+                    ffn_drop=0.0,
+                    dropout_layer=None,
+                    add_identity=True),
+                feedforward_channels=256,
+                operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
+                                 'ffn', 'norm')),
+            init_cfg=None),
+    ),
+
+    # ==== 替换 planning_head 为 DiffusionPlanningHead ====
     planning_head=dict(
         type='DiffusionPlanningHead',
 
@@ -68,26 +119,16 @@ model = dict(
 )
 
 # =====================================================================================
-# 覆盖：任务损失权重
-# 与 base_e2e.py 保持一致，planning 权重不变
-# =====================================================================================
-# 注：task_loss_weight 在 UniADTrack 中定义，不在 model dict 中直接暴露
-# 如需调整可在此处通过 model.task_loss_weight 覆盖：
-# model.update({'task_loss_weight': dict(track=1.0, map=1.0, motion=1.0, occ=1.0, planning=1.0)})
-
-# =====================================================================================
 # 覆盖：训练超参数（Diffusion 模型通常需要更小的学习率和更多 epochs）
 # =====================================================================================
 
-# DiffusionPlanningHead 的新参数使用正常 lr，冻结层使用更小的 lr
-# 与 base_e2e.py 的 optimizer 配置合并（只覆盖 lr）
 optimizer = dict(
     type="AdamW",
-    lr=1e-4,           # 比原版（2e-4）略小，适应 diffusion 训练的稳定性要求
+    lr=1e-4,
     paramwise_cfg=dict(
         custom_keys={
-            "img_backbone": dict(lr_mult=0.1),    # 骨干网络使用 0.1× lr
-            "bev_track_bridge": dict(lr_mult=1.0), # 桥接层正常 lr（新模块，需要充分训练）
+            "img_backbone": dict(lr_mult=0.1),
+            "bev_track_bridge": dict(lr_mult=1.0),
             "ego_bridge": dict(lr_mult=1.0),
             "dit_blocks": dict(lr_mult=1.0),
             "t_embedder": dict(lr_mult=1.0),
@@ -97,23 +138,56 @@ optimizer = dict(
 )
 
 # =====================================================================================
-# 覆盖：评估配置（添加扩散规划特有的评估策略）
+# 加载权重
 # =====================================================================================
+load_from = "ckpts/uniad_base_track_map.pth"
+find_unused_parameters = True
 
-# 保持与 base_e2e.py 一致，规划评估使用 "uniad" 策略
-planning_evaluation_strategy = "uniad"
+data = dict(
+    # 笔记本单卡，显存约 8GB，batch=1 必须
+    samples_per_gpu=1,
+    # 笔记本 CPU 核心数有限，降低 worker 数避免内存溢出
+    workers_per_gpu=2,
 
-evaluation = dict(
-    interval=20,
-    planning_evaluation_strategy=planning_evaluation_strategy,
+    train=dict(
+        # 切换为 Mini 训练 pkl（由 create_data.py --version v1.0-mini 生成）
+        ann_file=_mini_info_root + "nuscenes_infos_temporal_mini_infos_temporal_train.pkl",
+        data_root=_mini_data_root,
+    ),
+    val=dict(
+        ann_file=_mini_info_root + "nuscenes_infos_temporal_mini_infos_temporal_val.pkl",
+        data_root=_mini_data_root,
+    ),
+    test=dict(
+        ann_file=_mini_info_root + "nuscenes_infos_temporal_mini_infos_temporal_val.pkl",
+        data_root=_mini_data_root,
+    ),
 )
 
-# =====================================================================================
-# 加载权重说明：
-# - 推荐从 Stage2 的 base_e2e 预训练权重初始化
-#   （BEVFormer + TrackHead + SegHead + MotionHead + OccHead 均已训练好）
-# - DiffusionPlanningHead 的新参数（桥接层 + DiT）将从随机初始化开始训练
-# - 若无 Stage2 权重，也可从 Stage1 权重（track+map）开始（但需要更多 epoch）
-# =====================================================================================
-load_from = "ckpts/uniad_base_track_map.pth"   # Stage1 权重（或改为 Stage2 权重）
-find_unused_parameters = True
+# ---- 训练轮次：Mini 数据少，跑更多 epoch ----
+total_epochs = 20
+runner = dict(type="EpochBasedRunner", max_epochs=total_epochs)
+
+# ---- 评估间隔：每 5 个 epoch 评估一次（Mini 数据快）----
+evaluation = dict(
+    interval=5,
+    planning_evaluation_strategy="uniad",
+)
+
+# ---- 学习率预热步数适配（Mini 数据集 iter 数很少）----
+lr_config = dict(
+    policy="CosineAnnealing",
+    warmup="linear",
+    warmup_iters=50,       # Mini 数据集每 epoch 约 60 iter，50 iter 预热即可
+    warmup_ratio=1.0 / 3,
+    min_lr_ratio=1e-3,
+)
+
+# ---- 日志间隔：更频繁打印（Mini 数据 iter 少）----
+log_config = dict(
+    interval=5,
+    hooks=[
+        dict(type="TextLoggerHook"),
+        dict(type="TensorboardLoggerHook"),
+    ],
+)

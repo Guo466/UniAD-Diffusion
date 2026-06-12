@@ -714,8 +714,9 @@ class UniADTrack(MVXTwoStageDetector):
             (track_instances.matched_gt_idxes >= 0)
         )
         out.update(self.select_active_track_query(track_instances, active_index, img_metas))
-        # 提取第 900 个（索引900）固定的自车 Query
-        out.update(self.select_sdc_track_query(track_instances[900], img_metas))
+        # 提取最后一个固定的自车 Query（动态索引，兼容任意 num_query）
+        _sdc_idx = len(track_instances) - 1
+        out.update(self.select_sdc_track_query(track_instances[_sdc_idx], img_metas))
 
         # ---- Step 6: 更新记忆库 ----
         if self.memory_bank is not None:
@@ -1049,8 +1050,8 @@ class UniADTrack(MVXTwoStageDetector):
         track_instances.output_embedding = query_feats[-1][0]  # (901, 256)
         track_instances.ref_pts = last_ref_pts[0]              # 更新参考点
 
-        # 硬编码：第 900 个 Query（索引900）是自车 Query，ID=-2
-        track_instances.obj_idxes[900] = -2
+        # 动态获取最后一个 Query（自车 Query），ID=-2，兼容任意 num_query
+        track_instances.obj_idxes[len(track_instances) - 1] = -2
 
         # =====================================================================
         # Step 4: 跟踪状态更新（分配/维护全局跟踪 ID）

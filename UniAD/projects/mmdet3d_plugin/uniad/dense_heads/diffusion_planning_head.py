@@ -233,12 +233,13 @@ class BEVToContextBridge(nn.Module):
         # BEV token 可学习位置编码
         self.bev_pos_embed = nn.Parameter(torch.randn(1, self.actual_bev_tokens, out_dim) * 0.02)
 
-        # Agent 内部 Transformer（agent 间交互，2层）
+        # Agent 内部 Transformer（agent 间交互，1层，显存优化：nhead 4→8/4，FFN 缩小）
+        # nhead=4: 256/4=64，整除；FFN=256（原512）；层数=1（原2）→ 节省约50%显存
         enc_layer = nn.TransformerEncoderLayer(
-            d_model=out_dim, nhead=8, dim_feedforward=out_dim * 2,
+            d_model=out_dim, nhead=4, dim_feedforward=out_dim,
             dropout=0.1, batch_first=True
         )
-        self.agent_encoder = nn.TransformerEncoder(enc_layer, num_layers=2)
+        self.agent_encoder = nn.TransformerEncoder(enc_layer, num_layers=1)
 
     def forward(self, bev_embed, track_query, track_mask=None):
         B = track_query.shape[0]
@@ -253,9 +254,10 @@ class BEVToContextBridge(nn.Module):
         # 2. 投影 track 特征
         track_feat = self.track_proj(track_query)              # (B, N, D)
 
-        # 3. Agent 内部交互
-        kpm = (~track_mask) if track_mask is not None else None
-        track_feat = self.agent_encoder(track_feat, src_key_padding_mask=kpm)
+        # 3. Agent 内部交互（N=0 时跳过，避免 Transformer 空序列报错）
+        if track_feat.shape[1] > 0:
+            kpm = (~track_mask) if track_mask is not None else None
+            track_feat = self.agent_encoder(track_feat, src_key_padding_mask=kpm)
 
         # 4. 拼接
         context = torch.cat([track_feat, bev_tokens], dim=1)   # (B, N+64, D)
@@ -509,19 +511,32 @@ class DiffusionPlanningHead(nn.Module):
         losses  = {'loss_flow_matching': fm_loss}
 
         # 碰撞损失（可选）
+        # CollisionLoss.forward(sdc_traj_all, sdc_planning_gt, sdc_planning_gt_mask, future_gt_bbox)
+        # - sdc_traj_all: 预测轨迹 (B, T, 2)（绝对坐标）
+        # - sdc_planning_gt: GT 轨迹 (B, T, 3)（含 heading，用于 sdc_yaw）
+        # - sdc_planning_gt_mask: GT 轨迹有效掩码 (B, T)
+        # - future_gt_bbox: GT 未来障碍物框（list）
         if len(self.loss_collision) > 0 and gt_future_boxes is not None:
             with torch.no_grad():
                 s_traj = self._sample_traj(context, ego_ctx, eg_rout, B, gt_norm.device, n_steps=3)
+            # gt_traj: (B, T, 2)，需要扩充为 (B, T, 3)（补零 heading）
+            gt_traj_3d = torch.cat([gt_traj, torch.zeros_like(gt_traj[..., :1])], dim=-1)
             for i, col_fn in enumerate(self.loss_collision):
-                losses[f'loss_collision_{i}'] = col_fn(s_traj, gt_future_boxes)
+                losses[f'loss_collision_{i}'] = col_fn(
+                    s_traj,           # (B, T, 2): 预测轨迹（绝对坐标）
+                    gt_traj_3d,       # (B, T, 3): GT 轨迹（含伪 heading=0）
+                    traj_mask,        # (B, T): 有效掩码
+                    gt_future_boxes   # list: GT 未来障碍物框
+                )
 
         # 构造与 PlanningHeadSingleMode 兼容的返回格式
+        # pred_traj: (B, T, 2)，与原 PlanningHeadSingleMode 输出格式完全一致
         with torch.no_grad():
             pred_traj = self._sample_traj(context, ego_ctx, eg_rout, B,
                                            gt_norm.device, n_steps=self.sample_steps)
         outs_planning = {
-            'sdc_traj':     pred_traj.unsqueeze(0),
-            'sdc_traj_all': pred_traj.unsqueeze(0),
+            'sdc_traj':     pred_traj,   # (B, T, 2) — 与评估接口兼容
+            'sdc_traj_all': pred_traj,
         }
         return dict(losses=losses, outs_motion=outs_planning)
 
@@ -556,7 +571,8 @@ class DiffusionPlanningHead(nn.Module):
 
         pred_traj = self._sample_traj(context, ego_ctx, eg_rout, B, device,
                                        n_steps=self.sample_steps)
+        # pred_traj: (B, T, 2)，与原 PlanningHeadSingleMode 输出格式一致
         return {
-            'sdc_traj':     pred_traj.unsqueeze(0),
-            'sdc_traj_all': pred_traj.unsqueeze(0),
+            'sdc_traj':     pred_traj,   # (B, T, 2)
+            'sdc_traj_all': pred_traj,
         }

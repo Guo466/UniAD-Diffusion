@@ -1,0 +1,644 @@
+"""
+AWS S3 存储客户端
+用于 cache 阶段的数据上传
+"""
+import io
+import os
+import pickle
+import json
+import time
+import gzip
+import configparser
+from typing import Union, Optional, Any, Iterable, Dict, Tuple
+from abc import ABC, abstractmethod
+from aoss_client.client import Client
+from botocore.config import Config
+from proto.dlp_raw_data_pb2 import DLPRawData
+
+"""
+配置映射表: bucket_name -> conf_path
+"""
+BUCKET_CONF_MAP: Dict[str, str] = {
+    "dlp_pl_prediction" :   "./aoss.conf",
+    "vd-dlp-data-new"   :   "./aoss_dlp.conf",
+    "sdc3-gt-label-2"   :   "./aoss_dlp_sdc3.conf",
+    "hs-dongfeng"       :   "./aoss_data_hs.conf",
+}
+
+class StorageClient(ABC):
+    """存储客户端抽象接口"""
+
+    def __init__(self, config_file: Union[str, Dict[str, str]]):
+        """ 初始化客户端 """
+        self.config_source: Union[str, Dict[str, str]] = config_file
+        self.bucket_name: Optional[str] = None
+
+        # 配置映射表: bucket_name -> conf_path
+        if isinstance(config_file, dict):
+            if len(config_file) == 0:
+                raise ValueError("config_file is empty")
+            self._bucket_conf_map = config_file
+            self._default_conf = next(iter(config_file.values()))
+        else:
+            self._bucket_conf_map = {}
+            self._default_conf = config_file
+
+        # client 缓存：conf_path -> client
+        self._clients_by_conf: Dict[str, Any] = {}
+
+    @staticmethod
+    def _parse_s3_bucket_key(remote_path: str, default_bucket: Optional[str] = None) -> Tuple[Optional[str], str]:
+        """ """
+        if remote_path.startswith("s3://"):
+            # 格式: s3://bucket-name/path/to/file
+            path_parts = remote_path[5:].split('/', 1)
+            bucket_name = path_parts[0]
+            s3_key = path_parts[1] if len(path_parts) > 1 else ''
+            return bucket_name, s3_key
+        
+        return default_bucket, remote_path
+
+    def _resolve_conf_path_for_bucket(self, bucket_key: Optional[str]) -> str:
+        """ 解析 bucket 对应的 conf 路径 """
+        if not self._bucket_conf_map:
+            return self._default_conf
+
+        if bucket_key is None:
+            if not self._default_conf:
+                raise ValueError("default conf is not set")
+            return self._default_conf
+
+        return self._bucket_conf_map.get(bucket_key) or self._default_conf
+
+    def _resolve_conf_path_for_path(self, remote_path: str) -> str:
+        bucket_name, _ = self._parse_s3_bucket_key(remote_path, self.bucket_name)
+        return self._resolve_conf_path_for_bucket(bucket_name)
+
+    @abstractmethod
+    def _build_client(self, conf_path: str) -> Any:
+        raise NotImplementedError
+
+    def _get_local_cached_client(self, conf_path: str) -> Any:
+        """获取进程级客户端实例"""
+        cached = self._clients_by_conf.get(conf_path)
+        if cached is None:
+            cached = self._build_client(conf_path)
+            self._clients_by_conf[conf_path] = cached
+        return cached
+
+    def set_bucket(self, bucket_name: str):
+        self.bucket_name = bucket_name
+    
+    @abstractmethod
+    def put(self, remote_path: str, data: Union[bytes, io.BytesIO], large_file: bool = False):
+        """
+        上传数据到远程路径
+        
+        Args:
+            remote_path: 远程路径（完整路径，如 s3://bucket/path 或 path/to/file）
+            data: 数据（bytes 或 BytesIO 对象）
+        """
+        pass
+    
+    @abstractmethod
+    def get(self, remote_path: str, large_file: bool = False) -> bytes:
+        """
+        从远程路径下载数据
+        
+        Args:
+            remote_path: 远程路径
+        
+        Returns:
+            bytes: 下载的数据
+        """
+        pass
+    
+    @abstractmethod
+    def isdir(self, remote_path: str) -> bool:
+        """
+        检查远程路径是否为目录
+        
+        Args:
+            remote_path: 远程路径
+        
+        Returns:
+            bool: 是否为目录
+        """
+        pass
+    
+    @abstractmethod
+    def contains(self, remote_path: str) -> bool:
+        """
+        检查远程路径是否存在
+        
+        Args:
+            remote_path: 远程路径
+        
+        Returns:
+            bool: 是否存在
+        """
+        pass
+
+class AOSSClient(StorageClient):
+    """AOSS 客户端实现"""
+    
+    def __init__(self, config_file: Union[str, Dict[str, str]]):
+        """初始化 AOSS 客户端"""
+        super().__init__(config_file)
+    
+    def _build_client(self, conf_path: str) -> Client:
+        return Client(conf_path)
+
+    def _get_local_client(self, remote_path: str) -> Client:
+        conf_path = self._resolve_conf_path_for_path(remote_path)
+        return self._get_local_cached_client(conf_path)
+
+    def put(self, remote_path: str, data: Union[bytes, io.BytesIO], large_file: bool = False):
+        """上传数据到 AOSS"""
+        self._get_local_client(remote_path).put(remote_path, data)
+    
+    def get(self, remote_path: str, large_file: bool = False) -> bytes:
+        """从 AOSS 下载数据"""
+        return self._get_local_client(remote_path).get(remote_path)
+    
+    def isdir(self, remote_path: str) -> bool:
+        """检查 AOSS 路径是否为目录"""
+        return self._get_local_client(remote_path).isdir(remote_path)
+    
+    def contains(self, remote_path: str) -> bool:
+        """检查 AOSS 路径是否存在"""
+        return self._get_local_client(remote_path).contains(remote_path)
+
+
+class AWSClient(StorageClient):
+    """AWS S3 客户端实现"""
+    
+    def __init__(self, config_file: Union[str, Dict[str, str]]):
+        """初始化 AWS 客户端"""
+        super().__init__(config_file)
+
+        self.client_config = Config(
+            retries={"max_attempts": 3, "mode": "adaptive"},
+            connect_timeout=10,
+            read_timeout=30,
+            tcp_keepalive=True,
+            max_pool_connections=int(os.environ.get("AWS_MAX_POOL_CONNECTIONS", "64")),
+        )
+        self._clients_pid = os.getpid()
+
+    def _load_aws_cred_from_conf(self, conf_path: str) -> Tuple[str, str, str]:
+        """
+        从“单 conf”中加载 (ak, sk, endpoint_url)
+        要求:
+          [DEFAULT].default_cluster = xxx
+          [xxx].access_key/secret_key/host_base
+        """
+        cfg = configparser.ConfigParser()
+        cfg.read(conf_path)
+
+        cluster_name = cfg.get("DEFAULT", "default_cluster", fallback=None)
+        if not cluster_name:
+            # 兜底：如果只有一个 section，则用它
+            sections = [s for s in cfg.sections() if s.lower() != "default"]
+            if len(sections) == 1:
+                cluster_name = sections[0]
+            else:
+                raise ValueError(f"无法在 {conf_path} 找到 default_cluster")
+
+        access_key = cfg.get(cluster_name, "access_key")
+        secret_key = cfg.get(cluster_name, "secret_key")
+        host_base = cfg.get(cluster_name, "host_base")
+        return access_key, secret_key, host_base
+
+    def _build_client(self, conf_path: str):
+        access_key, secret_key, host_base = self._load_aws_cred_from_conf(conf_path)
+        import boto3
+        return boto3.client(
+            "s3",
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+            endpoint_url=host_base,
+            config=self.client_config,
+        )
+
+    def _get_local_client(self, bucket_name: Optional[str]):
+        """获取进程级的 S3 客户端实例"""
+        conf_path = self._resolve_conf_path_for_bucket(bucket_name)
+        """检查并重置缓存(进程级)"""
+        current_pid = os.getpid()
+        if current_pid != self._clients_pid:
+            self._clients_pid = current_pid
+            self._clients_by_conf = {}
+        return self._get_local_cached_client(conf_path)
+
+    def put(self, remote_path: str, data: Union[bytes, io.BytesIO], large_file: bool = False):
+        """上传数据到 S3"""
+        # 解析 bucket/key
+        bucket_name, s3_key = self._parse_s3_bucket_key(remote_path, self.bucket_name)
+        s3_client = self._get_local_client(bucket_name)
+        
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        
+        if large_file:
+            buf = io.BytesIO(data) if isinstance(data, bytes) else data
+            buf.seek(0)
+            s3_client.upload_fileobj(buf, bucket_name, s3_key)
+        else:
+            s3_client.put_object(Bucket=bucket_name, Key=s3_key, Body=data)
+    
+    def get(self, remote_path: str, large_file: bool = False) -> bytes:
+        """从 S3 下载数据"""
+        bucket_name, s3_key = self._parse_s3_bucket_key(remote_path, self.bucket_name)
+        s3_client = self._get_local_client(bucket_name)
+        
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        
+        if large_file:
+            buffer = io.BytesIO()
+            s3_client.download_fileobj(bucket_name, s3_key, buffer)
+            buffer.seek(0)
+            return buffer.read()
+        else:
+            response = s3_client.get_object(Bucket=bucket_name, Key=s3_key)
+            with response['Body'] as body:
+                return body.read()
+
+    def _parse_s3_path(self, remote_path: str):
+        """解析 S3 URI 或者使用默认 bucket"""
+        bucket_name, key = self._parse_s3_bucket_key(remote_path, self.bucket_name)
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        return bucket_name, key
+    
+    def isdir(self, remote_path: str) -> bool:
+        """检查 S3 路径是否为目录（通过检查是否存在以该路径为前缀的对象）"""
+        bucket_name, prefix = self._parse_s3_path(remote_path)
+        s3_client = self._get_local_client(bucket_name)
+        if prefix and not prefix.endswith('/'):
+            prefix = f"{prefix}/"
+        try:
+            response = s3_client.list_objects_v2(
+                Bucket=bucket_name,
+                Prefix=prefix,
+                Delimiter='/',
+                MaxKeys=1,
+            )
+        except Exception as exc:
+            error = getattr(exc, "response", {}).get("Error", {}) if hasattr(exc, "response") else {}
+            error_code = error.get('Code')
+            if error_code in {'NoSuchBucket', '404', 'NotFound'}:
+                return False
+            raise
+        contents = response.get('Contents') or []
+        common_prefixes = response.get('CommonPrefixes') or []
+        return bool(contents or common_prefixes)
+    
+    def contains(self, remote_path: str) -> bool:
+        """检查 S3 路径是否存在"""
+        bucket_name, s3_key = self._parse_s3_path(remote_path)
+        s3_client = self._get_local_client(bucket_name)
+        if not s3_key or s3_key.endswith('/'):
+            return self.isdir(remote_path)
+        try:
+            s3_client.head_object(Bucket=bucket_name, Key=s3_key)
+            return True
+        except Exception as exc:
+            error = getattr(exc, "response", {}).get("Error", {}) if hasattr(exc, "response") else {}
+            error_code = error.get('Code')
+            if error_code in {'404', 'NoSuchKey', 'NotFound'}:
+                dir_path = remote_path if remote_path.endswith('/') else f"{remote_path}/"
+                return self.isdir(dir_path)
+            raise
+    
+class TOSClient(StorageClient):
+    """TOS 客户端实现（仅依赖 tos SDK）"""
+
+    def __init__(self, config_file: Union[str, Dict[str, str]]):
+        super().__init__(config_file)
+
+    def _with_retry(self, func, max_retries: int = 1):
+        import tos
+        for attempt in range(max_retries + 1):
+            try:
+                return func()
+            except tos.exceptions.TosServerError as e:
+                retryable = e.status_code in {408, 425, 429} or (500 <= e.status_code < 600)
+                if (not retryable) or (attempt >= max_retries):
+                    raise
+                print(f"tos server error: {e}, attempt: {attempt}, max_retries: {max_retries}")
+                time.sleep(min(0.05 * (2 ** attempt), 1))
+
+    @staticmethod
+    def _parse_tos_bucket_key(remote_path: str, default_bucket: Optional[str] = None) -> Tuple[Optional[str], str]:
+        """解析 tos://bucket/key 或使用默认 bucket"""
+        if remote_path.startswith("tos://"):
+            path_parts = remote_path[6:].split('/', 1)
+            bucket_name = path_parts[0]
+            tos_key = path_parts[1] if len(path_parts) > 1 else ''
+            return bucket_name, tos_key
+        return default_bucket, remote_path
+
+    def _load_tos_cred_from_env(self) -> Tuple[str, str, str, str]:
+        """从环境变量加载 TOS 访问配置"""
+        access_key = "Y"
+        secret_key = "TVRVMU1EVTVPVE0wWlRkbU5EWTNZamc1TURSbFl6UXpOVFJpTm1Gak9HRQ=="
+        endpoint = "http://ep-5grwqvd9gef473inql0u3v95.tos.cn-shanghai.privatelink.volces.com"
+        region = "cn-shanghai"
+        if not all([access_key, secret_key, endpoint, region]):
+            raise ValueError(
+                "缺少 TOS 配置，请设置环境变量"
+            )
+        return access_key, secret_key, endpoint, region
+
+    def _build_client(self, conf_path: str):
+        try:
+            import tos
+        except Exception as exc:
+            raise ImportError("tos SDK 未安装，请先安装: pip install tos") from exc
+        access_key, secret_key, endpoint, region = self._load_tos_cred_from_env()
+        return tos.TosClientV2(access_key, secret_key, endpoint, region, max_retry_count=5)
+
+    def _get_local_client(self) -> Any:
+        # TOS 不依赖 conf_path，复用默认缓存键
+        return self._get_local_cached_client(self._default_conf or "__tos__")
+
+    def put(self, remote_path: str, data: Union[bytes, io.BytesIO], large_file: bool = False):
+        """上传数据到 TOS（目前仅基础实现）"""
+        bucket_name, tos_key = self._parse_tos_bucket_key(remote_path, self.bucket_name)
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        if not tos_key:
+            raise ValueError("tos key 为空，无法上传")
+        client = self._get_local_client()
+        content = data if isinstance(data, io.BytesIO) else io.BytesIO(data)
+        def _do_put():
+            content.seek(0)
+            return client.put_object(bucket_name, tos_key, content=content)
+        self._with_retry(_do_put)
+
+    def get(self, remote_path: str, large_file: bool = False) -> bytes:
+        """从 TOS 下载数据"""
+        bucket_name, tos_key = self._parse_tos_bucket_key(remote_path, self.bucket_name)
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        if not tos_key:
+            raise ValueError("tos key 为空，无法下载")
+        client = self._get_local_client()
+        def _do_get():
+            obj = client.get_object(bucket_name, tos_key)
+            return obj.read()
+        return self._with_retry(_do_get)
+
+    def isdir(self, remote_path: str) -> bool:
+        """检查 TOS 路径是否为目录"""
+        bucket_name, prefix = self._parse_tos_bucket_key(remote_path, self.bucket_name)
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        if prefix and not prefix.endswith('/'):
+            prefix = f"{prefix}/"
+        client = self._get_local_client()
+        try:
+            response = client.list_objects(bucket_name, prefix=prefix, delimiter='/', max_keys=1)
+        except Exception as exc:
+            error_code = getattr(exc, "code", None) or getattr(exc, "status_code", None)
+            if str(error_code) in {'404', 'NoSuchBucket', 'NotFound'}:
+                return False
+            raise
+        contents = getattr(response, "contents", None) or []
+        common_prefixes = getattr(response, "common_prefixes", None) or []
+        return bool(contents or common_prefixes)
+
+    def contains(self, remote_path: str) -> bool:
+        """检查 TOS 路径是否存在"""
+        bucket_name, tos_key = self._parse_tos_bucket_key(remote_path, self.bucket_name)
+        if bucket_name is None:
+            raise ValueError("bucket_name 未设置")
+        if not tos_key or tos_key.endswith('/'):
+            return self.isdir(remote_path)
+        client = self._get_local_client()
+        try:
+            response = client.list_objects(bucket_name, prefix=tos_key, max_keys=1)
+        except Exception as exc:
+            error_code = getattr(exc, "code", None) or getattr(exc, "status_code", None)
+            if str(error_code) in {'404', 'NoSuchBucket', 'NotFound'}:
+                return False
+            raise
+        contents = getattr(response, "contents", None) or []
+        if contents:
+            return any(getattr(obj, "key", None) == tos_key for obj in contents)
+        return False
+
+class RemoteClient:
+    # 大文件阈值 50MB
+    LARGE_FILE_THRESHOLD = 50 * 1024 * 1024
+
+    def __init__(self, client_type: str, cluster_path: str, config_file: str):
+        """初始化 AutoClient"""
+        self._client_type = client_type
+        self._config_file = config_file
+        self._cluster_path = cluster_path
+        self.client = None
+        self._json_config = None  # 存储 JSON 格式配置
+    
+    def is_remote_path(self, path: Optional[str]) -> bool:
+        # 通用检测：支持 s3:// 与 tos://
+        # 原逻辑 path.startswith(self._cluster_path) 只能识别特定 bucket（如 s3://dlp_pl_prediction），
+        # 无法正确处理其他 S3 bucket（如 s3://vd-dlp-data-new）
+        return isinstance(path, str) and ("s3://" in path or "tos://" in path)
+
+    def _is_tos_path(self, path: Optional[str]) -> bool:
+        return isinstance(path, str) and path.startswith("tos://")
+    
+    def isdir(self, path: str) -> bool:
+        """检查远程路径是否为目录"""
+        if self.is_remote_path(path):
+            return self._client_for_path(path).isdir(path)
+        return os.path.exists(path)
+    
+    def contains(self, path: str) -> bool:
+        """检查远程路径是否存在"""
+        if self.is_remote_path(path):
+            return self._client_for_path(path).contains(path)
+        return os.path.exists(path)
+
+    def load_pickle(self, path: str, large_file: bool = False) -> Any:
+        """从远程路径加载 pickle 数据"""
+        if self.is_remote_path(path):
+            client = self._client_for_path(path)
+            pickled_bytes = client.get(path, large_file)
+            # 检查返回值是否为 None
+            if pickled_bytes is None:
+                print(f"[ERROR] Failed to load pickle file (got None): {path}")
+                raise ValueError(f"client.get() returned None for path: {path}")
+            payload = pickle.loads(pickled_bytes)
+        else:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"File not found locally: {path}")
+            with open(path, 'rb') as f:
+                buffer = f.read()
+            payload = pickle.loads(buffer)
+        return payload
+
+    def save_pickle(self, path: str, payload: Any, large_file: bool = False) -> bool:
+        """将 pickle 数据保存到远程路径"""
+        try:
+            if self.is_remote_path(path):
+                pickled_bytes = pickle.dumps(payload, protocol=pickle.HIGHEST_PROTOCOL)
+                self._client_for_path(path).put(
+                    path,
+                    pickled_bytes,
+                    large_file or len(pickled_bytes) >= self.LARGE_FILE_THRESHOLD
+                )
+            else:
+                target_dir = os.path.dirname(path)
+                if target_dir:
+                    os.makedirs(target_dir, exist_ok=True)
+                with open(path, "wb") as handle:
+                    pickle.dump(payload, handle)
+            return True
+        except Exception as exc:
+            print(f"Failed to save pickle to {path}: {exc}")
+            return False
+    
+    def load_proto(self, path: str, message_class: Any = DLPRawData, large_file: bool = False) -> Any:
+        """ 从远程或本地路径加载 protobuf 数据 """
+        if message_class is None:
+            raise ImportError("Proto message class is None")
+        
+        if self.is_remote_path(path):
+            client = self._client_for_path(path)
+            proto_bytes = client.get(path, large_file)
+        else:
+            with open(path, 'rb') as f:
+                proto_bytes = f.read()
+
+        # 检查数据是否为空
+        if not proto_bytes:
+            raise ValueError(f"Proto file is empty: {path}")
+
+        # 若为 gzip 压缩文件，先解压再解析
+        if path.lower().endswith(".gz"):
+            proto_bytes = gzip.decompress(proto_bytes)
+
+        # 解析 protobuf 二进制数据
+        payload = message_class()
+        payload.ParseFromString(proto_bytes)
+        return payload
+
+    def load_json(self, path: str, large_file: bool = False) -> Any:
+        """从远程或本地路径加载 JSON 数据"""
+        if self.is_remote_path(path):
+            client = self._client_for_path(path)
+            json_bytes = client.get(path, large_file)
+            # 检查返回值是否为 None
+            if json_bytes is None:
+                print(f"[ERROR] Failed to load JSON file (got None): {path}")
+                raise ValueError(f"client.get() returned None for path: {path}")
+            payload = json.loads(json_bytes.decode('utf-8'))
+        else:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"File not found locally: {path}")
+            with open(path, 'r', encoding='utf-8') as f:
+                payload = json.load(f)
+        return payload
+
+    def save_json(self, path: str, payload: Any, large_file: bool = False) -> bool:
+        """将 JSON 数据保存到远程或本地路径"""
+        try:
+            if self.is_remote_path(path):
+                json_bytes = json.dumps(payload, ensure_ascii=False).encode('utf-8')
+                self._client_for_path(path).put(
+                    path,
+                    json_bytes,
+                    large_file or len(json_bytes) >= self.LARGE_FILE_THRESHOLD
+                )
+            else:
+                target_dir = os.path.dirname(path)
+                if target_dir:
+                    os.makedirs(target_dir, exist_ok=True)
+                with open(path, 'w', encoding='utf-8') as handle:
+                    json.dump(payload, handle, ensure_ascii=False)
+            return True
+        except Exception as exc:
+            print(f"Failed to save json to {path}: {exc}")
+            return False
+    
+    def refine_cache_dir(self, cache_dir: str, cache_dir_alter: Optional[str] = None) -> str:
+        """修正缓存目录"""
+        if cache_dir_alter is not None and self._cluster_path is not None:
+            return cache_dir.replace(self._cluster_path.rstrip('/'), os.path.join(self._cluster_path, cache_dir_alter.rstrip('/')))
+        return cache_dir
+
+    def get_cache_dir(self, dataset_dir:str, cache_dir_alter: Optional[str] = None) -> str:
+        """获取缓存目录"""
+        dataset_name = dataset_dir.split('/')[-1]
+        return os.path.join(self.refine_cache_dir(dataset_dir, cache_dir_alter), f'cache_{dataset_name}')
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if self._client_type == 'aws':
+            state['client'] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        if self._client_type == 'aws':
+            self.client = None
+
+    def _client(self):
+        if self.client is None:
+            self.client = create_storage_client(
+                client_type=self._client_type,
+                config_file=self._config_file
+            )
+        if not self.client:
+            raise RuntimeError(f"{'AWS' if self._client_type == 'aws' else 'AOSS'} client unavailable")
+        return self.client
+
+    def _tos_client(self):
+        if getattr(self, "_tos_client_instance", None) is None:
+            self._tos_client_instance = TOSClient(self._config_file)
+        return self._tos_client_instance
+
+    def _client_for_path(self, path: str):
+        if self._is_tos_path(path):
+            return self._tos_client()
+        return self._client()
+
+def create_storage_client(
+    client_type: str,
+    config_file: Union[str, Dict[str, str]],
+    bucket_name: Optional[str] = None
+) -> StorageClient:
+    """创建并初始化存储客户端"""
+    if client_type.lower() == 'aws':
+        client = AWSClient(config_file)
+        if bucket_name:
+            client.set_bucket(bucket_name)
+        return client
+    elif client_type.lower() == 'aoss':
+        client = AOSSClient(config_file)
+        return client
+    else:
+        raise ValueError(f"不支持的客户端类型: {client_type}，支持的类型: 'aws', 'aoss'")
+
+def create_remote_client(
+    data_config,
+    cluster_path: Optional[str] = None,
+    config_file: Union[str, Dict[str, str]] = None
+) -> RemoteClient:
+    """创建并初始化远程客户端"""
+    resolved_cluster_path = (
+        cluster_path
+        or data_config.get('cluster_path')
+        # or 's3://dlp_pl_prediction'
+    )
+    if config_file is None:
+        config_file = BUCKET_CONF_MAP
+    return RemoteClient(
+        'aws' if data_config.get('use_aws_client', True) else 'aoss',
+        resolved_cluster_path,
+        config_file,
+    )

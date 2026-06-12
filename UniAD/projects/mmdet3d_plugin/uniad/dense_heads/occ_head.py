@@ -240,13 +240,17 @@ class OccHead(BaseModule):
         )
         
         # multi_query_fuser：融合三种 query（轨迹query + track query + 位置query）
-        # 输入：三种 query 拼接 → 3×256=768 维
-        # 输出：64 维（与 BEV 特征对齐）
+        # 输入：mode_fuser(traj_query)[bev_proj_dim] + track_query[query_dim] + track_query_pos[query_dim]
+        #       = bev_proj_dim + query_dim * 2
+        # 注意：traj_query 经 mode_fuser 后已从 query_dim 降为 bev_proj_dim，
+        #       因此拼接维度是 bev_proj_dim + query_dim*2（而非 query_dim*3）
+        _fuser_in_dim = bev_proj_dim + query_dim * 2
+        _fuser_mid_dim = max(query_dim * 2, bev_proj_dim * 4)  # 中间层保持足够宽度
         self.multi_query_fuser = nn.Sequential(
-            nn.Linear(query_dim * 3, query_dim * 2),  # 768 → 512
-            nn.LayerNorm(query_dim * 2),
+            nn.Linear(_fuser_in_dim, _fuser_mid_dim),
+            nn.LayerNorm(_fuser_mid_dim),
             nn.ReLU(inplace=True),
-            nn.Linear(query_dim * 2, bev_proj_dim),   # 512 → 64
+            nn.Linear(_fuser_mid_dim, bev_proj_dim),
         )
 
         self.detach_query_pos = detach_query_pos  # 是否截断位置 query 的梯度

@@ -44,6 +44,7 @@ from einops import rearrange         # 张量维度重排工具（比 reshape/pe
 from mmdet.core import reduce_mean   # 分布式训练中同步平均值
 from mmcv.cnn.bricks.transformer import build_transformer_layer_sequence
 import copy
+import torch.utils.checkpoint as grad_checkpoint
 # 从 occ_head_plugin 导入各子模块：
 from .occ_head_plugin import (
     MLP,                                          # 多层感知机（全连接网络）
@@ -463,16 +464,26 @@ class OccHead(BaseModule):
                 # - query: BEV 格子特征（接收信息的一方）
                 # - key/value: 实例 query（提供目标信息的一方）
                 # attn_masks 引导 BEV 特征只在目标可能出现的区域更新
-                cur_state = trans_layer(
-                    query=cur_state,          # (H'*W', B, C)：BEV 格子特征
-                    key=cur_ins_query,        # (Q, B, C)：实例 query（key）
-                    value=cur_ins_query,      # (Q, B, C)：实例 query（value）
-                    query_pos=None,           # BEV 无位置编码（已通过 sampler 隐含位置）
-                    key_pos=None,             # query 无额外位置编码
-                    attn_masks=attn_masks,    # [None（自注意力）, attn_mask（交叉注意力）]
-                    query_key_padding_mask=None,
-                    key_padding_mask=None
-                )  # 输出: (H'*W', B, C)，BEV 特征被目标信息"污染"（更新）
+                # 使用梯度检查点（gradient checkpointing）节省显存：
+                # 前向时不保存中间激活值，反向时重新计算（用时间换空间）
+                # attn_masks 含有 None 元素，不能直接传给 checkpoint（不支持 None 参数）
+                # 因此用 lambda 包装，将 attn_masks 通过闭包捕获
+                _attn_masks = attn_masks  # 闭包捕获当前 attn_masks
+                def _trans_layer_fn(q, k, v, _layer=trans_layer, _am=_attn_masks):
+                    return _layer(
+                        query=q, key=k, value=v,
+                        query_pos=None, key_pos=None,
+                        attn_masks=_am,
+                        query_key_padding_mask=None,
+                        key_padding_mask=None
+                    )
+                if self.training:
+                    cur_state = grad_checkpoint.checkpoint(
+                        _trans_layer_fn, cur_state, cur_ins_query, cur_ins_query,
+                        use_reentrant=False
+                    )
+                else:
+                    cur_state = _trans_layer_fn(cur_state, cur_ins_query, cur_ins_query)
 
             # ---- 2f: 变形回图像格式，并上采样恢复分辨率 ----
             cur_state = rearrange(cur_state, '(h w) b c -> b c h w', h=self.bev_size[0]//8)

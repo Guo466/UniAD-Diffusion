@@ -258,8 +258,10 @@ class OccHead(BaseModule):
 
         # query_to_occ_feat：将 query 映射为用于生成占用掩码的特征向量
         # 最终会与 BEV 特征做点积得到占用 logit
+        # 注意：ins_query 经 merge_queries 压缩到 bev_proj_dim(64) 维后，
+        # 再经 temporal_mlps 变换，此处输入依然是 bev_proj_dim 维
         self.query_to_occ_feat = MLP(
-            query_dim, query_dim, bev_proj_dim, num_layers=query_mlp_layers
+            bev_proj_dim, bev_proj_dim, bev_proj_dim, num_layers=query_mlp_layers
         )
         
         # temporal_mlp_for_mask：用于生成注意力掩码的 query 变换
@@ -317,7 +319,7 @@ class OccHead(BaseModule):
                 shape: (B, Q, H, W)，用于辅助监督
             ins_embed (Tensor): 用于生成掩码的 query 嵌入，shape (B, Q, C)
         """
-        # temporal_mlp_for_mask: 将 query（256维）变换为与 BEV 特征对齐的维度（64维）
+        # temporal_mlp_for_mask: 对 64 维 query 做非线性变换（维度保持 bev_proj_dim=64）
         # ins_embed: shape (B, Q, C)，C=bev_proj_dim=64
         ins_embed = self.temporal_mlp_for_mask(ins_query)
         

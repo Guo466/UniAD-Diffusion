@@ -156,6 +156,9 @@ data = dict(
         # 切换为 Mini 训练 pkl（由 create_data.py --version v1.0-mini 生成）
         ann_file=_mini_info_root + "nuscenes_infos_temporal_mini_infos_temporal_train.pkl",
         data_root=_mini_data_root,
+        # 关键：数据集的 queue_length 也必须设为 1，否则仍会准备 3 帧图像
+        # model.queue_length=1 只控制模型层面，数据集层面需要单独设置
+        queue_length=1,
     ),
     val=dict(
         ann_file=_mini_info_root + "nuscenes_infos_temporal_mini_infos_temporal_val.pkl",

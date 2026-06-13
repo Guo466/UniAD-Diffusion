@@ -206,8 +206,9 @@ class OccHead(BaseModule):
         # ---- 时序感知 MLP（每个时间步一个独立的 MLP）----
         # 将 query 从"无时序意识"变换为"感知当前是第几步"
         # 每个时间步的 MLP 参数独立，让模型区分不同时间步
-        # 输入 query_dim=256，输出 bev_proj_dim=64（与 BEV 特征维度对齐）
-        temporal_mlp = MLP(query_dim, query_dim, bev_proj_dim, num_layers=temporal_mlp_layer)
+        # 注意：ins_query 在进入 forward() 之前已经被 merge_queries 压缩到 bev_proj_dim(64) 维
+        # 所以 input_dim = bev_proj_dim，而不是 query_dim
+        temporal_mlp = MLP(bev_proj_dim, bev_proj_dim, bev_proj_dim, num_layers=temporal_mlp_layer)
         self.temporal_mlps = _get_clones(temporal_mlp, self.n_future_blocks)  # 5个独立 MLP
             
         # ---- 逐时间步下采样卷积（每步一个独立卷积）----
@@ -425,7 +426,7 @@ class OccHead(BaseModule):
             # ---- 2b: 时序感知 query 变换 ----
             # temporal_mlps[i]：将 query 变换为"感知当前是第 i 步"的特征
             # 每个时间步有独立的 MLP 参数，让模型自动学习时序差异
-            # cur_ins_query: shape (B, Q, 64)（从256维降到64维，与 BEV 特征对齐）
+            # cur_ins_query: shape (B, Q, 64)（输入输出都是 bev_proj_dim=64 维）
             cur_ins_query = self.temporal_mlps[i](last_ins_query)
             temporal_query.append(cur_ins_query)
 

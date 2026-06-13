@@ -43,37 +43,11 @@ model = dict(
         num_things_classes=3,
         num_stuff_classes=1,
     ),
-    occ_head=dict(
-        # BEV 特征投影大幅降维（256→64），节省最多显存
-        bev_proj_dim=64,
-        bev_proj_nlayers=1,     # 只用1层卷积投影（原来4层）
-        transformer_decoder=dict(
-            type='DetrTransformerDecoder',
-            return_intermediate=True,
-            num_layers=5,           # 保持5层（需能整除 n_future_blocks=5）
-            transformerlayers=dict(
-                type='DetrTransformerDecoderLayer',
-                attn_cfgs=dict(
-                    type='MultiheadAttention',
-                    embed_dims=64,          # 256→64（主要省显存来源）
-                    num_heads=4,            # 8→4（头数同步减少）
-                    attn_drop=0.0,
-                    proj_drop=0.0,
-                    dropout_layer=None,
-                    batch_first=False),
-                ffn_cfgs=dict(
-                    embed_dims=64,
-                    feedforward_channels=256,   # 2048→256（FFN 是显存大户）
-                    num_fcs=2,
-                    act_cfg=dict(type='ReLU', inplace=True),
-                    ffn_drop=0.0,
-                    dropout_layer=None,
-                    add_identity=True),
-                feedforward_channels=256,
-                operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
-                                 'ffn', 'norm')),
-            init_cfg=None),
-    ),
+    # ==== 禁用 OccHead（节省大量显存）====
+    # DiffusionPlanningHead 不使用 occ_head 的输出（loss_collision=None, use_col_optim=False）
+    # 禁用 OccHead 可节省约 1.0~1.5 GB 显存（包括前向激活和反向梯度）
+    # 如需重新开启，将 None 改回完整的 occ_head=dict(...) 配置
+    occ_head=None,
 
     # ==== 替换 planning_head 为 DiffusionPlanningHead ====
     planning_head=dict(

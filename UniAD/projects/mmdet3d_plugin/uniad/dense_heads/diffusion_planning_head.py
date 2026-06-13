@@ -471,9 +471,14 @@ class DiffusionPlanningHead(nn.Module):
         Returns:
             dict: {'losses': {...}, 'outs_motion': {...}}
         """
-        sdc_traj_query  = outs_motion['sdc_traj_query']
-        sdc_track_query = outs_motion['sdc_track_query']
-        track_query     = outs_motion.get('track_query', None)
+        # ---- fp16 → fp32 转换（auto_fp16 环境下，输入可能是 fp16，而 MLP/LayerNorm 权重是 fp32）----
+        bev_embed       = bev_embed.float()
+        sdc_traj_query  = outs_motion['sdc_traj_query'].float()
+        sdc_track_query = outs_motion['sdc_track_query'].float()
+        raw_track       = outs_motion.get('track_query', None)
+        track_query     = raw_track.float() if raw_track is not None else None
+        sdc_planning     = sdc_planning.float()
+        sdc_planning_mask = sdc_planning_mask.float()
         B               = sdc_track_query.shape[0]
 
         # BEV Adapter（可选）
@@ -552,9 +557,12 @@ class DiffusionPlanningHead(nn.Module):
         Returns:
             dict: {'sdc_traj': (1, T, 2), 'sdc_traj_all': (1, T, 2)}
         """
-        sdc_traj_query  = outs_motion['sdc_traj_query']
-        sdc_track_query = outs_motion['sdc_track_query']
-        track_query     = outs_motion.get('track_query', None)
+        # ---- fp16 → fp32 转换（auto_fp16 环境下，输入可能是 fp16，而 MLP/LayerNorm 权重是 fp32）----
+        bev_embed       = bev_embed.float()
+        sdc_traj_query  = outs_motion['sdc_traj_query'].float()
+        sdc_track_query = outs_motion['sdc_track_query'].float()
+        raw_track       = outs_motion.get('track_query', None)
+        track_query     = raw_track.float() if raw_track is not None else None
         B               = sdc_track_query.shape[0]
         device          = sdc_track_query.device
 

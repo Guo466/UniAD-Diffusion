@@ -24,6 +24,7 @@ import copy
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint as grad_checkpoint
 from mmdet.models.builder import HEADS, build_loss
 
 
@@ -257,7 +258,14 @@ class BEVToContextBridge(nn.Module):
         # 3. Agent 内部交互（N=0 时跳过，避免 Transformer 空序列报错）
         if track_feat.shape[1] > 0:
             kpm = (~track_mask) if track_mask is not None else None
-            track_feat = self.agent_encoder(track_feat, src_key_padding_mask=kpm)
+            # 梯度检查点（训练时省显存）
+            if self.training:
+                track_feat = grad_checkpoint(
+                    self.agent_encoder, track_feat,
+                    None, kpm, use_reentrant=False
+                )
+            else:
+                track_feat = self.agent_encoder(track_feat, src_key_padding_mask=kpm)
 
         # 4. 拼接
         context = torch.cat([track_feat, bev_tokens], dim=1)   # (B, N+64, D)
@@ -429,7 +437,11 @@ class DiffusionPlanningHead(nn.Module):
         ctx = self.context_in(context)                               # (B, N_ctx, D)
         y   = t_emb + self.routing_in(ego_routing).squeeze(1)       # (B, D)
         for block in self.dit_blocks:
-            x = block(x, ctx, y)
+            # 梯度检查点：以重算激活值换取显存（训练时启用，推理时自动跳过）
+            if self.training:
+                x = grad_checkpoint(block, x, ctx, y, use_reentrant=False)
+            else:
+                x = block(x, ctx, y)
         return self.final_layer(x, y)                                # (B, T, output_dim)
 
     # ------------------------------------------------------------------
@@ -546,10 +558,10 @@ class DiffusionPlanningHead(nn.Module):
                 )
 
         # 构造与 PlanningHeadSingleMode 兼容的返回格式
-        # pred_traj: (B, T, 2)，与原 PlanningHeadSingleMode 输出格式完全一致
+        # 训练时直接用 FM 预测的反归一化轨迹（避免额外 ODE 采样消耗显存）
         with torch.no_grad():
-            pred_traj = self._sample_traj(context, ego_ctx, eg_rout, B,
-                                           gt_norm.device, n_steps=self.sample_steps)
+            pred_delta = self.denormalize_traj(pred.detach())   # (B, T, 2)
+            pred_traj  = torch.cumsum(pred_delta, dim=1)        # 累积求和得绝对坐标
         outs_planning = {
             'sdc_traj':     pred_traj,   # (B, T, 2) — 与评估接口兼容
             'sdc_traj_all': pred_traj,

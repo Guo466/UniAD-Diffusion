@@ -98,19 +98,22 @@ model = dict(
         # ---- Flow Matching 损失 ----
         flow_matching_loss_weight=1.0,
 
-        # ---- 碰撞损失（与原接口保持一致，DiT 端到端优化中也保留碰撞约束）----
-        loss_collision=[
-            dict(type='CollisionLoss', delta=0.0, weight=2.5),
-            dict(type='CollisionLoss', delta=0.5, weight=1.0),
-            dict(type='CollisionLoss', delta=1.0, weight=0.25),
-        ],
+        # ---- 碰撞损失（显存优化：笔记本 8GB 环境下禁用碰撞损失，节省采样额外的 ODE 轨迹所需显存）----
+        # 碰撞损失在 forward_train 中会额外采样一次 ODE 轨迹（3步），占用额外显存
+        # 在显存充足的环境中可以重新开启：
+        # loss_collision=[
+        #     dict(type='CollisionLoss', delta=0.0, weight=2.5),
+        #     dict(type='CollisionLoss', delta=0.5, weight=1.0),
+        #     dict(type='CollisionLoss', delta=1.0, weight=0.25),
+        # ],
+        loss_collision=None,
 
         # ---- 兼容性参数（对接原 PlanningHeadSingleMode 接口）----
         loss_planning=None,        # 不使用原 ADE 损失（被 FM loss 替代）
         loss_kinematic=None,       # 不使用运动学损失（DiT 学习分布隐式保证平滑性）
-        planning_eval=True,        # 训练时同步评估规划指标（L2 / 碰撞率）
+        planning_eval=False,       # 显存优化：训练时关闭实时评估（节省显存）
         use_col_optim=False,       # 推理时不使用 CasADi 碰撞优化（DiT 本身学习避障）
-        with_adapter=True,         # 启用 BEV Adapter（轻量级特征适配，与原配置一致）
+        with_adapter=False,        # 显存优化：笔记本 8GB 环境下禁用 BEV Adapter（在 200×200 BEV 上做卷积+梯度消耗大）
         n_commands=3,              # 3 类驾驶命令（右转/直行/左转）
 
         # ---- 默认碰撞优化参数（use_col_optim=False 时不生效，保留接口兼容性）----

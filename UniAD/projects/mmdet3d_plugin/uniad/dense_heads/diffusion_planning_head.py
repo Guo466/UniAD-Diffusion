@@ -518,21 +518,31 @@ class DiffusionPlanningHead(nn.Module):
 
         # 碰撞损失（可选）
         # CollisionLoss.forward(sdc_traj_all, sdc_planning_gt, sdc_planning_gt_mask, future_gt_bbox)
-        # - sdc_traj_all: 预测轨迹 (B, T, 2)（绝对坐标）
-        # - sdc_planning_gt: GT 轨迹 (B, T, 3)（含 heading，用于 sdc_yaw）
-        # - sdc_planning_gt_mask: GT 轨迹有效掩码 (B, T)
-        # - future_gt_bbox: GT 未来障碍物框（list）
+        # - sdc_traj_all:      预测轨迹 (1, T, 2)（绝对坐标）
+        # - sdc_planning_gt:   GT 轨迹 (1, T, 3)（含 heading，用于 sdc_yaw）
+        # - sdc_planning_gt_mask: GT 轨迹有效掩码 (1, T)
+        # - future_gt_bbox:    GT 未来障碍物框 list[LiDARInstance3DBoxes]
+        # 注意：gt_future_boxes 是 [[LiDARInstance3DBoxes, ...]]（外层是 batch list）
+        #       需要取 [0] 解包 batch 维度，再取 [1:planning_steps+1] 跳过当前帧
         if len(self.loss_collision) > 0 and gt_future_boxes is not None:
             with torch.no_grad():
                 s_traj = self._sample_traj(context, ego_ctx, eg_rout, B, gt_norm.device, n_steps=3)
-            # gt_traj: (B, T, 2)，需要扩充为 (B, T, 3)（补零 heading）
-            gt_traj_3d = torch.cat([gt_traj, torch.zeros_like(gt_traj[..., :1])], dim=-1)
+            # gt_traj: (B, T, 2) → 扩充为 (B, T, 3)，补 heading 列（从 sdc_planning 取）
+            gt_heading = sdc_planning[:, 0, :, 2:3]  # (B, T, 1) — 真实 heading
+            gt_traj_3d = torch.cat([gt_traj, gt_heading], dim=-1)  # (B, T, 3)
+            # CollisionLoss 期望 (1, T, *) 格式，取第 0 个 batch 元素
+            gt_traj_3d_b0 = gt_traj_3d[:1]      # (1, T, 3)
+            s_traj_b0     = s_traj[:1]            # (1, T, 2)
+            traj_mask_b0  = torch.any(sdc_planning_mask[0, :, :self.planning_steps], dim=-1)  # (1, T)
+            # gt_future_boxes[0]: 解包 batch → list[LiDARInstance3DBoxes]（长度 ≈ occ_n_future+1）
+            # [1:planning_steps+1]: 跳过第 0 帧（当前帧），取未来 planning_steps 帧
+            future_boxes = gt_future_boxes[0][1:self.planning_steps + 1]
             for i, col_fn in enumerate(self.loss_collision):
                 losses[f'loss_collision_{i}'] = col_fn(
-                    s_traj,           # (B, T, 2): 预测轨迹（绝对坐标）
-                    gt_traj_3d,       # (B, T, 3): GT 轨迹（含伪 heading=0）
-                    traj_mask,        # (B, T): 有效掩码
-                    gt_future_boxes   # list: GT 未来障碍物框
+                    s_traj_b0,        # (1, T, 2): 预测轨迹（绝对坐标）
+                    gt_traj_3d_b0,    # (1, T, 3): GT 轨迹（含真实 heading）
+                    traj_mask_b0,     # (1, T): 有效掩码
+                    future_boxes      # list[LiDARInstance3DBoxes]: 未来各帧 GT 框
                 )
 
         # 构造与 PlanningHeadSingleMode 兼容的返回格式

@@ -90,9 +90,9 @@ model = dict(
         n_bev_tokens=64,           # 200×200 → 8×8=64 BEV context tokens
         max_agents=50,             # 最多 50 个 agent（TrackHead 的 num_query=900，取活跃 agent）
 
-        # ---- DiT 扩散解码器参数 ----
-        dit_depth=4,               # 4 层 DiT block
-        dit_heads=8,               # 8 头 multi-head attention
+        # ---- DiT 扩散解码器参数（显存优化）----
+        dit_depth=2,               # 4→2 层 DiT block（节省约 50% DiT 显存）
+        dit_heads=4,               # 8→4 头 multi-head attention（embed_dims=256, 256/4=64整除）
         sample_steps=5,            # 推理时 Euler ODE 积分步数（越大越精确，但更慢）
 
         # ---- Flow Matching 损失 ----

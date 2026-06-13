@@ -386,15 +386,16 @@ class DiffusionPlanningHead(nn.Module):
             for cfg in loss_collision:
                 self.loss_collision.append(build_loss(cfg))
 
-        # ---- BEV Adapter（可选）----
+        # ---- BEV Adapter（可选，显存优化版）----
+        # 原版：3 层叠加，中间通道 embed_dims//2=128，显存消耗大
+        # 优化：1 层，中间通道 embed_dims//4=64，节省约 3/4 显存
         self.with_adapter = with_adapter
         if with_adapter:
-            blk = nn.Sequential(
-                nn.Conv2d(embed_dims, embed_dims // 2, 3, padding=1),
+            self.bev_adapter = nn.Sequential(
+                nn.Conv2d(embed_dims, embed_dims // 4, 3, padding=1),
                 nn.ReLU(),
-                nn.Conv2d(embed_dims // 2, embed_dims, 1),
+                nn.Conv2d(embed_dims // 4, embed_dims, 1),
             )
-            self.bev_adapter = nn.Sequential(*[copy.deepcopy(blk) for _ in range(3)])
 
     # ------------------------------------------------------------------
     # 辅助：轨迹归一化 / 反归一化

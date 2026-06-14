@@ -23,6 +23,40 @@ import os.path as osp
 
 warnings.filterwarnings("ignore")
 
+from projects.mmdet3d_plugin.uniad.dense_heads.planning_head_plugin import PlanningMetric
+
+
+def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
+    """单卡版本的 UniAD 推理，保留 planning_traj/traj/command 等可视化所需字段。"""
+    model.eval()
+
+    eval_planning = hasattr(model.module, 'with_planning_head') \
+                    and model.module.with_planning_head
+
+    bbox_results = []
+    dataset = data_loader.dataset
+    prog_bar = mmcv.ProgressBar(len(dataset))
+
+    for i, data in enumerate(data_loader):
+        with torch.no_grad():
+            result = model(return_loss=False, rescale=True, **data)
+
+        # 提取规划轨迹字段（可视化必需）
+        if eval_planning and 'planning' in result[0]:
+            result[0]['planning_traj'] = result[0]['planning']['result_planning']['sdc_traj']
+            result[0]['planning_traj_gt'] = result[0]['planning']['planning_gt']['sdc_planning']
+            result[0]['command'] = result[0]['planning']['planning_gt']['command']
+
+        # 清理不需要序列化的大字段
+        result[0].pop('occ', None)
+        result[0].pop('planning', None)
+
+        bbox_results.extend(result)
+        prog_bar.update()
+
+    return dict(bbox_results=bbox_results)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description='MMDet test (and eval) a model')
@@ -220,9 +254,8 @@ def main():
         model.PALETTE = dataset.PALETTE
 
     if not distributed:
-        assert False
-        # model = MMDataParallel(model, device_ids=[0])
-        # outputs = single_gpu_test(model, data_loader, args.show, args.show_dir)
+        model = MMDataParallel(model, device_ids=[0])
+        outputs = custom_single_gpu_test(model, data_loader, args.show, args.show_dir)
     else:
         model = MMDistributedDataParallel(
             model.cuda(),

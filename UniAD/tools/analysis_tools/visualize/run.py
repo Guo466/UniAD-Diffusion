@@ -3,6 +3,7 @@ import torch
 import argparse
 import os
 import glob
+import shutil
 import numpy as np
 import mmcv
 import matplotlib
@@ -275,8 +276,9 @@ class Visualizer:
             height, width, channel = img.shape
             size = (width, height)
             img_array.append(img)
-        out = cv2.VideoWriter(
-            out_path, cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
+        # 优先使用 mp4v（H.264 降级方案），兼容浮点 fps 且文件更小
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(out_path, fourcc, fps, size)
         for i in range(len(img_array)):
             out.write(img_array[i])
         out.release()
@@ -308,24 +310,61 @@ def main(args):
     for i in range(len(viser.nusc.scene)):
         scene_token_to_name[viser.nusc.scene[i]['token']] = viser.nusc.scene[i]['name']
 
+    # 按 scene 分组：{ scene_name: [(global_idx, sample_token), ...] }
+    scene_frames = {}
     for i in range(len(viser.nusc.sample)):
         sample_token = viser.nusc.sample[i]['token']
         scene_token = viser.nusc.sample[i]['scene_token']
+        scene_name = scene_token_to_name[scene_token]
 
-        if scene_token_to_name[scene_token] not in val_splits:
+        if scene_name not in val_splits:
             continue
-
         if sample_token not in viser.token_set:
             print(i, sample_token, 'not in prediction pkl!')
             continue
 
-        viser.visualize_bev(sample_token, os.path.join(args.out_folder, str(i).zfill(3)))
+        if scene_name not in scene_frames:
+            scene_frames[scene_name] = []
+        scene_frames[scene_name].append((i, sample_token))
 
-        if args.project_to_cam:
-            viser.visualize_cam(sample_token, os.path.join(args.out_folder, str(i).zfill(3)))
-            viser.combine(os.path.join(args.out_folder, str(i).zfill(3)))
+    # 渲染每个 scene 的帧，并各自生成视频
+    # fps=2 使每帧显示 0.5s，约 16~20 帧的 scene 对应 8~10s；
+    # 若想要每段更长，可进一步调低 fps（如 fps=1 则每帧显示 1s）
+    fps = args.fps
+    demo_video_base = os.path.splitext(args.demo_video)[0]
+    demo_video_ext  = os.path.splitext(args.demo_video)[1] or '.avi'
 
-    viser.to_video(args.out_folder, args.demo_video, fps=4, downsample=2)
+    for scene_idx, (scene_name, frames) in enumerate(sorted(scene_frames.items())):
+        # 每个 scene 单独使用子文件夹存帧
+        scene_folder = os.path.join(args.out_folder, f'scene_{scene_idx:02d}_{scene_name}')
+        os.makedirs(scene_folder, exist_ok=True)
+
+        print(f'\n=== Rendering scene {scene_idx+1}/{len(scene_frames)}: {scene_name} ({len(frames)} frames) ===')
+        for global_idx, sample_token in frames:
+            out_name = os.path.join(scene_folder, str(global_idx).zfill(3))
+            viser.visualize_bev(sample_token, out_name)
+            if args.project_to_cam:
+                viser.visualize_cam(sample_token, out_name)
+                viser.combine(out_name)
+
+        # 每个 scene 生成独立视频
+        scene_video_path = f'{demo_video_base}_scene{scene_idx:02d}_{scene_name}{demo_video_ext}'
+        print(f'Saving scene video: {scene_video_path}  (fps={fps})')
+        viser.to_video(scene_folder, scene_video_path, fps=fps, downsample=2)
+
+    # 同时生成合并视频（所有 scene 按顺序拼接）
+    print(f'\n=== Generating merged video: {args.demo_video} ===')
+    # 收集所有 scene 文件夹下的帧，按文件名排序后合并
+    all_frames_folder = os.path.join(args.out_folder, '_all_frames')
+    os.makedirs(all_frames_folder, exist_ok=True)
+    frame_seq = 0
+    for scene_idx, (scene_name, _) in enumerate(sorted(scene_frames.items())):
+        scene_folder = os.path.join(args.out_folder, f'scene_{scene_idx:02d}_{scene_name}')
+        for jpg in sorted(glob.glob(os.path.join(scene_folder, '*.jpg'))):
+            dst = os.path.join(all_frames_folder, f'{frame_seq:05d}.jpg')
+            shutil.copy2(jpg, dst)
+            frame_seq += 1
+    viser.to_video(all_frames_folder, args.demo_video, fps=fps, downsample=2)
 
 
 if __name__ == '__main__':
@@ -334,5 +373,9 @@ if __name__ == '__main__':
     parser.add_argument('--out_folder', default='/mnt/nas20/yihan01.hu/tmp/viz/demo_test/', help='Output folder path')
     parser.add_argument('--demo_video', default='mini_val_final.avi', help='Demo video name')
     parser.add_argument('--project_to_cam', default=True, help='Project to cam (default: True)')
+    parser.add_argument('--fps', type=float, default=2.0,
+                        help='Video FPS. Lower fps = longer video. '
+                             'Default 2.0: ~16 frames/scene → ~8s per scene. '
+                             'Use 1.0 for ~16s per scene, 0.8 for ~20s per scene.')
     args = parser.parse_args()
     main(args)

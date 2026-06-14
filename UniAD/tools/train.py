@@ -1,12 +1,17 @@
 from __future__ import division
 
+import os
+# ---- 显存碎片化缓解（必须在 import torch 之前设置）----
+# 将 PyTorch 显存分配的最大连续块限制为 128MB，避免碎片化导致的 OOM
+# 症状：reserved >> allocated，无法分配连续大块内存
+os.environ.setdefault('PYTORCH_CUDA_ALLOC_CONF', 'max_split_size_mb:128')
+
 import argparse
 import cv2
 import torch
 import sklearn
 import mmcv
 import copy
-import os
 import time
 import warnings
 from mmcv import Config, DictAction

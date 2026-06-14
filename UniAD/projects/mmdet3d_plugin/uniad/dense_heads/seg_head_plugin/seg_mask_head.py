@@ -11,6 +11,7 @@ from functools import partial
 from mmdet.models.utils.builder import TRANSFORMER
 import math
 from mmcv.runner import force_fp32
+from torch.utils.checkpoint import checkpoint as grad_checkpoint
 
 count = 0
 
@@ -376,12 +377,23 @@ class SegMaskHead(nn.Module):
         masks = []
         inter_query = []
         for i, block in enumerate(self.blocks):
-            query_embed, mask = block(self.with_pos_embed(
-                query_embed, pos_query),
-                                      self.with_pos_embed(memory, pos_memory),
-                                      memory,
-                                      key_padding_mask=mask_memory,
-                                      hw_lvl=hw_lvl)
+            if self.training:
+                # 梯度检查点：以重算换显存，节省 seg_mask_head 的激活值显存
+                # grad_checkpoint 只接受 Tensor 位置参数，用 partial 固定非 Tensor 参数
+                q_with_pos = self.with_pos_embed(query_embed, pos_query)
+                m_with_pos = self.with_pos_embed(memory, pos_memory)
+                block_fn = partial(block, key_padding_mask=mask_memory, hw_lvl=hw_lvl)
+                query_embed, mask = grad_checkpoint(
+                    block_fn, q_with_pos, m_with_pos, memory,
+                    use_reentrant=False,
+                )
+            else:
+                query_embed, mask = block(self.with_pos_embed(
+                    query_embed, pos_query),
+                                          self.with_pos_embed(memory, pos_memory),
+                                          memory,
+                                          key_padding_mask=mask_memory,
+                                          hw_lvl=hw_lvl)
             masks.append(mask)
             inter_query.append(query_embed)
             #if i == 1:

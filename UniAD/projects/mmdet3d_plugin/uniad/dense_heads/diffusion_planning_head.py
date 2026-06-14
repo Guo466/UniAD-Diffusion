@@ -503,6 +503,10 @@ class DiffusionPlanningHead(nn.Module):
         if track_query is None:
             track_query = torch.zeros(B, 1, self.embed_dims, device=bev_embed.device)
 
+        # command 可能是 list（来自 DataLoader 的 meta），需转为 LongTensor
+        if not isinstance(command, torch.Tensor):
+            command = torch.tensor(command, dtype=torch.long, device=bev_embed.device)
+
         context, _  = self.bev_track_bridge(bev_embed, track_query)
         ego_ctx, eg_rout = self.ego_bridge(sdc_traj_query, sdc_track_query, command)
 
@@ -596,6 +600,10 @@ class DiffusionPlanningHead(nn.Module):
 
         if track_query is None:
             track_query = torch.zeros(B, 1, self.embed_dims, device=device)
+
+        # 推理时 command 可能是 list（来自 DataLoader 的 meta），需转为 LongTensor
+        if not isinstance(command, torch.Tensor):
+            command = torch.tensor(command, dtype=torch.long, device=device)
 
         context, _ = self.bev_track_bridge(bev_embed, track_query)
         ego_ctx, eg_rout = self.ego_bridge(sdc_traj_query, sdc_track_query, command)

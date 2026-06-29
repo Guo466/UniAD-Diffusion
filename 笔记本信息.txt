@@ -1,31 +1,77 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ grep -A 8 "def to_numpy" UniAD/tools/compare_metrics.py 
-def to_numpy(x):
-    """安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。"""
-    if x is None:
-        return None
-    # 必须先 .cpu() 再 .numpy()，两步不能合并
-    # 注意：GPU tensor 的 hasattr(x,'numpy') 也是 True，所以不能用它判断是否在 CPU
-    if hasattr(x, 'is_cuda'):      # 是 torch.Tensor
-        x = x.detach().cpu().numpy()
-        return np.array(x)
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ cd UniAD/
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/compare_metrics.py --uniad_pkl /home/guo/VLA/UniAD/results/e2e_results.pkl --dit_pkl /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl --out_csv output/compare.csv
+conda activate uniad
+cd /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD
 
-读取: /home/guo/VLA/UniAD/results/e2e_results.pkl
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import packaging  # type: ignore[attr-defined]
-  总样本数: 81
-Traceback (most recent call last):
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 248, in <module>
-    main()
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 241, in main
-    uniad_l2 = compute_metrics_from_pkl(args.uniad_pkl, n_future=args.n_future)
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 128, in compute_metrics_from_pkl
-    pred, gt = parse_single_result(r)
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 66, in parse_single_result
-    gt   = to_numpy(result.get('planning_traj_gt', None))
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 52, in to_numpy
+python3 - << 'PYEOF'
+import pickle, numpy as np, os, csv
+import torch
+
+UNIAD_PKL = '/home/guo/VLA/UniAD/results/e2e_results.pkl'
+DIT_PKL   = '/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl'
+OUT_CSV   = 'output/compare.csv'
+N_FUTURE  = 6
+
+def to_np(x):
+    if x is None: return None
+    if isinstance(x, torch.Tensor):
+        return x.detach().cpu().numpy()
     return np.array(x)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/_tensor.py", line 970, in __array__
-    return self.numpy()
-TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
+
+def get_l2(pkl_path):
+    data = pickle.load(open(pkl_path, 'rb'))
+    results = data['bbox_results'] if isinstance(data, dict) and 'bbox_results' in data else data
+    print(f'{pkl_path}  样本数={len(results)}')
+    l2s = []
+    for r in results:
+        if not isinstance(r, dict): continue
+        pred = to_np(r.get('planning_traj'))
+        gt   = to_np(r.get('planning_traj_gt'))
+        if pred is None or gt is None: continue
+        while pred.ndim > 2: pred = pred[0]
+        while gt.ndim > 2:   gt   = gt[0]
+        gt = gt[:, :2]
+        T = min(pred.shape[0], gt.shape[0], N_FUTURE)
+        l2 = np.sqrt(((pred[:T,:2] - gt[:T,:2])**2).sum(-1))
+        if len(l2) < N_FUTURE:
+            l2 = np.concatenate([l2, np.full(N_FUTURE-len(l2), l2[-1])])
+        l2s.append(l2[:N_FUTURE])
+    arr = np.stack(l2s)
+    print(f'  有效样本={arr.shape[0]}')
+    return arr
+
+uniad = get_l2(UNIAD_PKL)
+dit   = get_l2(DIT_PKL)
+
+steps = [('1s',1),('2s',3),('3s',5)]
+sep = '─'*68
+print(f'\n{sep}')
+print(' 📊 规划指标对比：UniAD 原版 vs DiffusionPlanningHead（DiT）')
+print(sep)
+print(f"{'指标':<18} {'UniAD原版':>10} {'DiT版本':>10} {'变化':>10} {'优化幅度':>10}")
+print(sep)
+rows = []
+for label, idx in steps:
+    u = uniad[:,idx].mean()
+    d = dit[:,idx].mean()
+    delta = d - u
+    pct = delta/(u+1e-8)*100
+    flag = '✅' if delta<0 else '❌'
+    sign = '▼' if delta<0 else '▲'
+    print(f"  L2_{label:<14} {u:>10.4f} {d:>10.4f} {delta:>+10.4f} {sign}{pct:>7.1f}% {flag}")
+    rows.append({'指标':f'L2_{label}','UniAD':round(float(u),4),'DiT':round(float(d),4),'变化':round(float(delta),4),'幅度%':round(float(pct),1)})
+
+u_avg = uniad[:,[i for _,i in steps]].mean()
+d_avg = dit[:,[i for _,i in steps]].mean()
+delta = d_avg-u_avg; pct=(delta/(u_avg+1e-8))*100
+flag='✅' if delta<0 else '❌'; sign='▼' if delta<0 else '▲'
+print(sep)
+print(f"  {'L2_avg(1/2/3s)':<16} {u_avg:>10.4f} {d_avg:>10.4f} {delta:>+10.4f} {sign}{pct:>7.1f}% {flag}")
+rows.append({'指标':'L2_avg','UniAD':round(float(u_avg),4),'DiT':round(float(d_avg),4),'变化':round(float(delta),4),'幅度%':round(float(pct),1)})
+print(sep)
+print(f'\n  UniAD样本数={uniad.shape[0]}  DiT样本数={dit.shape[0]}')
+
+os.makedirs('output', exist_ok=True)
+with open(OUT_CSV,'w',newline='',encoding='utf-8') as f:
+    w = csv.DictWriter(f, fieldnames=['指标','UniAD','DiT','变化','幅度%'])
+    w.writeheader(); w.writerows(rows)
+print(f'  CSV已保存: {OUT_CSV}')
+PYEOF

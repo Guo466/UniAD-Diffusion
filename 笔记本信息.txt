@@ -1,19 +1,42 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python3 -c "
-import pickle, torch
-data=pickle.load(open('/home/guo/VLA/UniAD/results/e2e_results.pkl', 'rb'))
-r=data['bbox_results'][0]
-gt=r.get('planning_traj_gt')
-print('type:', type(gt))
-print('type name:', type(gt).__name__)
-print('type mro:', [t.__name__ for t in type(gt).__mro__])
-if hasattr(gt, '__len__'):
-   print('len:', len(gt))
-   print('type of gt[0]:', type(gt[0]))
-"
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/compare_metrics.py --uniad_pkl /home/guo/VLA/UniAD/results/e2e_results.pkl --dit_pkl /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl --out_csv output/compare.csv
+
+读取: /home/guo/VLA/UniAD/results/e2e_results.pkl
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import packaging  # type: ignore[attr-defined]
-type: <class 'list'>
-type name: list
-type mro: ['list', 'object']
-len: 1
-type of gt[0]: <class 'torch.Tensor'>
+  总样本数: 81
+  有效规划样本: 81
+
+读取: /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl
+  总样本数: 81
+  有效规划样本: 81
+
+──────────────────────────────────────────────────────────────────────
+ 📊 规划指标对比：UniAD 原版 vs DiffusionPlanningHead（DiT）
+──────────────────────────────────────────────────────────────────────
+指标                      UniAD原版      DiT版本         变化         优化幅度
+──────────────────────────────────────────────────────────────────────
+ L2 误差（单位：米，越小越好）
+  L2_1s                   1.1986     1.8937    +0.6951  ▲  58.0%  ❌
+  L2_2s                   2.9944     4.5207    +1.5263  ▲  51.0%  ❌
+  L2_3s                   5.4355     7.9769    +2.5414  ▲  46.8%  ❌
+──────────────────────────────────────────────────────────────────────
+  L2_avg (1s/2s/3s)      3.2095     4.7971    +1.5876  ▲  49.5%  ❌
+──────────────────────────────────────────────────────────────────────
+
+  说明：
+    ▼ ✅ = DiT 版本 L2 误差更低（更优）
+    ▲ ❌ = DiT 版本 L2 误差更高（更差）
+    nuScenes 规划 2Hz，共 6 步 × 0.5s = 3 秒预测窗口
+
+  UniAD 原版有效样本数 : 81
+  DiT  版本有效样本数  : 81
+──────────────────────────────────────────────────────────────────────
+
+  CSV 已保存至: output/compare.csv
+
+  下面是compare.csv文件
+  指标,UniAD,DiT,变化,幅度%
+L2_1s,1.1986,1.8937,0.6951,58.0
+L2_2s,2.9944,4.5207,1.5263,51.0
+L2_3s,5.4355,7.9769,2.5414,46.8
+L2_avg,3.2095,4.7971,1.5876,49.5

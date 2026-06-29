@@ -1,39 +1,19 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ git pull
-remote: Enumerating objects: 9, done.
-remote: Counting objects: 100% (9/9), done.
-remote: Compressing objects: 100% (1/1), done.
-remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
-展开对象中: 100% (5/5), 2.40 KiB | 1.20 MiB/s, 完成.
-来自 github.com:Guo466/UniAD-Diffusion
-   9d64912..feda731  main       -> origin/main
-更新 9d64912..feda731
-Fast-forward
- UniAD/tools/compare_metrics.py | 245 +++++++++++++++++++++++++++++----------------------------
- 1 file changed, 124 insertions(+), 121 deletions(-)
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ grep -n "isinstance" UniAD/tools/compare_metrics.py 
-33:    if isinstance(x, torch.Tensor):
-91:    if isinstance(data, dict) and 'bbox_results' in data:
-93:    elif isinstance(data, list):
-97:                         f"keys={list(data.keys())[:6] if isinstance(data, dict) else 'N/A'}")
-105:        if not isinstance(r, dict):
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ cd UniAD/
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/compare_metrics.py --uniad_pkl /home/guo/VLA/UniAD/results/e2e_results.pkl --dit_pkl /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl --out_csv output/compare.csv
-
-读取: /home/guo/VLA/UniAD/results/e2e_results.pkl
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python3 -c "
+import pickle, torch
+data=pickle.load(open('/home/guo/VLA/UniAD/results/e2e_results.pkl', 'rb'))
+r=data['bbox_results'][0]
+gt=r.get('planning_traj_gt')
+print('type:', type(gt))
+print('type name:', type(gt).__name__)
+print('type mro:', [t.__name__ for t in type(gt).__mro__])
+if hasattr(gt, '__len__'):
+   print('len:', len(gt))
+   print('type of gt[0]:', type(gt[0]))
+"
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import packaging  # type: ignore[attr-defined]
-  总样本数: 81
-Traceback (most recent call last):
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 251, in <module>
-    main()
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 244, in main
-    uniad_l2 = compute_metrics_from_pkl(args.uniad_pkl, n_future=args.n_future)
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 109, in compute_metrics_from_pkl
-    pred, gt = parse_single_result(r)
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 50, in parse_single_result
-    gt   = to_numpy(result.get('planning_traj_gt', None))
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 36, in to_numpy
-    return np.array(x)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/_tensor.py", line 970, in __array__
-    return self.numpy()
-TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
+type: <class 'list'>
+type name: list
+type mro: ['list', 'object']
+len: 1
+type of gt[0]: <class 'torch.Tensor'>

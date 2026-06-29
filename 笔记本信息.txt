@@ -1,6 +1,4 @@
-cd /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD
-
-python3 << 'EOF'
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python3 << 'EOF'
 import re
 
 path = 'tools/compare_metrics.py'
@@ -25,6 +23,18 @@ content = re.sub(
 open(path, 'w').write(content)
 print('替换成功')
 # 验证
-for i, line in enumerate(open(path).readlines()[42:55], start=43):
-    print(f'{i}: {line}', end='')
-EOF
+EOF print(f'{i}: {line}', end='')h).readlines()[42:55], start=43):
+替换成功
+43: def to_numpy(x):
+44:     """安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。"""
+45:     if x is None:
+46:         return None
+47:     import torch
+48:     if isinstance(x, torch.Tensor):
+49:         return x.detach().cpu().numpy()
+50:     return np.array(x)
+51: 
+52: 
+53: def parse_single_result(result):
+54:     """
+55:     从单个推理结果 dict 中提取：

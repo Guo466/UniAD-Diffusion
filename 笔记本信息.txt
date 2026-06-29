@@ -1,270 +1,43 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ mkdir -p output/vis_frames
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ PYTHONPATH=$(pwd):$PYTHONPATH
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/analysis_tools/visualize/run.py --predroot output/vis_results.pkl --out_folder output/vis_frames --demo_video output/uniad_diffusion_demo.avi --project_to_cam True
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python3 -c "
+content = open('tools/compare_metrics.py').read()
+old = '''def to_numpy(x):
+    \"\"\"安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。\"\"\"
+    if x is None:
+        return None
+    if hasattr(x, 'cpu'):          # torch.Tensor（包括 cuda tensor）
+        x = x.detach().cpu()
+    if hasattr(x, 'numpy'):        # torch.Tensor on CPU
+        x = x.numpy()
+    return np.array(x)'''
+new = '''def to_numpy(x):
+    \"\"\"安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。\"\"\"
+    if x is None:
+        return None
+    if hasattr(x, 'is_cuda'):      # 是 torch.Tensor，无论在 CPU 还是 GPU
+        x = x.detach().cpu().numpy()
+        return x
+    return np.array(x)'''
+open('tools/compare_metrics.py','w').write(content.replace(old, new))
+print('done')
+"
+done
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/compare_metrics.py --uniad_pkl /home/guo/VLA/UniAD/results/e2e_results.pkl --dit_pkl /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl --out_csv output/compare.csv
+
+读取: /home/guo/VLA/UniAD/results/e2e_results.pkl
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import packaging  # type: ignore[attr-defined]
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.238 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-saving to output/vis_frames/039.jpg
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/nuscenes/utils/geometry_utils.py:52: RuntimeWarning: invalid value encountered in divide
-  points = points / points[2:3, :].repeat(3, 0).reshape(3, nbr_points)
-saving to output/vis_frames/039_cam.jpg
-saving to output/vis_frames/040.jpg
-saving to output/vis_frames/040_cam.jpg
-saving to output/vis_frames/041.jpg
-saving to output/vis_frames/041_cam.jpg
-saving to output/vis_frames/042.jpg
-saving to output/vis_frames/042_cam.jpg
-saving to output/vis_frames/043.jpg
-saving to output/vis_frames/043_cam.jpg
-saving to output/vis_frames/044.jpg
-saving to output/vis_frames/044_cam.jpg
-saving to output/vis_frames/045.jpg
-saving to output/vis_frames/045_cam.jpg
-saving to output/vis_frames/046.jpg
-saving to output/vis_frames/046_cam.jpg
-saving to output/vis_frames/047.jpg
-saving to output/vis_frames/047_cam.jpg
-saving to output/vis_frames/048.jpg
-saving to output/vis_frames/048_cam.jpg
-saving to output/vis_frames/049.jpg
-saving to output/vis_frames/049_cam.jpg
-saving to output/vis_frames/050.jpg
-saving to output/vis_frames/050_cam.jpg
-saving to output/vis_frames/051.jpg
-saving to output/vis_frames/051_cam.jpg
-saving to output/vis_frames/052.jpg
-saving to output/vis_frames/052_cam.jpg
-saving to output/vis_frames/053.jpg
-saving to output/vis_frames/053_cam.jpg
-saving to output/vis_frames/054.jpg
-saving to output/vis_frames/054_cam.jpg
-saving to output/vis_frames/055.jpg
-saving to output/vis_frames/055_cam.jpg
-saving to output/vis_frames/056.jpg
-saving to output/vis_frames/056_cam.jpg
-saving to output/vis_frames/057.jpg
-saving to output/vis_frames/057_cam.jpg
-saving to output/vis_frames/058.jpg
-saving to output/vis_frames/058_cam.jpg
-saving to output/vis_frames/059.jpg
-saving to output/vis_frames/059_cam.jpg
-saving to output/vis_frames/060.jpg
-saving to output/vis_frames/060_cam.jpg
-saving to output/vis_frames/061.jpg
-saving to output/vis_frames/061_cam.jpg
-saving to output/vis_frames/062.jpg
-saving to output/vis_frames/062_cam.jpg
-saving to output/vis_frames/063.jpg
-saving to output/vis_frames/063_cam.jpg
-saving to output/vis_frames/064.jpg
-saving to output/vis_frames/064_cam.jpg
-saving to output/vis_frames/065.jpg
-saving to output/vis_frames/065_cam.jpg
-saving to output/vis_frames/066.jpg
-saving to output/vis_frames/066_cam.jpg
-saving to output/vis_frames/067.jpg
-saving to output/vis_frames/067_cam.jpg
-saving to output/vis_frames/068.jpg
-saving to output/vis_frames/068_cam.jpg
-saving to output/vis_frames/069.jpg
-saving to output/vis_frames/069_cam.jpg
-saving to output/vis_frames/070.jpg
-saving to output/vis_frames/070_cam.jpg
-saving to output/vis_frames/071.jpg
-saving to output/vis_frames/071_cam.jpg
-saving to output/vis_frames/072.jpg
-saving to output/vis_frames/072_cam.jpg
-saving to output/vis_frames/073.jpg
-saving to output/vis_frames/073_cam.jpg
-saving to output/vis_frames/074.jpg
-saving to output/vis_frames/074_cam.jpg
-saving to output/vis_frames/075.jpg
-saving to output/vis_frames/075_cam.jpg
-saving to output/vis_frames/076.jpg
-saving to output/vis_frames/076_cam.jpg
-saving to output/vis_frames/077.jpg
-saving to output/vis_frames/077_cam.jpg
-saving to output/vis_frames/078.jpg
-saving to output/vis_frames/078_cam.jpg
-79 8687ba92abd3406aa797115b874ebeba not in prediction pkl!
-80 5bbeb4e68d51413f81a370cb33ef27fb not in prediction pkl!
-81 e9a1c915c0d641d0b0a3019112a1ee90 not in prediction pkl!
-82 f5b8088835f247b8a5434a9f0daadc20 not in prediction pkl!
-83 2021b6b367984ad7b18464a550d0ae8d not in prediction pkl!
-84 7315022fc89147a6afc7f978601f8f38 not in prediction pkl!
-85 dc03fe4e0a374592af7701c66d5276c4 not in prediction pkl!
-86 b7f64f73e8a548488e6d85d9b0e13242 not in prediction pkl!
-87 6dabc0fb1df045558f802246dd186b3f not in prediction pkl!
-88 82597244941b4e79aa3e1e9cc6386f8b not in prediction pkl!
-89 8bf071b1b92c4ff1bd5016bfb30de3f7 not in prediction pkl!
-90 b8766f4291d5449d95bab459ca724ad8 not in prediction pkl!
-91 dde297c8e12f44c4bc2f2c80e49d2b5a not in prediction pkl!
-92 a0462df7186d4ca99ef58f455d53a42c not in prediction pkl!
-93 d7bea9a3552b40e29d42324108dff575 not in prediction pkl!
-94 3ffc4360d1084e6eae5067e87d79503f not in prediction pkl!
-95 05bc09f952ab4cf8b754405f20d503c5 not in prediction pkl!
-96 a860c02c06e54d9dbe83ce7b694f6c17 not in prediction pkl!
-97 6873840fc1df4796a7b959e13e9fb78a not in prediction pkl!
-98 4ae9c033164e4e01a0392672686d095c not in prediction pkl!
-99 ecd49e3c38624c77b8aac8df445d49ba not in prediction pkl!
-100 ac452a60e8b34a7080c938c904b23057 not in prediction pkl!
-101 27900b9c3cfb48ed8b49087098d4a15a not in prediction pkl!
-102 c4f9b75136384ec4a76c4adfc28b4259 not in prediction pkl!
-103 a572dd2e95e94e4db66bb5dbfaf870b5 not in prediction pkl!
-104 313a60afcab5481a94a4815e0d1a6496 not in prediction pkl!
-105 d2ae3c5bbb5343a393882b44d56f8da3 not in prediction pkl!
-106 59bd7a9fae8a45bcb76f1847cf09e000 not in prediction pkl!
-107 37535cd306954669a2b21578573b93e3 not in prediction pkl!
-108 3a064c48e47b489a8b442b8081f877b6 not in prediction pkl!
-109 d3c0bbf933594f7184e20d761b6416f4 not in prediction pkl!
-110 31812a5e8d514b5f8d2fbc50fc007475 not in prediction pkl!
-111 32e2619879854a83953c08ec8557f3bb not in prediction pkl!
-112 4d7cf1ad5f9c4842bb6f135e058deed4 not in prediction pkl!
-113 c143943fd6e246448eab88ce1a0aeda9 not in prediction pkl!
-114 47188ae2bc8c4faf83c909b135701176 not in prediction pkl!
-115 a5f101af325144bd8b8f67694766e255 not in prediction pkl!
-116 6f114ec641f8426399b69e844c0dfd62 not in prediction pkl!
-117 ed5b84e7ea6f434e99d7816b37d15f2f not in prediction pkl!
-118 739b12938d0e410d9b8fc832dfad5510 not in prediction pkl!
-119 dcbe451d383e450786aaad04ab9d3790 not in prediction pkl!
-202 c1676a2feac74eee8aa38ca3901787d6 not in prediction pkl!
-203 d6b0de49811b4d1b86a0933719c0c44a not in prediction pkl!
-204 6d5d0e60cbf4429d8b6cfa055924e5ca not in prediction pkl!
-205 a51146d2b181450292623ec03ade9f03 not in prediction pkl!
-206 092051710b7b4d9294e98dcb3f0f7be1 not in prediction pkl!
-207 feaef544d11646ed806b53d9e1f39cd9 not in prediction pkl!
-208 dca2cc206bb34bc197ae8ebdaed22f35 not in prediction pkl!
-209 fe42b85d7f7a4107b650ffa993a4fbff not in prediction pkl!
-210 fe2a163b8948451b95fa48e21e1988ce not in prediction pkl!
-211 3a7aa284dd9d485d8effc20db8cda140 not in prediction pkl!
-212 f218a2b4fa6941f7ac3798adc72126e8 not in prediction pkl!
-213 17723c0411434e48875a93de4db0ecba not in prediction pkl!
-214 7fd597745c26471ab336b3dd41a5f6dc not in prediction pkl!
-215 19f02e3faab4412988f28d419e1727fa not in prediction pkl!
-216 312cd4d3bef1476a9211d3dab50dd0b7 not in prediction pkl!
-217 4aaaf68b9f9f45968a4e862eb03e17ea not in prediction pkl!
-218 639a4120779f44bb9cf41be3e8612e36 not in prediction pkl!
-219 b2f333255d574bebb6f170beaab6a824 not in prediction pkl!
-220 0106a9b8e65f4ad1867b44591aeed8b0 not in prediction pkl!
-221 4786b3c0d0a24c8b86b0676d32dd5919 not in prediction pkl!
-222 4ee219c4638949de9d994bc792fd0a69 not in prediction pkl!
-223 ac9af15d1aba4f5786877dde9f0b1c93 not in prediction pkl!
-224 61d47d1198184bfdaa6777e9448d825d not in prediction pkl!
-225 f1fd429830e3437db4ba03ba851f0015 not in prediction pkl!
-226 7df1288fed8a403b8e7a35112b392d7c not in prediction pkl!
-227 264c5f3a04744d53a72fd07c1bb6a724 not in prediction pkl!
-228 bc0040070bcc4233a057bb293f5f6444 not in prediction pkl!
-229 269ccf1fe399403c914e1f649d2a8ca2 not in prediction pkl!
-230 59b32981037042eda1fed3c1026fbaba not in prediction pkl!
-231 1dba6570f0774b5cb87de6694bb338c0 not in prediction pkl!
-232 3e7ed5cf0b4541e4a0e1b109dfea89cf not in prediction pkl!
-233 be1494c7762c43ca88010f366997a586 not in prediction pkl!
-234 b422bd971acf483592e367c2c5057a60 not in prediction pkl!
-235 fa51f1910942494cbe396640010fea64 not in prediction pkl!
-236 26e594c412e84bdda76e344933fe305a not in prediction pkl!
-237 78e778e7e6c84dc59c0436a4d6ff5032 not in prediction pkl!
-238 9966278ad296494598a9e5fba07926e0 not in prediction pkl!
-239 225aa2795d63442ebc496cd0c49d3bdb not in prediction pkl!
-240 de9432d4fc7a4e5a985e2bc628eb614c not in prediction pkl!
-241 63c24b51feb94f14bec29022dae4975d not in prediction pkl!
-saving to output/vis_frames/242.jpg
-saving to output/vis_frames/242_cam.jpg
-saving to output/vis_frames/243.jpg
-saving to output/vis_frames/243_cam.jpg
-saving to output/vis_frames/244.jpg
-saving to output/vis_frames/244_cam.jpg
-saving to output/vis_frames/245.jpg
-saving to output/vis_frames/245_cam.jpg
-saving to output/vis_frames/246.jpg
-saving to output/vis_frames/246_cam.jpg
-saving to output/vis_frames/247.jpg
-saving to output/vis_frames/247_cam.jpg
-saving to output/vis_frames/248.jpg
-saving to output/vis_frames/248_cam.jpg
-saving to output/vis_frames/249.jpg
-saving to output/vis_frames/249_cam.jpg
-saving to output/vis_frames/250.jpg
-saving to output/vis_frames/250_cam.jpg
-saving to output/vis_frames/251.jpg
-saving to output/vis_frames/251_cam.jpg
-saving to output/vis_frames/252.jpg
-saving to output/vis_frames/252_cam.jpg
-saving to output/vis_frames/253.jpg
-saving to output/vis_frames/253_cam.jpg
-saving to output/vis_frames/254.jpg
-saving to output/vis_frames/254_cam.jpg
-saving to output/vis_frames/255.jpg
-saving to output/vis_frames/255_cam.jpg
-saving to output/vis_frames/256.jpg
-saving to output/vis_frames/256_cam.jpg
-saving to output/vis_frames/257.jpg
-saving to output/vis_frames/257_cam.jpg
-saving to output/vis_frames/258.jpg
-saving to output/vis_frames/258_cam.jpg
-saving to output/vis_frames/259.jpg
-saving to output/vis_frames/259_cam.jpg
-saving to output/vis_frames/260.jpg
-saving to output/vis_frames/260_cam.jpg
-saving to output/vis_frames/261.jpg
-saving to output/vis_frames/261_cam.jpg
-saving to output/vis_frames/262.jpg
-saving to output/vis_frames/262_cam.jpg
-saving to output/vis_frames/263.jpg
-saving to output/vis_frames/263_cam.jpg
-saving to output/vis_frames/264.jpg
-saving to output/vis_frames/264_cam.jpg
-saving to output/vis_frames/265.jpg
-saving to output/vis_frames/265_cam.jpg
-saving to output/vis_frames/266.jpg
-saving to output/vis_frames/266_cam.jpg
-saving to output/vis_frames/267.jpg
-saving to output/vis_frames/267_cam.jpg
-saving to output/vis_frames/268.jpg
-saving to output/vis_frames/268_cam.jpg
-saving to output/vis_frames/269.jpg
-saving to output/vis_frames/269_cam.jpg
-saving to output/vis_frames/270.jpg
-saving to output/vis_frames/270_cam.jpg
-saving to output/vis_frames/271.jpg
-saving to output/vis_frames/271_cam.jpg
-saving to output/vis_frames/272.jpg
-saving to output/vis_frames/272_cam.jpg
-saving to output/vis_frames/273.jpg
-saving to output/vis_frames/273_cam.jpg
-saving to output/vis_frames/274.jpg
-saving to output/vis_frames/274_cam.jpg
-saving to output/vis_frames/275.jpg
-saving to output/vis_frames/275_cam.jpg
-saving to output/vis_frames/276.jpg
-saving to output/vis_frames/276_cam.jpg
-saving to output/vis_frames/277.jpg
-saving to output/vis_frames/277_cam.jpg
-saving to output/vis_frames/278.jpg
-saving to output/vis_frames/278_cam.jpg
-saving to output/vis_frames/279.jpg
-saving to output/vis_frames/279_cam.jpg
-saving to output/vis_frames/280.jpg
-saving to output/vis_frames/280_cam.jpg
-saving to output/vis_frames/281.jpg
-saving to output/vis_frames/281_cam.jpg
-saving to output/vis_frames/282.jpg
-saving to output/vis_frames/282_cam.jpg
+  总样本数: 81
+Traceback (most recent call last):
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 246, in <module>
+    main()
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 239, in main
+    uniad_l2 = compute_metrics_from_pkl(args.uniad_pkl, n_future=args.n_future)
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 126, in compute_metrics_from_pkl
+    pred, gt = parse_single_result(r)
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 64, in parse_single_result
+    gt   = to_numpy(result.get('planning_traj_gt', None))
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 50, in to_numpy
+    return np.array(x)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/_tensor.py", line 970, in __array__
+    return self.numpy()
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.

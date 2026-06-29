@@ -1,19 +1,20 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python tools/train.py projects/configs/stage2_e2e/base_e2e_mini.py --no-validate
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ PYTHONPATH=$(pwd):$PYTHONPATH PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python tools/train.py projects/configs/stage2_e2e/base_e2e_mini.py --no-validate
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import packaging  # type: ignore[attr-defined]
 projects.mmdet3d_plugin
 Traceback (most recent call last):
   File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 260, in <module>
     main()
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 128, in main
-    plg_lib = importlib.import_module(_module_path)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/importlib/__init__.py", line 127, in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 972, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
-  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 984, in _find_and_load_unlocked
-ModuleNotFoundError: No module named 'projects'
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 193, in main
+    env_info_dict = collect_env()
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet3d/utils/collect_env.py", line 13, in collect_env
+    env_info = collect_base_env()
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/utils/env.py", line 49, in collect_env
+    devices[torch.cuda.get_device_name(k)].append(str(k))
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/cuda/__init__.py", line 365, in get_device_name
+    return get_device_properties(device).name
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/cuda/__init__.py", line 395, in get_device_properties
+    _lazy_init()  # will define _get_device_properties
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/cuda/__init__.py", line 247, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: Unrecognized CachingAllocator option: expandable_segments

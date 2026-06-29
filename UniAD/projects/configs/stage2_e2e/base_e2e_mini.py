@@ -41,13 +41,26 @@ model = dict(
     ),
     # 禁用 OccHead（节省约 1.0~1.5 GB，与 DiT 版本保持一致）
     occ_head=None,
-    # 规划头保持原版（唯一与 DiT 版本不同的地方）
-    # planning_head 不覆盖，使用 base_e2e.py 中的 PlanningHeadSingleMode 默认配置
-    # 注意：base_e2e.py 中 use_col_optim=True，但 occ_head=None 后无法用，需关闭
+    # 规划头：PlanningHeadSingleMode（唯一与 DiT 版本不同的地方）
+    # 完整写出所有参数，避免继承 base_e2e.py 的默认值导致报错
     planning_head=dict(
         type='PlanningHeadSingleMode',
-        # 关闭碰撞优化（occ_head 已禁用，无法提供 occ 特征）
+        embed_dims=256,
+        planning_steps=6,
+        # ADE 轨迹损失（必须提供，不能为 None）
+        loss_planning=dict(type='PlanningLoss'),
+        # 碰撞损失：occ_head=None 时无法使用，改为空列表
+        # （不能传 None，PlanningHeadSingleMode 会对它做迭代）
+        loss_collision=[],
+        # 运动学损失：显存优化，禁用
+        loss_kinematic=None,
+        # 碰撞避免优化：occ_head=None 时无法启用
         use_col_optim=False,
+        col_optim_args=dict(occ_filter_range=5.0, sigma=1.0, alpha_collision=5.0),
+        # 训练时评估：显存优化，关闭
+        planning_eval=False,
+        # BEV Adapter：显存优化，关闭
+        with_adapter=False,
     ),
 )
 

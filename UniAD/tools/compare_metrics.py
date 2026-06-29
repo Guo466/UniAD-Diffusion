@@ -24,15 +24,22 @@ import torch
 
 def to_numpy(x):
     """
-    将任意输入（torch.Tensor / numpy.ndarray / list / None）安全转为 numpy array。
-    兼容 GPU tensor（cuda:0 等），先强制 .detach().cpu() 再转换。
+    将任意输入安全转为 numpy array，兼容：
+      - torch.Tensor（CPU 或 GPU）
+      - list / tuple 内部嵌套 torch.Tensor（如 [cuda_tensor]）
+      - numpy.ndarray、Python list of numbers
+      - None
     """
     if x is None:
         return None
-    # torch.Tensor 无论在 CPU 还是 GPU，统一先 cpu() 再 numpy()
+    # 直接是 Tensor
     if isinstance(x, torch.Tensor):
         return x.detach().cpu().numpy()
-    # 其他情况（list、ndarray 等）直接转
+    # list 或 tuple：可能内部嵌套 Tensor，先递归展开再 stack
+    if isinstance(x, (list, tuple)):
+        converted = [to_numpy(item) for item in x]
+        return np.array(converted)
+    # numpy array 或其他数值类型
     return np.array(x)
 
 

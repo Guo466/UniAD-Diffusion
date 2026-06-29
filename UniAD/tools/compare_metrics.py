@@ -44,10 +44,11 @@ def to_numpy(x):
     """安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。"""
     if x is None:
         return None
-    if hasattr(x, 'cpu'):          # torch.Tensor（包括 cuda tensor）
-        x = x.detach().cpu()
-    if hasattr(x, 'numpy'):        # torch.Tensor on CPU
-        x = x.numpy()
+    # 必须先 .cpu() 再 .numpy()，两步不能合并
+    # 注意：GPU tensor 的 hasattr(x,'numpy') 也是 True，所以不能用它判断是否在 CPU
+    if hasattr(x, 'is_cuda'):      # 是 torch.Tensor
+        x = x.detach().cpu().numpy()
+        return np.array(x)
     return np.array(x)
 
 

@@ -1,3 +1,14 @@
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ grep -A 8 "def to_numpy" UniAD/tools/compare_metrics.py 
+def to_numpy(x):
+    """安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。"""
+    if x is None:
+        return None
+    # 必须先 .cpu() 再 .numpy()，两步不能合并
+    # 注意：GPU tensor 的 hasattr(x,'numpy') 也是 True，所以不能用它判断是否在 CPU
+    if hasattr(x, 'is_cuda'):      # 是 torch.Tensor
+        x = x.detach().cpu().numpy()
+        return np.array(x)
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion$ cd UniAD/
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/compare_metrics.py --uniad_pkl /home/guo/VLA/UniAD/results/e2e_results.pkl --dit_pkl /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl --out_csv output/compare.csv
 
 读取: /home/guo/VLA/UniAD/results/e2e_results.pkl
@@ -5,15 +16,15 @@
   from pkg_resources import packaging  # type: ignore[attr-defined]
   总样本数: 81
 Traceback (most recent call last):
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 246, in <module>
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 248, in <module>
     main()
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 239, in main
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 241, in main
     uniad_l2 = compute_metrics_from_pkl(args.uniad_pkl, n_future=args.n_future)
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 126, in compute_metrics_from_pkl
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 128, in compute_metrics_from_pkl
     pred, gt = parse_single_result(r)
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 64, in parse_single_result
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 66, in parse_single_result
     gt   = to_numpy(result.get('planning_traj_gt', None))
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 50, in to_numpy
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/compare_metrics.py", line 52, in to_numpy
     return np.array(x)
   File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/_tensor.py", line 970, in __array__
     return self.numpy()

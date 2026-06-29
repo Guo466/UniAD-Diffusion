@@ -1,42 +1,45 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ python tools/compare_metrics.py --uniad_pkl /home/guo/VLA/UniAD/results/e2e_results.pkl --dit_pkl /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl --out_csv output/compare.csv
-
-读取: /home/guo/VLA/UniAD/results/e2e_results.pkl
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import packaging  # type: ignore[attr-defined]
-  总样本数: 81
-  有效规划样本: 81
-
-读取: /home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/output/vis_results.pkl
-  总样本数: 81
-  有效规划样本: 81
-
-──────────────────────────────────────────────────────────────────────
- 📊 规划指标对比：UniAD 原版 vs DiffusionPlanningHead（DiT）
-──────────────────────────────────────────────────────────────────────
-指标                      UniAD原版      DiT版本         变化         优化幅度
-──────────────────────────────────────────────────────────────────────
- L2 误差（单位：米，越小越好）
-  L2_1s                   1.1986     1.8937    +0.6951  ▲  58.0%  ❌
-  L2_2s                   2.9944     4.5207    +1.5263  ▲  51.0%  ❌
-  L2_3s                   5.4355     7.9769    +2.5414  ▲  46.8%  ❌
-──────────────────────────────────────────────────────────────────────
-  L2_avg (1s/2s/3s)      3.2095     4.7971    +1.5876  ▲  49.5%  ❌
-──────────────────────────────────────────────────────────────────────
-
-  说明：
-    ▼ ✅ = DiT 版本 L2 误差更低（更优）
-    ▲ ❌ = DiT 版本 L2 误差更高（更差）
-    nuScenes 规划 2Hz，共 6 步 × 0.5s = 3 秒预测窗口
-
-  UniAD 原版有效样本数 : 81
-  DiT  版本有效样本数  : 81
-──────────────────────────────────────────────────────────────────────
-
-  CSV 已保存至: output/compare.csv
-
-  下面是compare.csv文件
-  指标,UniAD,DiT,变化,幅度%
-L2_1s,1.1986,1.8937,0.6951,58.0
-L2_2s,2.9944,4.5207,1.5263,51.0
-L2_3s,5.4355,7.9769,2.5414,46.8
-L2_avg,3.2095,4.7971,1.5876,49.5
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ ls -la /home/guo/VLA/UniAD/results/
+总计 127744
+drwxrwxr-x  3 guo guo     4096  5月 25 20:07 .
+drwxrwxr-x 15 guo guo     4096  5月 21 10:01 ..
+-rw-rw-r--  1 guo guo 29316040  5月 20 21:38 e2e_results.pkl
+-rw-rw-r--  1 guo guo 35770778  5月 25 20:07 scene_0103.mp4
+-rw-rw-r--  1 guo guo 62654440  5月 21 10:35 test_demo.mp4
+-rw-rw-r--  1 guo guo  3045287  5月 20 20:52 track_map_results.pkl
+drwxrwxr-x  2 guo guo     4096  5月 21 10:08 vis_output
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ ls -la /home/guo/VLA/UniAD/output/
+总计 2980
+drwxrwxr-x  2 guo guo    4096  5月 20 20:37 .
+drwxrwxr-x 15 guo guo    4096  5月 21 10:01 ..
+-rw-rw-r--  1 guo guo 3040751  5月 20 20:37 results.pkl
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ ls -la /home/guo/VLA/UniAD/
+总计 120
+drwxrwxr-x 15 guo guo  4096  5月 21 10:01 .
+drwxrwxr-x  3 guo guo  4096  5月 17 20:55 ..
+-rw-rw-r--  1 guo guo   258  5月 17 15:30 CITATION.cff
+drwxrwxr-x  3 guo guo  4096  5月 20 16:19 ckpts
+-rw-rw-r--  1 guo guo  5226  5月 17 15:30 CODE_OF_CONDUCT.md
+-rw-rw-r--  1 guo guo  4332  4月 22  2022 cuda-keyring_1.0-1_all.deb
+drwxrwxr-x  5 guo guo  4096  5月 19 20:02 data
+drwxrwxr-x  2 guo guo  4096  5月 20 21:38 .dist_test
+drwxrwxr-x  2 guo guo  4096  5月 17 15:30 docker
+drwxrwxr-x  2 guo guo  4096  5月 17 15:30 docs
+drwxrwxr-x  8 guo guo  4096  6月 10 18:24 .git
+drwxrwxr-x  2 guo guo  4096  5月 17 15:30 .github
+-rw-rw-r--  1 guo guo  2047  5月 21 14:31 .gitignore
+-rw-rw-r--  1 guo guo 11357  5月 17 15:30 LICENSE
+drwxrwxr-x  2 guo guo  4096  5月 20 20:37 output
+drwxrwxr-x  6 guo guo  4096  5月 20 17:07 projects
+-rw-rw-r--  1 guo guo  9714  5月 17 15:30 README.md
+-rw-rw-r--  1 guo guo  5740  5月 20 20:44 requirements_full.txt
+-rw-rw-r--  1 guo guo   208  5月 17 15:30 requirements.txt
+drwxrwxr-x  3 guo guo  4096  5月 25 20:07 results
+drwxrwxr-x  2 guo guo  4096  5月 17 15:30 sources
+drwxrwxr-x  4 guo guo  4096  5月 20 21:38 test
+drwxrwxr-x  4 guo guo  4096  5月 17 15:30 tools
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ find /home/guo/VLA/UniAD -name "*.log" -o -name "*.txt" 2>/dev/null | head -10
+/home/guo/VLA/UniAD/requirements.txt
+/home/guo/VLA/UniAD/data/nuscenes/.v1.0-mini.txt
+/home/guo/VLA/UniAD/requirements_full.txt
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ find /home/guo/VLA/UniAD -name "epoch_*.pth" -o -name "latest.pth" 2>/dev/null
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ 

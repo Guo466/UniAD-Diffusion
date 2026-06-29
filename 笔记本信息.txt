@@ -1,84 +1,19 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ ls /home/guo/VLA/UniAD/projects/configs/stage2_e2e/
-base_e2e.py
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ cat /home/guo/VLA/UniAD/projects/configs/stage2_e2e/base_e2e.py | head -80
-_base_ = ["../_base_/datasets/nus-3d.py",
-          "../_base_/default_runtime.py"]
-
-# Update-2023-06-12: 
-# [Enhance] Update some freezing args of UniAD 
-plugin = True
-plugin_dir = "projects/mmdet3d_plugin/"
-# If point cloud range is changed, the models should also change their point
-# cloud range accordingly
-point_cloud_range = [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
-voxel_size = [0.2, 0.2, 8]
-patch_size = [102.4, 102.4]
-img_norm_cfg = dict(mean=[103.530, 116.280, 123.675], std=[1.0, 1.0, 1.0], to_rgb=False)
-# For nuScenes we usually do 10-class detection
-class_names = [
-    "car",
-    "truck",
-    "construction_vehicle",
-    "bus",
-    "trailer",
-    "barrier",
-    "motorcycle",
-    "bicycle",
-    "pedestrian",
-    "traffic_cone",
-]
-vehicle_id_list = [0, 1, 2, 3, 4, 6, 7]
-group_id_list = [[0,1,2,3,4], [6,7], [8], [5,9]]
-input_modality = dict(
-    use_lidar=False, use_camera=True, use_radar=False, use_map=False, use_external=True
-)
-_dim_ = 256
-_pos_dim_ = _dim_ // 2
-_ffn_dim_ = _dim_ * 2
-_num_levels_ = 4
-bev_h_ = 200
-bev_w_ = 200
-_feed_dim_ = _ffn_dim_
-_dim_half_ = _pos_dim_
-canvas_size = (bev_h_, bev_w_)
-queue_length = 3  # each sequence contains `queue_length` frames.
-
-### traj prediction args ###
-predict_steps = 12
-predict_modes = 6
-fut_steps = 4
-past_steps = 4
-use_nonlinear_optimizer = True
-
-## occflow setting
-occ_n_future = 4
-occ_n_future_plan = 6
-occ_n_future_max = max([occ_n_future, occ_n_future_plan])
-
-### planning ###
-planning_steps = 6
-use_col_optim = True
-# there exists multiple interpretations of the planning metric, where it differs between uniad and stp3/vad
-# uniad: computed at a particular time (e.g., L2 distance between the predicted and ground truth future trajectory at time 3.0s)
-# stp3: computed as the average up to a particular time (e.g., average L2 distance between the predicted and ground truth future trajectory up to 3.0s)
-planning_evaluation_strategy = "uniad"  # uniad or stp3
-
-### Occ args ### 
-occflow_grid_conf = {
-    'xbound': [-50.0, 50.0, 0.5],
-    'ybound': [-50.0, 50.0, 0.5],
-    'zbound': [-10.0, 10.0, 20.0],
-}
-
-# Other settings
-train_gt_iou_threshold=0.3
-
-model = dict(
-    type="UniAD",
-    gt_iou_threshold=train_gt_iou_threshold,
-    queue_length=queue_length,
-    use_grid_mask=True,
-    video_test_mode=True,
-    num_query=900,
-    num_classes=10,
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ 
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python tools/train.py projects/configs/stage2_e2e/base_e2e_mini.py --no-validate
+/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import packaging  # type: ignore[attr-defined]
+projects.mmdet3d_plugin
+Traceback (most recent call last):
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 260, in <module>
+    main()
+  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 128, in main
+    plg_lib = importlib.import_module(_module_path)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 972, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 984, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'projects'

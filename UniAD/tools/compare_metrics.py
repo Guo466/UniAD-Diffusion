@@ -40,32 +40,41 @@ def compute_l2(pred_traj, gt_traj):
     return np.sqrt(((pred_traj[:, :2] - gt_traj[:, :2]) ** 2).sum(axis=-1))
 
 
+def to_numpy(x):
+    """安全地将 tensor/array/list 转为 numpy，兼容 GPU tensor。"""
+    if x is None:
+        return None
+    if hasattr(x, 'cpu'):          # torch.Tensor（包括 cuda tensor）
+        x = x.detach().cpu()
+    if hasattr(x, 'numpy'):        # torch.Tensor on CPU
+        x = x.numpy()
+    return np.array(x)
+
+
 def parse_single_result(result):
     """
     从单个推理结果 dict 中提取：
       pred_traj : (T, 2)
       gt_traj   : (T, 2)
+    兼容：
+      - GPU tensor (cuda:0)：自动 .cpu()
+      - shape (1,T,2) / (T,2) / (1,1,T,2)：自动去掉多余维度
+      - planning_traj_gt 可能是 (1,T,3)，只取前 2 列 (x,y)
     """
-    pred = result.get('planning_traj', None)
-    gt   = result.get('planning_traj_gt', None)
+    pred = to_numpy(result.get('planning_traj', None))
+    gt   = to_numpy(result.get('planning_traj_gt', None))
 
     if pred is None or gt is None:
         return None, None
 
-    # 兼容各种 shape：(1,T,2), (T,2), tensor, array
-    if hasattr(pred, 'cpu'):
-        pred = pred.cpu().numpy()
-    if hasattr(gt, 'cpu'):
-        gt = gt.cpu().numpy()
-
-    pred = np.array(pred)
-    gt   = np.array(gt)
-
-    # 去掉多余的 batch/mode 维度
+    # 去掉多余的 batch/mode 维度，直到剩 (T, D)
     while pred.ndim > 2:
         pred = pred[0]
     while gt.ndim > 2:
         gt = gt[0]
+
+    # gt 可能是 (T, 3)，包含 heading；只取前 2 列 (x, y)
+    gt = gt[:, :2]
 
     return pred, gt
 
@@ -80,11 +89,30 @@ def compute_metrics_from_pkl(pkl_path, n_future=6):
     with open(pkl_path, 'rb') as f:
         data = pickle.load(f)
 
-    # test.py 输出的格式是 dict(bbox_results=[...])
+    # 兼容三种格式：
+    #   格式A: dict(bbox_results=[sample_dict, ...])  ← test.py 标准输出
+    #   格式B: list([sample_dict, ...])               ← 部分脚本直接输出列表
+    #   格式C: dict(token=..., planning_traj=...)     ← 单样本 dict（罕见）
     if isinstance(data, dict) and 'bbox_results' in data:
         results = data['bbox_results']
     elif isinstance(data, list):
         results = data
+    elif isinstance(data, dict) and 'planning_traj' in data:
+        # 顶层就是单个样本 dict，包装成列表
+        results = [data]
+    elif isinstance(data, dict):
+        # 顶层是 dict 但没有 bbox_results，尝试把所有 value 是 list 的拼起来
+        # vis_results.pkl 可能是 {token: sample_dict} 的字典
+        candidate = []
+        for v in data.values():
+            if isinstance(v, list):
+                candidate.extend(v)
+            elif isinstance(v, dict):
+                candidate.append(v)
+        if candidate:
+            results = candidate
+        else:
+            raise ValueError(f"无法解析 pkl 格式，顶层 type=dict, keys={list(data.keys())[:8]}")
     else:
         raise ValueError(f"无法解析 pkl 格式，顶层 type={type(data)}")
 

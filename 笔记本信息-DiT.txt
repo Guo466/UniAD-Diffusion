@@ -1,127 +1,49 @@
-cat > ~/UniAD/UniAD/tools/compare_metrics.py << 'SCRIPT_EOF'
-import argparse
-import pickle
-import numpy as np
-import os
-import csv
-import torch
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ python -c "
+> import pickle
+> with open('output/uniad_mini_results.pkl', 'rb') as f:
+>     data = pickle.load(f)
+> print('顶层类型:', type(data))
+> if isinstance(data, list):
+>     print('列表长度:', len(data))
+>     print('第0个元素类型:', type(data[0]))
+>     if isinstance(data[0], dict):
+>         print('第0个元素的keys:', list(data[0].keys()))
+>         for k,v in data[0].items():
+>             print(f'  {k}: type={type(v)}, ', end='')
+>             try:
+>                 print(f'shape={v.shape if hasattr(v, \"shape\") else len(v) if hasattr(v, \"__len__\") else v}')
+>             except:
+>                 print(v)
+> elif isinstance(data, dict):
+>     print('dict keys:', list(data.keys())[:10])
+> "
+/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import packaging  # type: ignore[attr-defined]
+顶层类型: <class 'list'>
+列表长度: 81
+第0个元素类型: <class 'dict'>
+第0个元素的keys: ['planning', 'token', 'track_bbox_results', 'boxes_3d', 'scores_3d', 'labels_3d', 'track_scores', 'track_ids', 'sdc_boxes_3d', 'sdc_scores_3d', 'sdc_track_scores', 'sdc_track_bbox_results', 'boxes_3d_det', 'scores_3d_det', 'labels_3d_det', 'traj_0', 'traj_scores_0', 'traj_1', 'traj_scores_1', 'traj', 'traj_scores', 'ret_iou']
+  planning: type=<class 'dict'>, shape=2
+  token: type=<class 'str'>, shape=32
+  track_bbox_results: type=<class 'list'>, shape=1
+  boxes_3d: type=<class 'mmdet3d.core.bbox.structures.lidar_box3d.LiDARInstance3DBoxes'>, shape=18
+  scores_3d: type=<class 'torch.Tensor'>, shape=torch.Size([18])
+  labels_3d: type=<class 'torch.Tensor'>, shape=torch.Size([18])
+  track_scores: type=<class 'torch.Tensor'>, shape=torch.Size([18])
+  track_ids: type=<class 'torch.Tensor'>, shape=torch.Size([18])
+  sdc_boxes_3d: type=<class 'mmdet3d.core.bbox.structures.lidar_box3d.LiDARInstance3DBoxes'>, shape=1
+  sdc_scores_3d: type=<class 'torch.Tensor'>, shape=torch.Size([1])
+  sdc_track_scores: type=<class 'torch.Tensor'>, shape=torch.Size([1])
+  sdc_track_bbox_results: type=<class 'list'>, shape=1
+  boxes_3d_det: type=<class 'mmdet3d.core.bbox.structures.lidar_box3d.LiDARInstance3DBoxes'>, shape=300
+  scores_3d_det: type=<class 'torch.Tensor'>, shape=torch.Size([300])
+  labels_3d_det: type=<class 'torch.Tensor'>, shape=torch.Size([300])
+  traj_0: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6, 12, 5])
+  traj_scores_0: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6])
+  traj_1: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6, 12, 5])
+  traj_scores_1: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6])
+  traj: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6, 12, 5])
+  traj_scores: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6])
+  ret_iou: type=<class 'dict'>, shape=15
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 
 
-def to_numpy(x):
-    if x is None:
-        return None
-    if isinstance(x, torch.Tensor):
-        return x.detach().cpu().numpy()
-    if isinstance(x, (list, tuple)):
-        converted = [to_numpy(item) for item in x]
-        return np.array(converted)
-    return np.array(x)
-
-def parse_single_result(result):
-    pred = to_numpy(result.get('planning_traj', None))
-    gt   = to_numpy(result.get('planning_traj_gt', None))
-    if pred is None or gt is None:
-        return None, None
-    while pred.ndim > 2:
-        pred = pred[0]
-    while gt.ndim > 2:
-        gt = gt[0]
-    gt = gt[:, :2]
-    return pred, gt
-
-def compute_l2_per_step(pred, gt):
-    return np.sqrt(((pred[:, :2] - gt[:, :2]) ** 2).sum(axis=-1))
-
-def compute_metrics_from_pkl(pkl_path, n_future=6):
-    print(f"\n读取: {pkl_path}")
-    with open(pkl_path, 'rb') as f:
-        data = pickle.load(f)
-    if isinstance(data, dict) and 'bbox_results' in data:
-        results = data['bbox_results']
-    elif isinstance(data, list):
-        results = data
-    else:
-        raise ValueError(f"无法解析 pkl 顶层格式，type={type(data)}")
-    print(f"  总样本数: {len(results)}")
-    l2_list = []
-    skipped = 0
-    for r in results:
-        if not isinstance(r, dict):
-            skipped += 1
-            continue
-        pred, gt = parse_single_result(r)
-        if pred is None or gt is None:
-            skipped += 1
-            continue
-        T = min(pred.shape[0], gt.shape[0], n_future)
-        l2 = compute_l2_per_step(pred[:T], gt[:T])
-        if len(l2) < n_future:
-            pad = np.full(n_future - len(l2), l2[-1] if len(l2) > 0 else 0.0)
-            l2 = np.concatenate([l2, pad])
-        l2_list.append(l2[:n_future])
-    if skipped > 0:
-        print(f"  跳过无规划字段样本: {skipped}")
-    if len(l2_list) == 0:
-        raise RuntimeError(f"pkl 中没有找到任何有效的 planning_traj / planning_traj_gt 字段！\n路径: {pkl_path}")
-    print(f"  有效规划样本: {len(l2_list)}")
-    return np.stack(l2_list, axis=0)
-
-def print_table(uniad_l2, dit_l2, out_csv=None):
-    time_steps = [('1s', 1), ('2s', 3), ('3s', 5)]
-    sep = '-' * 70
-    print(f"\n{sep}")
-    print(" 规划指标对比：UniAD 原版 vs DiffusionPlanningHead（DiT）")
-    print(sep)
-    print(f"{'指标':<20} {'UniAD原版':>10} {'DiT版本':>10} {'变化':>10} {'优化幅度':>12}")
-    print(sep)
-    print(" L2 误差（单位：米，越小越好）")
-    rows = []
-    for label, idx in time_steps:
-        if idx >= uniad_l2.shape[1] or idx >= dit_l2.shape[1]:
-            continue
-        u_val = float(uniad_l2[:, idx].mean())
-        d_val = float(dit_l2[:, idx].mean())
-        delta = d_val - u_val
-        pct   = delta / (u_val + 1e-8) * 100
-        sign  = 'v' if delta < 0 else '^'
-        flag  = 'BETTER' if delta < 0 else 'WORSE'
-        print(f"  L2_{label:<16} {u_val:>10.4f} {d_val:>10.4f} {delta:>+10.4f}  {sign}{abs(pct):>6.1f}%  {flag}")
-        rows.append({'指标': f'L2_{label}', 'UniAD': round(u_val,4), 'DiT': round(d_val,4), '变化': round(delta,4), '幅度%': round(pct,1)})
-    valid_idx = [idx for _, idx in time_steps if idx < uniad_l2.shape[1] and idx < dit_l2.shape[1]]
-    u_avg = float(uniad_l2[:, valid_idx].mean())
-    d_avg = float(dit_l2[:, valid_idx].mean())
-    delta = d_avg - u_avg
-    pct   = delta / (u_avg + 1e-8) * 100
-    sign  = 'v' if delta < 0 else '^'
-    flag  = 'BETTER' if delta < 0 else 'WORSE'
-    print(sep)
-    print(f"  {'L2_avg (1s/2s/3s)':<18} {u_avg:>10.4f} {d_avg:>10.4f} {delta:>+10.4f}  {sign}{abs(pct):>6.1f}%  {flag}")
-    rows.append({'指标': 'L2_avg', 'UniAD': round(u_avg,4), 'DiT': round(d_avg,4), '变化': round(delta,4), '幅度%': round(pct,1)})
-    print(sep)
-    print(f"\n  UniAD 原版有效样本数: {uniad_l2.shape[0]}")
-    print(f"  DiT  版本有效样本数 : {dit_l2.shape[0]}")
-    print(sep + "\n")
-    if out_csv:
-        os.makedirs(os.path.dirname(os.path.abspath(out_csv)), exist_ok=True)
-        with open(out_csv, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=['指标','UniAD','DiT','变化','幅度%'])
-            writer.writeheader()
-            writer.writerows(rows)
-        print(f"  CSV 已保存至: {out_csv}\n")
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--uniad_pkl', required=True)
-    parser.add_argument('--dit_pkl',   required=True)
-    parser.add_argument('--out_csv',   default=None)
-    parser.add_argument('--n_future',  type=int, default=6)
-    args = parser.parse_args()
-    for p in [args.uniad_pkl, args.dit_pkl]:
-        if not os.path.exists(p):
-            raise FileNotFoundError(f"找不到文件: {p}")
-    uniad_l2 = compute_metrics_from_pkl(args.uniad_pkl, n_future=args.n_future)
-    dit_l2   = compute_metrics_from_pkl(args.dit_pkl,   n_future=args.n_future)
-    print_table(uniad_l2, dit_l2, out_csv=args.out_csv)
-
-if __name__ == '__main__':
-    main()
-SCRIPT_EOF

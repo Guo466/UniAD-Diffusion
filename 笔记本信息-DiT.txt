@@ -1,471 +1,157 @@
-  (reference_points): Linear(in_features=256, out_features=3, bias=True)
-  (query_interact): QueryInteractionModule(
-    (self_attn): MultiheadAttention(
-      (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-    )
-    (linear1): Linear(in_features=256, out_features=256, bias=True)
-    (dropout): Dropout(p=0, inplace=False)
-    (linear2): Linear(in_features=256, out_features=256, bias=True)
-    (linear_pos1): Linear(in_features=256, out_features=256, bias=True)
-    (linear_pos2): Linear(in_features=256, out_features=256, bias=True)
-    (dropout_pos1): Dropout(p=0, inplace=False)
-    (dropout_pos2): Dropout(p=0, inplace=False)
-    (norm_pos): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-    (linear_feat1): Linear(in_features=256, out_features=256, bias=True)
-    (linear_feat2): Linear(in_features=256, out_features=256, bias=True)
-    (dropout_feat1): Dropout(p=0, inplace=False)
-    (dropout_feat2): Dropout(p=0, inplace=False)
-    (norm_feat): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-    (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-    (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-    (dropout1): Dropout(p=0, inplace=False)
-    (dropout2): Dropout(p=0, inplace=False)
-  )
-  (memory_bank): MemoryBank(
-    (save_proj): Linear(in_features=256, out_features=256, bias=True)
-    (temporal_attn): MultiheadAttention(
-      (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-    )
-    (temporal_fc1): Linear(in_features=256, out_features=256, bias=True)
-    (temporal_fc2): Linear(in_features=256, out_features=256, bias=True)
-    (temporal_norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-    (temporal_norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-  )
-  (criterion): ClipMatcher(
-    (loss_cls): FocalLoss()
-    (loss_bboxes): L1Loss()
-    (loss_predictions): SmoothL1Loss()
-  )
-  (seg_head): PansegformerHead(
-    (loss_cls): FocalLoss()
-    (loss_bbox): L1Loss()
-    (loss_iou): GIoULoss()
-    (activate): ReLU(inplace=True)
-    (positional_encoding): SinePositionalEncoding(num_feats=128, temperature=10000, normalize=True, scale=6.283185307179586, eps=1e-06)
-    (transformer): SegDeformableTransformer(
-      (encoder): DetrTransformerEncoder(
-        (layers): ModuleList(
-          (0-5): 6 x BaseTransformerLayer(
-            (attentions): ModuleList(
-              (0): MultiScaleDeformableAttention(
-                (dropout): Dropout(p=0.1, inplace=False)
-                (sampling_offsets): Linear(in_features=256, out_features=256, bias=True)
-                (attention_weights): Linear(in_features=256, out_features=128, bias=True)
-                (value_proj): Linear(in_features=256, out_features=256, bias=True)
-                (output_proj): Linear(in_features=256, out_features=256, bias=True)
-              )
-            )
-            (ffns): ModuleList(
-              (0): FFN(
-                (activate): ReLU(inplace=True)
-                (layers): Sequential(
-                  (0): Sequential(
-                    (0): Linear(in_features=256, out_features=512, bias=True)
-                    (1): ReLU(inplace=True)
-                    (2): Dropout(p=0.1, inplace=False)
-                  )
-                  (1): Linear(in_features=512, out_features=256, bias=True)
-                  (2): Dropout(p=0.1, inplace=False)
-                )
-                (dropout_layer): Identity()
-              )
-            )
-            (norms): ModuleList(
-              (0-1): 2 x LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            )
-          )
-        )
-      )
-      (decoder): DeformableDetrTransformerDecoder(
-        (layers): ModuleList(
-          (0-5): 6 x DetrTransformerDecoderLayer(
-            (attentions): ModuleList(
-              (0): MultiheadAttention(
-                (attn): MultiheadAttention(
-                  (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-                )
-                (proj_drop): Dropout(p=0.0, inplace=False)
-                (dropout_layer): Dropout(p=0.1, inplace=False)
-              )
-              (1): MultiScaleDeformableAttention(
-                (dropout): Dropout(p=0.1, inplace=False)
-                (sampling_offsets): Linear(in_features=256, out_features=256, bias=True)
-                (attention_weights): Linear(in_features=256, out_features=128, bias=True)
-                (value_proj): Linear(in_features=256, out_features=256, bias=True)
-                (output_proj): Linear(in_features=256, out_features=256, bias=True)
-              )
-            )
-            (ffns): ModuleList(
-              (0): FFN(
-                (activate): ReLU(inplace=True)
-                (layers): Sequential(
-                  (0): Sequential(
-                    (0): Linear(in_features=256, out_features=512, bias=True)
-                    (1): ReLU(inplace=True)
-                    (2): Dropout(p=0.1, inplace=False)
-                  )
-                  (1): Linear(in_features=512, out_features=256, bias=True)
-                  (2): Dropout(p=0.1, inplace=False)
-                )
-                (dropout_layer): Identity()
-              )
-            )
-            (norms): ModuleList(
-              (0-2): 3 x LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            )
-          )
-        )
-      )
-      (reference_points): Linear(in_features=256, out_features=2, bias=True)
-    )
-    (bev_embedding): Embedding(40000, 256)
-    (cls_branches): ModuleList(
-      (0-5): 6 x Linear(in_features=256, out_features=3, bias=True)
-    )
-    (reg_branches): ModuleList(
-      (0-5): 6 x Sequential(
-        (0): Linear(in_features=256, out_features=256, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=256, out_features=256, bias=True)
-        (3): ReLU()
-        (4): Linear(in_features=256, out_features=4, bias=True)
-      )
-    )
-    (query_embedding): Embedding(100, 512)
-    (stuff_query): Embedding(1, 512)
-    (reg_branches2): ModuleList(
-      (0-3): 4 x Sequential(
-        (0): Linear(in_features=256, out_features=256, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=256, out_features=256, bias=True)
-        (3): ReLU()
-        (4): Linear(in_features=256, out_features=4, bias=True)
-      )
-    )
-    (cls_thing_branches): ModuleList(
-      (0-3): 4 x Linear(in_features=256, out_features=3, bias=True)
-    )
-    (cls_stuff_branches): ModuleList(
-      (0-5): 6 x Linear(in_features=256, out_features=1, bias=True)
-    )
-    (loss_mask): DiceLoss()
-    (things_mask_head): SegMaskHead(
-      (blocks): ModuleList(
-        (0-3): 4 x Block(
-          (head_norm1): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
-          (attn): Attention(
-            (q): Linear(in_features=256, out_features=256, bias=True)
-            (k): Linear(in_features=256, out_features=256, bias=True)
-            (v): Linear(in_features=256, out_features=256, bias=True)
-            (attn_drop): Dropout(p=0, inplace=False)
-            (proj): Linear(in_features=256, out_features=256, bias=True)
-            (proj_drop): Dropout(p=0, inplace=False)
-            (linear_l1): Sequential(
-              (0): Linear(in_features=8, out_features=8, bias=True)
-              (1): ReLU()
-            )
-            (linear): Sequential(
-              (0): Linear(in_features=8, out_features=1, bias=True)
-              (1): ReLU()
-            )
-          )
-          (drop_path): Identity()
-          (head_norm2): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
-          (mlp): Mlp(
-            (fc1): Linear(in_features=256, out_features=1024, bias=True)
-            (act): GELU(approximate='none')
-            (fc2): Linear(in_features=1024, out_features=256, bias=True)
-            (drop): Dropout(p=0, inplace=False)
-          )
-        )
-      )
-      (attnen): AttentionTail(
-        (q): Linear(in_features=256, out_features=256, bias=True)
-        (k): Linear(in_features=256, out_features=256, bias=True)
-        (linear_l1): Sequential(
-          (0): Linear(in_features=8, out_features=8, bias=True)
-          (1): ReLU()
-        )
-        (linear): Sequential(
-          (0): Linear(in_features=8, out_features=1, bias=True)
-          (1): ReLU()
-        )
-      )
-    )
-    (stuff_mask_head): SegMaskHead(
-      (blocks): ModuleList(
-        (0-5): 6 x Block(
-          (head_norm1): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
-          (attn): Attention(
-            (q): Linear(in_features=256, out_features=256, bias=True)
-            (k): Linear(in_features=256, out_features=256, bias=True)
-            (v): Linear(in_features=256, out_features=256, bias=True)
-            (attn_drop): Dropout(p=0, inplace=False)
-            (proj): Linear(in_features=256, out_features=256, bias=True)
-            (proj_drop): Dropout(p=0, inplace=False)
-            (linear_l1): Sequential(
-              (0): Linear(in_features=8, out_features=8, bias=True)
-              (1): ReLU()
-            )
-            (linear): Sequential(
-              (0): Linear(in_features=8, out_features=1, bias=True)
-              (1): ReLU()
-            )
-          )
-          (drop_path): Identity()
-          (head_norm2): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
-          (mlp): Mlp(
-            (fc1): Linear(in_features=256, out_features=1024, bias=True)
-            (act): GELU(approximate='none')
-            (fc2): Linear(in_features=1024, out_features=256, bias=True)
-            (drop): Dropout(p=0, inplace=False)
-          )
-          (self_attention): SelfAttention(
-            (qkv): Linear(in_features=256, out_features=768, bias=True)
-            (attn_drop): Dropout(p=0, inplace=False)
-            (proj): Linear(in_features=256, out_features=256, bias=True)
-            (proj_drop): Dropout(p=0, inplace=False)
-          )
-          (norm3): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
-        )
-      )
-      (attnen): AttentionTail(
-        (q): Linear(in_features=256, out_features=256, bias=True)
-        (k): Linear(in_features=256, out_features=256, bias=True)
-        (linear_l1): Sequential(
-          (0): Linear(in_features=8, out_features=8, bias=True)
-          (1): ReLU()
-        )
-        (linear): Sequential(
-          (0): Linear(in_features=8, out_features=1, bias=True)
-          (1): ReLU()
-        )
-      )
-    )
-  )
-  (motion_head): MotionHead(
-    (loss_traj): TrajLoss()
-    (unflatten_traj): Unflatten(dim=3, unflattened_size=(12, 5))
-    (log_softmax): LogSoftmax(dim=2)
-    (learnable_motion_query_embedding): Embedding(24, 256)
-    (motionformer): MotionTransformerDecoder(
-      (intention_interaction_layers): IntentionInteraction(
-        (interaction_transformer): TransformerEncoderLayer(
-          (self_attn): MultiheadAttention(
-            (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-          )
-          (linear1): Linear(in_features=256, out_features=512, bias=True)
-          (dropout): Dropout(p=0.1, inplace=False)
-          (linear2): Linear(in_features=512, out_features=256, bias=True)
-          (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-          (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-          (dropout1): Dropout(p=0.1, inplace=False)
-          (dropout2): Dropout(p=0.1, inplace=False)
-        )
-      )
-      (track_agent_interaction_layers): ModuleList(
-        (0-2): 3 x TrackAgentInteraction(
-          (interaction_transformer): TransformerDecoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (multihead_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (linear1): Linear(in_features=256, out_features=512, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=512, out_features=256, bias=True)
-            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm3): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-            (dropout3): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (map_interaction_layers): ModuleList(
-        (0-2): 3 x MapInteraction(
-          (interaction_transformer): TransformerDecoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (multihead_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (linear1): Linear(in_features=256, out_features=512, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=512, out_features=256, bias=True)
-            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm3): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-            (dropout3): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (bev_interaction_layers): ModuleList(
-        (0-2): 3 x MotionTransformerAttentionLayer(
-          (attentions): ModuleList(
-            (0): MotionDeformableAttention(
-              (dropout): Dropout(p=0.1, inplace=False)
-              (sampling_offsets): Linear(in_features=256, out_features=768, bias=True)
-              (attention_weights): Linear(in_features=256, out_features=384, bias=True)
-              (value_proj): Linear(in_features=256, out_features=256, bias=True)
-              (output_proj): Sequential(
-                (0): Linear(in_features=3072, out_features=256, bias=True)
-                (1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-                (2): ReLU(inplace=True)
-              )
-            )
-          )
-          (ffns): ModuleList(
-            (0): FFN(
-              (activate): ReLU(inplace=True)
-              (layers): Sequential(
-                (0): Sequential(
-                  (0): Linear(in_features=256, out_features=512, bias=True)
-                  (1): ReLU(inplace=True)
-                  (2): Dropout(p=0.1, inplace=False)
-                )
-                (1): Linear(in_features=512, out_features=256, bias=True)
-                (2): Dropout(p=0.1, inplace=False)
-              )
-              (dropout_layer): Identity()
-            )
-          )
-          (norms): ModuleList(
-            (0-1): 2 x LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-          )
-        )
-      )
-      (static_dynamic_fuser): Sequential(
-        (0): Linear(in_features=512, out_features=512, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=512, out_features=256, bias=True)
-      )
-      (dynamic_embed_fuser): Sequential(
-        (0): Linear(in_features=768, out_features=512, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=512, out_features=256, bias=True)
-      )
-      (in_query_fuser): Sequential(
-        (0): Linear(in_features=512, out_features=512, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=512, out_features=256, bias=True)
-      )
-      (out_query_fuser): Sequential(
-        (0): Linear(in_features=1024, out_features=512, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=512, out_features=256, bias=True)
-      )
-    )
-    (layer_track_query_fuser): Sequential(
-      (0): Linear(in_features=1536, out_features=256, bias=True)
-      (1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-      (2): ReLU(inplace=True)
-    )
-    (agent_level_embedding_layer): Sequential(
-      (0): Linear(in_features=256, out_features=512, bias=True)
-      (1): ReLU()
-      (2): Linear(in_features=512, out_features=256, bias=True)
-    )
-    (scene_level_ego_embedding_layer): Sequential(
-      (0): Linear(in_features=256, out_features=512, bias=True)
-      (1): ReLU()
-      (2): Linear(in_features=512, out_features=256, bias=True)
-    )
-    (scene_level_offset_embedding_layer): Sequential(
-      (0): Linear(in_features=256, out_features=512, bias=True)
-      (1): ReLU()
-      (2): Linear(in_features=512, out_features=256, bias=True)
-    )
-    (boxes_query_embedding_layer): Sequential(
-      (0): Linear(in_features=256, out_features=512, bias=True)
-      (1): ReLU()
-      (2): Linear(in_features=512, out_features=256, bias=True)
-    )
-    (traj_cls_branches): ModuleList(
-      (0-2): 3 x Sequential(
-        (0): Linear(in_features=256, out_features=256, bias=True)
-        (1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-        (2): ReLU(inplace=True)
-        (3): Linear(in_features=256, out_features=256, bias=True)
-        (4): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-        (5): ReLU(inplace=True)
-        (6): Linear(in_features=256, out_features=1, bias=True)
-      )
-    )
-    (traj_reg_branches): ModuleList(
-      (0-2): 3 x Sequential(
-        (0): Linear(in_features=256, out_features=256, bias=True)
-        (1): ReLU()
-        (2): Linear(in_features=256, out_features=256, bias=True)
-        (3): ReLU()
-        (4): Linear(in_features=256, out_features=60, bias=True)
-      )
-    )
-  )
-  (planning_head): PlanningHeadSingleMode(
-    (navi_embed): Embedding(3, 256)
-    (reg_branch): Sequential(
-      (0): Linear(in_features=256, out_features=256, bias=True)
-      (1): ReLU()
-      (2): Linear(in_features=256, out_features=12, bias=True)
-    )
-    (loss_planning): PlanningLoss()
-    (attn_module): TransformerDecoder(
-      (layers): ModuleList(
-        (0-2): 3 x TransformerDecoderLayer(
-          (self_attn): MultiheadAttention(
-            (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-          )
-          (multihead_attn): MultiheadAttention(
-            (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-          )
-          (linear1): Linear(in_features=256, out_features=512, bias=True)
-          (dropout): Dropout(p=0.1, inplace=False)
-          (linear2): Linear(in_features=512, out_features=256, bias=True)
-          (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-          (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-          (norm3): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-          (dropout1): Dropout(p=0.1, inplace=False)
-          (dropout2): Dropout(p=0.1, inplace=False)
-          (dropout3): Dropout(p=0.1, inplace=False)
-        )
-      )
-    )
-    (mlp_fuser): Sequential(
-      (0): Linear(in_features=768, out_features=256, bias=True)
-      (1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-      (2): ReLU(inplace=True)
-    )
-    (pos_embed): Embedding(1, 256)
-    (loss_collision): ModuleList()
-  )
-)
-Traceback (most recent call last):
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/utils/registry.py", line 69, in build_from_cfg
-    return obj_cls(**args)
-  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/datasets/nuscenes_e2e_dataset.py", line 78, in __init__
-    super().__init__(*args, **kwargs)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet3d/datasets/nuscenes_dataset.py", line 131, in __init__
-    super().__init__(
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet3d/datasets/custom_3d.py", line 88, in __init__
-    self.data_infos = self.load_annotations(open(local_path, 'rb'))
-FileNotFoundError: [Errno 2] No such file or directory: 'data/infos/nuscenes_infos_temporal_mini_infos_temporal_train.pkl'
+.layers.1.norm2.weight, planning_head.attn_module.layers.1.norm2.bias, planning_head.attn_module.layers.1.norm3.weight, planning_head.attn_module.layers.1.norm3.bias, planning_head.attn_module.layers.2.self_attn.in_proj_weight, planning_head.attn_module.layers.2.self_attn.in_proj_bias, planning_head.attn_module.layers.2.self_attn.out_proj.weight, planning_head.attn_module.layers.2.self_attn.out_proj.bias, planning_head.attn_module.layers.2.multihead_attn.in_proj_weight, planning_head.attn_module.layers.2.multihead_attn.in_proj_bias, planning_head.attn_module.layers.2.multihead_attn.out_proj.weight, planning_head.attn_module.layers.2.multihead_attn.out_proj.bias, planning_head.attn_module.layers.2.linear1.weight, planning_head.attn_module.layers.2.linear1.bias, planning_head.attn_module.layers.2.linear2.weight, planning_head.attn_module.layers.2.linear2.bias, planning_head.attn_module.layers.2.norm1.weight, planning_head.attn_module.layers.2.norm1.bias, planning_head.attn_module.layers.2.norm2.weight, planning_head.attn_module.layers.2.norm2.bias, planning_head.attn_module.layers.2.norm3.weight, planning_head.attn_module.layers.2.norm3.bias, planning_head.mlp_fuser.0.weight, planning_head.mlp_fuser.0.bias, planning_head.mlp_fuser.1.weight, planning_head.mlp_fuser.1.bias, planning_head.pos_embed.weight
 
-During handling of the above exception, another exception occurred:
+2026-07-01 10:11:11,785 - mmdet - WARNING - The model and loaded state dict do not match exactly
 
+size mismatch for query_embedding.weight: copying a param with shape torch.Size([901, 512]) from checkpoint, the shape in current model is torch.Size([301, 512]).
+size mismatch for seg_head.query_embedding.weight: copying a param with shape torch.Size([300, 512]) from checkpoint, the shape in current model is torch.Size([100, 512]).
+missing keys in source state_dict: motion_head.learnable_motion_query_embedding.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.intention_interaction_layers.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.intention_interaction_layers.interaction_transformer.linear1.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.linear1.bias, motion_head.motionformer.intention_interaction_layers.interaction_transformer.linear2.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.linear2.bias, motion_head.motionformer.intention_interaction_layers.interaction_transformer.norm1.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.norm1.bias, motion_head.motionformer.intention_interaction_layers.interaction_transformer.norm2.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear1.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear1.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear2.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear2.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm1.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm1.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm2.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm3.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm3.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear1.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear1.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear2.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear2.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm1.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm1.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm2.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm3.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm3.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear1.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear1.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear2.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear2.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm1.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm1.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm2.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm3.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm3.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.0.norms.0.weight, motion_head.motionformer.bev_interaction_layers.0.norms.0.bias, motion_head.motionformer.bev_interaction_layers.0.norms.1.weight, motion_head.motionformer.bev_interaction_layers.0.norms.1.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.1.norms.0.weight, motion_head.motionformer.bev_interaction_layers.1.norms.0.bias, motion_head.motionformer.bev_interaction_layers.1.norms.1.weight, motion_head.motionformer.bev_interaction_layers.1.norms.1.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.2.norms.0.weight, motion_head.motionformer.bev_interaction_layers.2.norms.0.bias, motion_head.motionformer.bev_interaction_layers.2.norms.1.weight, motion_head.motionformer.bev_interaction_layers.2.norms.1.bias, motion_head.motionformer.static_dynamic_fuser.0.weight, motion_head.motionformer.static_dynamic_fuser.0.bias, motion_head.motionformer.static_dynamic_fuser.2.weight, motion_head.motionformer.static_dynamic_fuser.2.bias, motion_head.motionformer.dynamic_embed_fuser.0.weight, motion_head.motionformer.dynamic_embed_fuser.0.bias, motion_head.motionformer.dynamic_embed_fuser.2.weight, motion_head.motionformer.dynamic_embed_fuser.2.bias, motion_head.motionformer.in_query_fuser.0.weight, motion_head.motionformer.in_query_fuser.0.bias, motion_head.motionformer.in_query_fuser.2.weight, motion_head.motionformer.in_query_fuser.2.bias, motion_head.motionformer.out_query_fuser.0.weight, motion_head.motionformer.out_query_fuser.0.bias, motion_head.motionformer.out_query_fuser.2.weight, motion_head.motionformer.out_query_fuser.2.bias, motion_head.layer_track_query_fuser.0.weight, motion_head.layer_track_query_fuser.0.bias, motion_head.layer_track_query_fuser.1.weight, motion_head.layer_track_query_fuser.1.bias, motion_head.agent_level_embedding_layer.0.weight, motion_head.agent_level_embedding_layer.0.bias, motion_head.agent_level_embedding_layer.2.weight, motion_head.agent_level_embedding_layer.2.bias, motion_head.scene_level_ego_embedding_layer.0.weight, motion_head.scene_level_ego_embedding_layer.0.bias, motion_head.scene_level_ego_embedding_layer.2.weight, motion_head.scene_level_ego_embedding_layer.2.bias, motion_head.scene_level_offset_embedding_layer.0.weight, motion_head.scene_level_offset_embedding_layer.0.bias, motion_head.scene_level_offset_embedding_layer.2.weight, motion_head.scene_level_offset_embedding_layer.2.bias, motion_head.boxes_query_embedding_layer.0.weight, motion_head.boxes_query_embedding_layer.0.bias, motion_head.boxes_query_embedding_layer.2.weight, motion_head.boxes_query_embedding_layer.2.bias, motion_head.traj_cls_branches.0.0.weight, motion_head.traj_cls_branches.0.0.bias, motion_head.traj_cls_branches.0.1.weight, motion_head.traj_cls_branches.0.1.bias, motion_head.traj_cls_branches.0.3.weight, motion_head.traj_cls_branches.0.3.bias, motion_head.traj_cls_branches.0.4.weight, motion_head.traj_cls_branches.0.4.bias, motion_head.traj_cls_branches.0.6.weight, motion_head.traj_cls_branches.0.6.bias, motion_head.traj_cls_branches.1.0.weight, motion_head.traj_cls_branches.1.0.bias, motion_head.traj_cls_branches.1.1.weight, motion_head.traj_cls_branches.1.1.bias, motion_head.traj_cls_branches.1.3.weight, motion_head.traj_cls_branches.1.3.bias, motion_head.traj_cls_branches.1.4.weight, motion_head.traj_cls_branches.1.4.bias, motion_head.traj_cls_branches.1.6.weight, motion_head.traj_cls_branches.1.6.bias, motion_head.traj_cls_branches.2.0.weight, motion_head.traj_cls_branches.2.0.bias, motion_head.traj_cls_branches.2.1.weight, motion_head.traj_cls_branches.2.1.bias, motion_head.traj_cls_branches.2.3.weight, motion_head.traj_cls_branches.2.3.bias, motion_head.traj_cls_branches.2.4.weight, motion_head.traj_cls_branches.2.4.bias, motion_head.traj_cls_branches.2.6.weight, motion_head.traj_cls_branches.2.6.bias, motion_head.traj_reg_branches.0.0.weight, motion_head.traj_reg_branches.0.0.bias, motion_head.traj_reg_branches.0.2.weight, motion_head.traj_reg_branches.0.2.bias, motion_head.traj_reg_branches.0.4.weight, motion_head.traj_reg_branches.0.4.bias, motion_head.traj_reg_branches.1.0.weight, motion_head.traj_reg_branches.1.0.bias, motion_head.traj_reg_branches.1.2.weight, motion_head.traj_reg_branches.1.2.bias, motion_head.traj_reg_branches.1.4.weight, motion_head.traj_reg_branches.1.4.bias, motion_head.traj_reg_branches.2.0.weight, motion_head.traj_reg_branches.2.0.bias, motion_head.traj_reg_branches.2.2.weight, motion_head.traj_reg_branches.2.2.bias, motion_head.traj_reg_branches.2.4.weight, motion_head.traj_reg_branches.2.4.bias, planning_head.navi_embed.weight, planning_head.reg_branch.0.weight, planning_head.reg_branch.0.bias, planning_head.reg_branch.2.weight, planning_head.reg_branch.2.bias, planning_head.attn_module.layers.0.self_attn.in_proj_weight, planning_head.attn_module.layers.0.self_attn.in_proj_bias, planning_head.attn_module.layers.0.self_attn.out_proj.weight, planning_head.attn_module.layers.0.self_attn.out_proj.bias, planning_head.attn_module.layers.0.multihead_attn.in_proj_weight, planning_head.attn_module.layers.0.multihead_attn.in_proj_bias, planning_head.attn_module.layers.0.multihead_attn.out_proj.weight, planning_head.attn_module.layers.0.multihead_attn.out_proj.bias, planning_head.attn_module.layers.0.linear1.weight, planning_head.attn_module.layers.0.linear1.bias, planning_head.attn_module.layers.0.linear2.weight, planning_head.attn_module.layers.0.linear2.bias, planning_head.attn_module.layers.0.norm1.weight, planning_head.attn_module.layers.0.norm1.bias, planning_head.attn_module.layers.0.norm2.weight, planning_head.attn_module.layers.0.norm2.bias, planning_head.attn_module.layers.0.norm3.weight, planning_head.attn_module.layers.0.norm3.bias, planning_head.attn_module.layers.1.self_attn.in_proj_weight, planning_head.attn_module.layers.1.self_attn.in_proj_bias, planning_head.attn_module.layers.1.self_attn.out_proj.weight, planning_head.attn_module.layers.1.self_attn.out_proj.bias, planning_head.attn_module.layers.1.multihead_attn.in_proj_weight, planning_head.attn_module.layers.1.multihead_attn.in_proj_bias, planning_head.attn_module.layers.1.multihead_attn.out_proj.weight, planning_head.attn_module.layers.1.multihead_attn.out_proj.bias, planning_head.attn_module.layers.1.linear1.weight, planning_head.attn_module.layers.1.linear1.bias, planning_head.attn_module.layers.1.linear2.weight, planning_head.attn_module.layers.1.linear2.bias, planning_head.attn_module.layers.1.norm1.weight, planning_head.attn_module.layers.1.norm1.bias, planning_head.attn_module.layers.1.norm2.weight, planning_head.attn_module.layers.1.norm2.bias, planning_head.attn_module.layers.1.norm3.weight, planning_head.attn_module.layers.1.norm3.bias, planning_head.attn_module.layers.2.self_attn.in_proj_weight, planning_head.attn_module.layers.2.self_attn.in_proj_bias, planning_head.attn_module.layers.2.self_attn.out_proj.weight, planning_head.attn_module.layers.2.self_attn.out_proj.bias, planning_head.attn_module.layers.2.multihead_attn.in_proj_weight, planning_head.attn_module.layers.2.multihead_attn.in_proj_bias, planning_head.attn_module.layers.2.multihead_attn.out_proj.weight, planning_head.attn_module.layers.2.multihead_attn.out_proj.bias, planning_head.attn_module.layers.2.linear1.weight, planning_head.attn_module.layers.2.linear1.bias, planning_head.attn_module.layers.2.linear2.weight, planning_head.attn_module.layers.2.linear2.bias, planning_head.attn_module.layers.2.norm1.weight, planning_head.attn_module.layers.2.norm1.bias, planning_head.attn_module.layers.2.norm2.weight, planning_head.attn_module.layers.2.norm2.bias, planning_head.attn_module.layers.2.norm3.weight, planning_head.attn_module.layers.2.norm3.bias, planning_head.mlp_fuser.0.weight, planning_head.mlp_fuser.0.bias, planning_head.mlp_fuser.1.weight, planning_head.mlp_fuser.1.bias, planning_head.pos_embed.weight
+
+2026-07-01 10:11:11,800 - mmdet - INFO - Start running, host: guo@guo-Legion-Y7000-IRX9, work_dir: /home/guo/UniAD/UniAD/work_dir/uniad_mini
+2026-07-01 10:11:11,800 - mmdet - INFO - Start running, host: guo@guo-Legion-Y7000-IRX9, work_dir: /home/guo/UniAD/UniAD/work_dir/uniad_mini
+2026-07-01 10:11:11,801 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CheckpointHook                     
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_epoch:
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+2026-07-01 10:11:11,801 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CheckpointHook                     
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_epoch:
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+2026-07-01 10:11:11,801 - mmdet - INFO - workflow: [('train', 1)], max: 20 epochs
+2026-07-01 10:11:11,801 - mmdet - INFO - workflow: [('train', 1)], max: 20 epochs
+2026-07-01 10:11:11,801 - mmdet - INFO - Checkpoints will be saved to /home/guo/UniAD/UniAD/work_dir/uniad_mini by HardDiskBackend.
+2026-07-01 10:11:11,801 - mmdet - INFO - Checkpoints will be saved to /home/guo/UniAD/UniAD/work_dir/uniad_mini by HardDiskBackend.
+2026-07-01 10:11:13,913 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-01 10:11:13,920 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-01 10:11:13,933 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-01 10:11:13,942 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-01 10:11:15,159 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-01 10:11:15,167 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-01 10:11:15,182 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-01 10:11:15,193 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
 Traceback (most recent call last):
   File "/home/guo/UniAD/UniAD/tools/train.py", line 255, in <module>
     main()
-  File "/home/guo/UniAD/UniAD/tools/train.py", line 216, in main
-    datasets = [build_dataset(cfg.data.train)]
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet3d/datasets/builder.py", line 46, in build_dataset
-    dataset = build_from_cfg(cfg, MMDET_DATASETS, default_args)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/utils/registry.py", line 72, in build_from_cfg
-    raise type(e)(f'{obj_cls.__name__}: {e}')
-FileNotFoundError: NuScenesE2EDataset: [Errno 2] No such file or directory: 'data/infos/nuscenes_infos_temporal_mini_infos_temporal_train.pkl'
+  File "/home/guo/UniAD/UniAD/tools/train.py", line 242, in main
+    custom_train_model(
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/apis/train.py", line 21, in custom_train_model
+    custom_train_detector(
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/apis/mmdet_train.py", line 194, in custom_train_detector
+    runner.run(data_loaders, cfg.workflow)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 136, in run
+    epoch_runner(data_loaders[i], **kwargs)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 53, in train
+    self.run_iter(data_batch, train_mode=True, **kwargs)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 31, in run_iter
+    outputs = self.model.train_step(data_batch, self.optimizer,
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/parallel/data_parallel.py", line 77, in train_step
+    return self.module.train_step(*inputs[0], **kwargs[0])
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet/models/detectors/base.py", line 248, in train_step
+    losses = self(**data)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 81, in forward
+    return self.forward_train(**kwargs)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 116, in new_func
+    return old_func(*args, **kwargs)
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 163, in forward_train
+    losses_track, outs_track = self.forward_track_train(img, gt_bboxes_3d, gt_labels_3d, gt_past_traj, gt_past_traj_mask, gt_inds, gt_sdc_bbox, gt_sdc_label,
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 116, in new_func
+    return old_func(*args, **kwargs)
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_track.py", line 554, in forward_track_train
+    frame_res = self._forward_single_frame_train(
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 116, in new_func
+    return old_func(*args, **kwargs)
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_track.py", line 452, in _forward_single_frame_train
+    track_instances, matched_indices = self.criterion.match_for_single_frame(
+  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/losses/track_loss.py", line 371, in match_for_single_frame
+    track_instances.obj_idxes[900]=-2
+IndexError: index 900 is out of bounds for dimension 0 with size 301
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 

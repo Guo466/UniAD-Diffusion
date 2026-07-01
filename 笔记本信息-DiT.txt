@@ -17,42 +17,33 @@ def to_numpy(x):
     return np.array(x)
 
 def parse_single_result(result):
-    """
-    兼容两种格式：
-    1. DiT格式：result['planning_traj'], result['planning_traj_gt']
-    2. UniAD格式：result['planning']['result_planning']['sdc_traj']
-                  result['planning']['planning_gt']['sdc_planning']
-    """
     pred = None
     gt = None
 
-    # 格式1：DiT直接字段
     if 'planning_traj' in result:
         pred = to_numpy(result['planning_traj'])
         gt   = to_numpy(result['planning_traj_gt'])
 
-    # 格式2：UniAD嵌套格式
     elif 'planning' in result:
         p = result['planning']
         rp = p.get('result_planning', {})
         pg = p.get('planning_gt', {})
-        pred_raw = rp.get('sdc_traj', None) or rp.get('sdc_traj_all', None)
-        gt_raw   = pg.get('sdc_planning', None)
+        pred_raw = rp.get('sdc_traj', None)
+        if pred_raw is None:
+            pred_raw = rp.get('sdc_traj_all', None)
+        gt_raw = pg.get('sdc_planning', None)
         pred = to_numpy(pred_raw)
         gt   = to_numpy(gt_raw)
 
     if pred is None or gt is None:
         return None, None
 
-    # 去掉多余维度直到剩 (T, D)
     while pred.ndim > 2:
         pred = pred[0]
     while gt.ndim > 2:
         gt = gt[0]
 
-    # GT 可能含 heading 列，只保留 x, y
     gt = gt[:, :2]
-
     return pred, gt
 
 def compute_l2_per_step(pred, gt):
@@ -63,7 +54,6 @@ def compute_metrics_from_pkl(pkl_path, n_future=6):
     with open(pkl_path, 'rb') as f:
         data = pickle.load(f)
 
-    # 兼容顶层格式
     if isinstance(data, dict) and 'bbox_results' in data:
         results = data['bbox_results']
     elif isinstance(data, list):

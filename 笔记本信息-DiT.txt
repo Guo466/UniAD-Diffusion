@@ -1,107 +1,27 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ git pull
-remote: Enumerating objects: 7, done.
-remote: Counting objects: 100% (7/7), done.
-remote: Compressing objects: 100% (2/2), done.
-remote: Total 4 (delta 3), reused 3 (delta 2), pack-reused 0 (from 0)
-展开对象中: 100% (4/4), 335 字节 | 33.00 KiB/s, 完成.
-来自 github.com:Guo466/UniAD
-   01a04f8..d4b8039  v2.0       -> origin/v2.0
-更新 01a04f8..d4b8039
-Fast-forward
- tools/test.py | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ PYTHONPATH=$(pwd):$PYTHONPATH python tools/test.py projects/configs/stage2_e2e/base_e2e_mini.py work_dir/uniad_mini/latest.pth --out output/uniad_mini_results.pkl --launcher none
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import packaging  # type: ignore[attr-defined]
-projects.mmdet3d_plugin
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.327 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-WARNING!!!!, Only can be used for obtain inference speed!!!!
-load checkpoint from local path: work_dir/uniad_mini/latest.pth
-2026-07-01 16:27:40,603 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.0.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,606 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.1.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,608 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.2.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,610 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.3.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,612 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.4.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,614 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.5.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,616 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.6.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,618 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.7.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,620 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.8.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,622 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.9.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,623 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.10.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,625 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.11.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,627 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.12.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,629 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.13.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,631 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.14.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,633 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.15.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,635 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.16.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,637 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.17.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,639 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.18.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,641 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.19.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,643 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.20.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,645 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.21.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,647 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.22.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,649 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.0.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,653 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.1.conv2 is upgraded to version 2.
-2026-07-01 16:27:40,656 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.2.conv2 is upgraded to version 2.
-[                                                  ] 0/81, elapsed: 0s, ETA:2026-07-01 16:27:41,121 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-01 16:27:41,127 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-01 16:27:41,128 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-01 16:27:41,133 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-01 16:27:41,141 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-01 16:27:41,145 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-01 16:27:41,149 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-01 16:27:41,153 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-01 16:27:41,733 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-01 16:27:41,739 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-01 16:27:41,739 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-01 16:27:41,744 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-01 16:27:41,752 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-01 16:27:41,757 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-01 16:27:41,760 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-01 16:27:41,766 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-01 16:27:42,267 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-01 16:27:42,273 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-01 16:27:42,285 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-01 16:27:42,293 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-Traceback (most recent call last):
-  File "/home/guo/UniAD/UniAD/tools/test.py", line 262, in <module>
-    main()
-  File "/home/guo/UniAD/UniAD/tools/test.py", line 224, in main
-    outputs = single_gpu_test(model, data_loader, args.show, args.show_dir)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet3d/apis/test.py", line 40, in single_gpu_test
-    result = model(return_loss=False, rescale=True, **data)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/parallel/data_parallel.py", line 51, in forward
-    return super().forward(*inputs, **kwargs)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 169, in forward
-    return self.module(*inputs[0], **kwargs[0])
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 83, in forward
-    return self.forward_test(**kwargs)
-  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 326, in forward_test
-    result_planning = self.planning_head.forward_test(bev_embed, outs_motion, outs_occ, command)
-  File "/home/guo/UniAD/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/planning_head.py", line 139, in forward_test
-    occ_mask = outs_occflow['seg_out']
-KeyError: 'seg_out'
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls
+CITATION.cff        data    LICENSE   README.md         terminal_out.log
+ckpts               docker  output    requirements.txt  tools
+CODE_OF_CONDUCT.md  docs    projects  sources           work_dirs
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls ~/UniAD-Diffusion/UniAD/work_dirs/
+base_e2e_diffusion
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ cd work_dirs/
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD/work_dirs$ ls
+base_e2e_diffusion
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD/work_dirs$ cd base_e2e_diffusion/
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD/work_dirs/base_e2e_diffusion$ ls
+20260630_171124.log       epoch_12.pth  epoch_17.pth  epoch_2.pth  epoch_7.pth
+20260630_171124.log.json  epoch_13.pth  epoch_18.pth  epoch_3.pth  epoch_8.pth
+base_e2e_diffusion.py     epoch_14.pth  epoch_19.pth  epoch_4.pth  epoch_9.pth
+epoch_10.pth              epoch_15.pth  epoch_1.pth   epoch_5.pth  latest.pth
+epoch_11.pth              epoch_16.pth  epoch_20.pth  epoch_6.pth  tf_logs
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD/work_dirs/base_e2e_diffusion$ 
+
+
+2026-07-01 16:58:01,181 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-01 16:58:01,194 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-01 16:58:01,202 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 81/81, 0.8 task/s, elapsed: 101s, ETA:     0s
+writing results to output/uniad_mini_results.pkl
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls ~/UniAD/UniAD/output/
+uniad_mini_results.pkl
+

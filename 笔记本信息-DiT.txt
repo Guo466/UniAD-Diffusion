@@ -2,48 +2,92 @@
 > import pickle
 > with open('output/uniad_mini_results.pkl', 'rb') as f:
 >     data = pickle.load(f)
-> print('顶层类型:', type(data))
-> if isinstance(data, list):
->     print('列表长度:', len(data))
->     print('第0个元素类型:', type(data[0]))
->     if isinstance(data[0], dict):
->         print('第0个元素的keys:', list(data[0].keys()))
->         for k,v in data[0].items():
->             print(f'  {k}: type={type(v)}, ', end='')
->             try:
->                 print(f'shape={v.shape if hasattr(v, \"shape\") else len(v) if hasattr(v, \"__len__\") else v}')
->             except:
->                 print(v)
-> elif isinstance(data, dict):
->     print('dict keys:', list(data.keys())[:10])
+> planning = data[0]['planning']
+> print('planning keys:', list(planning.keys()))
+> for k,v in planning.items():
+>     print(f'  {k}: type={type(v)}, ', end='')
+>     try:
+>         import torch, numpy as np
+>         if hasattr(v, 'shape'):
+>             print(f'shape={v.shape}')
+>         elif isinstance(v, (list, tuple)):
+>             print(f'len={len(v)}, first_type={type(v[0]) if len(v)>0 else None}')
+>         else:
+>             print(v)
+>     except:
+>         print(v)
 > "
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import packaging  # type: ignore[attr-defined]
-顶层类型: <class 'list'>
-列表长度: 81
-第0个元素类型: <class 'dict'>
-第0个元素的keys: ['planning', 'token', 'track_bbox_results', 'boxes_3d', 'scores_3d', 'labels_3d', 'track_scores', 'track_ids', 'sdc_boxes_3d', 'sdc_scores_3d', 'sdc_track_scores', 'sdc_track_bbox_results', 'boxes_3d_det', 'scores_3d_det', 'labels_3d_det', 'traj_0', 'traj_scores_0', 'traj_1', 'traj_scores_1', 'traj', 'traj_scores', 'ret_iou']
-  planning: type=<class 'dict'>, shape=2
-  token: type=<class 'str'>, shape=32
-  track_bbox_results: type=<class 'list'>, shape=1
-  boxes_3d: type=<class 'mmdet3d.core.bbox.structures.lidar_box3d.LiDARInstance3DBoxes'>, shape=18
-  scores_3d: type=<class 'torch.Tensor'>, shape=torch.Size([18])
-  labels_3d: type=<class 'torch.Tensor'>, shape=torch.Size([18])
-  track_scores: type=<class 'torch.Tensor'>, shape=torch.Size([18])
-  track_ids: type=<class 'torch.Tensor'>, shape=torch.Size([18])
-  sdc_boxes_3d: type=<class 'mmdet3d.core.bbox.structures.lidar_box3d.LiDARInstance3DBoxes'>, shape=1
-  sdc_scores_3d: type=<class 'torch.Tensor'>, shape=torch.Size([1])
-  sdc_track_scores: type=<class 'torch.Tensor'>, shape=torch.Size([1])
-  sdc_track_bbox_results: type=<class 'list'>, shape=1
-  boxes_3d_det: type=<class 'mmdet3d.core.bbox.structures.lidar_box3d.LiDARInstance3DBoxes'>, shape=300
-  scores_3d_det: type=<class 'torch.Tensor'>, shape=torch.Size([300])
-  labels_3d_det: type=<class 'torch.Tensor'>, shape=torch.Size([300])
-  traj_0: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6, 12, 5])
-  traj_scores_0: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6])
-  traj_1: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6, 12, 5])
-  traj_scores_1: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6])
-  traj: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6, 12, 5])
-  traj_scores: type=<class 'torch.Tensor'>, shape=torch.Size([19, 6])
-  ret_iou: type=<class 'dict'>, shape=15
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 
+planning keys: ['planning_gt', 'result_planning']
+  planning_gt: type=<class 'dict'>, {'segmentation': [tensor([[[[0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          ...,
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0]],
 
+         [[0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          ...,
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0]],
+
+         [[0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          ...,
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0]],
+
+         ...,
+
+         [[0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          ...,
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0]],
+
+         [[0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          ...,
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0]],
+
+         [[0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          ...,
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0],
+          [0, 0, 0,  ..., 0, 0, 0]]]], device='cuda:0')], 'sdc_planning': [tensor([[[[ 0.0758,  4.2526,  1.5528],
+          [ 0.2682,  8.4670,  1.5254],
+          [ 0.5579, 12.6398,  1.4962],
+          [ 0.9556, 16.8074,  1.4693],
+          [ 1.4746, 21.0605,  1.4454],
+          [ 2.1522, 25.3447,  1.4150]]]], device='cuda:0', dtype=torch.float64)], 'sdc_planning_mask': [tensor([[[[1., 1.],
+          [1., 1.],
+          [1., 1.],
+          [1., 1.],
+          [1., 1.],
+          [1., 1.]]]], device='cuda:0', dtype=torch.float64)], 'command': [tensor([0], device='cuda:0')]}
+  result_planning: type=<class 'dict'>, {'sdc_traj': tensor([[[-4.6491e-02,  5.0123e+00],
+         [-3.0211e-02,  1.0108e+01],
+         [-1.3258e-02,  1.5214e+01],
+         [ 4.7214e-02,  2.0680e+01],
+         [ 9.9947e-03,  2.5984e+01],
+         [ 1.7235e-01,  3.1290e+01]]], device='cuda:0'), 'sdc_traj_all': tensor([[[-4.6491e-02,  5.0123e+00],
+         [-3.0211e-02,  1.0108e+01],
+         [-1.3258e-02,  1.5214e+01],
+         [ 4.7214e-02,  2.0680e+01],
+         [ 9.9947e-03,  2.5984e+01],
+         [ 1.7235e-01,  3.1290e+01]]], device='cuda:0')}
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 

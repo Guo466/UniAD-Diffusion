@@ -1,20 +1,11 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD-Diffusion/UniAD$ PYTHONPATH=$(pwd):$PYTHONPATH PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python tools/train.py projects/configs/stage2_e2e/base_e2e_mini.py --no-validate
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import packaging  # type: ignore[attr-defined]
-projects.mmdet3d_plugin
-Traceback (most recent call last):
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 260, in <module>
-    main()
-  File "/home/guo/UniAD-Diffusion/UniAD-Diffusion/UniAD/tools/train.py", line 193, in main
-    env_info_dict = collect_env()
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet3d/utils/collect_env.py", line 13, in collect_env
-    env_info = collect_base_env()
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/utils/env.py", line 49, in collect_env
-    devices[torch.cuda.get_device_name(k)].append(str(k))
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/cuda/__init__.py", line 365, in get_device_name
-    return get_device_properties(device).name
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/cuda/__init__.py", line 395, in get_device_properties
-    _lazy_init()  # will define _get_device_properties
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/cuda/__init__.py", line 247, in _lazy_init
-    torch._C._cuda_init()
-RuntimeError: Unrecognized CachingAllocator option: expandable_segments
+(base) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ conda activate uniad
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ git status
+位于分支 v2.0
+您的分支与上游分支 'origin/v2.0' 一致。
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+	"\347\254\224\350\256\260\346\234\254\344\277\241\346\201\257-UniAD.txt"
+
+提交为空，但是存在尚未跟踪的文件（使用 "git add" 建立跟踪）
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$

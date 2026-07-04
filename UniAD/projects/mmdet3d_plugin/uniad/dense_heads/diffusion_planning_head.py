@@ -617,6 +617,9 @@ class DiffusionPlanningHead(nn.Module):
         max_agents=50,                  # 最多处理的 agent 数量
         output_dim=2,                   # 输出维度（2=x,y；3=x,y,heading）
         flow_matching_loss_weight=1.0,  # FM 损失的权重系数
+        ade_loss_weight=0.5,            # ADE 辅助损失权重（0=关闭，>0=开启）
+                                        # 改进：在归一化空间计算，量纲与 FM loss 完全一致（均约 0~2）
+                                        # 因此 0.5 的权重合理：FM(1.0) 主导速度场，ADE(0.5) 辅助加速收敛
         loss_planning=None,             # 兼容接口，不使用（被 FM loss 替代）
         loss_collision=None,            # 碰撞损失（可选，显存紧张时禁用）
         loss_kinematic=None,            # 兼容接口，不使用
@@ -632,6 +635,7 @@ class DiffusionPlanningHead(nn.Module):
         self.sample_steps              = sample_steps
         self.output_dim                = output_dim
         self.flow_matching_loss_weight = flow_matching_loss_weight
+        self.ade_loss_weight           = ade_loss_weight  # ADE 辅助损失权重
         self.planning_eval             = planning_eval
         self.use_col_optim             = use_col_optim
         self.embed_dims                = embed_dims
@@ -974,6 +978,39 @@ class DiffusionPlanningHead(nn.Module):
         fm_loss = ((pred - target) ** 2 * mask_e).sum() / (mask_e.sum() * self.output_dim + 1e-6)
         fm_loss = fm_loss * self.flow_matching_loss_weight
         losses  = {'loss_flow_matching': fm_loss}
+
+        # ================================================================
+        # ADE 辅助损失（加速收敛的关键）
+        # ================================================================
+        # 原理：FM 的单步预测 pred 是对 (gt_norm - noise) 的估计，
+        #       即 pred ≈ x_data - noise，则 pred + noise ≈ x_data（GT 归一化轨迹）
+        # 直接从 pred 推导预测轨迹，与 GT 轨迹做 L2 对比，形成直接监督。
+        # 这条梯度路径比 FM loss 更短，收敛更快（缺点是略微破坏"速度场一致性"）。
+        if self.ade_loss_weight > 0:
+            # ----------------------------------------------------------------
+            # 【归一化空间 ADE 辅助损失】
+            # 关键设计：在归一化空间计算，量纲与 FM loss 一致（均约 0~2），
+            #           因此权重可以直接与 flow_matching_loss_weight 对齐（如 0.5）。
+            #
+            # 推导：
+            #   z_t = t*x_data + (1-t)*noise
+            #   x_data_est = z_t + pred*(1-t)
+            #              ≈ [t*x_data + (1-t)*noise] + (x_data-noise)*(1-t)
+            #              = t*x_data + (1-t)*noise + (1-t)*x_data - (1-t)*noise
+            #              = x_data   ← 理想情况下恰好等于 GT 归一化轨迹 ✓
+            #
+            # x_data_est 是在归一化空间对 gt_norm（GT 归一化增量序列）的估计，
+            # 与 gt_norm 做 L1/L2 对比，量纲完全一致（无量纲，约 0~2）。
+            # ----------------------------------------------------------------
+            t_view     = t.view(B, 1, 1)
+            # 归一化空间中对 x_data（GT 归一化轨迹增量）的估计
+            x_data_est = z_t.detach() + pred * (1.0 - t_view)      # (B, T, output_dim)
+
+            # 在归一化空间直接计算逐步 L2（量纲与 FM loss 一致）
+            # gt_norm: (B, T, output_dim)，GT 归一化增量序列（即 x_data）
+            ade_norm_loss = ((x_data_est - gt_norm) ** 2 * mask_e).sum(-1)  # (B, T)
+            ade_norm_loss = ade_norm_loss.sqrt().mean()  # 对 B×T 求均值
+            losses['loss_ade_aux'] = ade_norm_loss * self.ade_loss_weight
 
         # ================================================================
         # ⑦ 碰撞损失（当前配置下跳过，loss_collision 为空列表）

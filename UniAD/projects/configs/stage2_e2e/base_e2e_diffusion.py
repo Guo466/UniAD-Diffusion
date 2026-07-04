@@ -72,6 +72,15 @@ model = dict(
         # ---- Flow Matching 损失 ----
         flow_matching_loss_weight=1.0,
 
+        # ---- ADE 辅助损失（加速收敛，让 DiT 在短期训练内追上回归方法）----
+        # 改进：在归一化空间计算，量纲与 FM loss 完全一致（均约 0~2，无量纲）
+        # 因此权重可以直接与 flow_matching_loss_weight 对齐：
+        #   flow_matching_loss_weight=1.0：监督速度场方向（FM 核心任务）
+        #   ade_loss_weight=0.5：          监督轨迹估计（辅助加速收敛）
+        # 两者量纲相同，0.5 的比例让辅助损失起引导作用但不压制 FM 训练
+        # 设为 0 可完全关闭（退回纯 FM 训练）
+        ade_loss_weight=0.5,
+
         # ---- 碰撞损失（显存优化：笔记本 8GB 环境下禁用碰撞损失，节省采样额外的 ODE 轨迹所需显存）----
         # 碰撞损失在 forward_train 中会额外采样一次 ODE 轨迹（3步），占用额外显存
         # 在显存充足的环境中可以重新开启：

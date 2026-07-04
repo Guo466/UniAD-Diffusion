@@ -700,16 +700,29 @@ class DiffusionPlanningHead(nn.Module):
             )
 
         # ----------------------------------------------------------------
-        # 【关键初始化】DiT 全链路零/小值初始化，确保初始 pred ≈ 0
+        # 【关键初始化】DiT 全链路零初始化（AdaLN-Zero 标准方案）
         # ----------------------------------------------------------------
-        # 问题根源：即使 final_layer.linear 权重为零，
-        #   若上游 preproj/dit_blocks 输出量级很大，AdaLN 的 scale 参数
-        #   会放大输入，最终 pred 依然不为零。
-        # 解决方案：对整个输出链路做零初始化：
-        #   1. final_layer.linear        → 零初始化（直接截断输出）
-        #   2. final_layer.adaLN_modulation 最后一层 → 零初始化（AdaLN scale/shift=0）
-        #   3. 每个 DiTBlock.adaLN_modulation 最后一层 → 零初始化（所有调制参数为0）
-        # 效果：初始时整个 DiT 输出 pred = 0，FM loss = ||noise||² ≈ 1，不爆炸。
+        # 问题根源（之前的版本只初始化了 adaLN_modulation，但不够）：
+        #   - adaLN_modulation 零初始化 → shift=0, scale=0
+        #   - modulate(x, 0, 0) = x（不是0！而是 LayerNorm 后的 x）
+        #   - self_attn(x, x, x) / cross_attn / ffn 仍然产生非零输出
+        #   - 这些非零输出通过残差路径累积，最终 pred ≠ 0，FM loss 爆炸
+        #
+        # 正确方案（参考 DiT 原文 Sec 3.1 AdaLN-Zero）：
+        #   同时将 attention/FFN 的最后一个投影层零初始化
+        #   → 每个 Block 的残差贡献 = 0
+        #   → Block 退化为恒等映射（输出 = 输入）
+        #   → final_layer.linear 零初始化后，整个 DiT 输出 pred = 0
+        #   → FM loss = ||target||² = ||gt_norm - noise||² ≈ 2（正态分布差的方差）
+        #
+        # 初始化列表：
+        #   1. final_layer.linear           → 零初始化（直接截断最终输出）
+        #   2. final_layer.adaLN_modulation 最后一层 → 零初始化
+        #   3. 每个 DiTBlock：
+        #      a. adaLN_modulation 最后一层 → 零初始化（调制参数=0，恒等调制）
+        #      b. self_attn.out_proj        → 零初始化（自注意力残差=0）
+        #      c. cross_attn.out_proj       → 零初始化（交叉注意力残差=0）
+        #      d. ffn 最后一层（Linear）    → 零初始化（FFN残差=0）
 
         # final_layer 输出投影
         nn.init.zeros_(self.final_layer.linear.weight)
@@ -717,10 +730,20 @@ class DiffusionPlanningHead(nn.Module):
         # final_layer AdaLN 调制层
         nn.init.zeros_(self.final_layer.adaLN_modulation[-1].weight)
         nn.init.zeros_(self.final_layer.adaLN_modulation[-1].bias)
-        # 每个 DiTBlock 的 AdaLN 调制层
+        # 每个 DiTBlock：出口投影全部零初始化
         for block in self.dit_blocks:
+            # AdaLN 调制输出层（shift/scale=0 → 恒等调制，但注意 modulate 仍传递 x）
             nn.init.zeros_(block.adaLN_modulation[-1].weight)
             nn.init.zeros_(block.adaLN_modulation[-1].bias)
+            # Self-Attention 输出投影（零初始化 → 自注意力的残差贡献=0）
+            nn.init.zeros_(block.self_attn.out_proj.weight)
+            nn.init.zeros_(block.self_attn.out_proj.bias)
+            # Cross-Attention 输出投影（零初始化 → 交叉注意力的残差贡献=0）
+            nn.init.zeros_(block.cross_attn.out_proj.weight)
+            nn.init.zeros_(block.cross_attn.out_proj.bias)
+            # FFN 最后一层（零初始化 → FFN的残差贡献=0）
+            nn.init.zeros_(block.ffn[-1].weight)
+            nn.init.zeros_(block.ffn[-1].bias)
 
     # ------------------------------------------------------------------
     # 【辅助方法】轨迹归一化 / 反归一化

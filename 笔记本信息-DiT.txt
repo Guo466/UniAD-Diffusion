@@ -1,178 +1,184 @@
-on_head.motionformer.map_interaction_layers.0.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm3.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.0.norms.0.weight, motion_head.motionformer.bev_interaction_layers.0.norms.0.bias, motion_head.motionformer.bev_interaction_layers.0.norms.1.weight, motion_head.motionformer.bev_interaction_layers.0.norms.1.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.1.norms.0.weight, motion_head.motionformer.bev_interaction_layers.1.norms.0.bias, motion_head.motionformer.bev_interaction_layers.1.norms.1.weight, motion_head.motionformer.bev_interaction_layers.1.norms.1.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.2.norms.0.weight, motion_head.motionformer.bev_interaction_layers.2.norms.0.bias, motion_head.motionformer.bev_interaction_layers.2.norms.1.weight, motion_head.motionformer.bev_interaction_layers.2.norms.1.bias, motion_head.motionformer.static_dynamic_fuser.0.weight, motion_head.motionformer.static_dynamic_fuser.0.bias, motion_head.motionformer.static_dynamic_fuser.2.weight, motion_head.motionformer.static_dynamic_fuser.2.bias, motion_head.motionformer.dynamic_embed_fuser.0.weight, motion_head.motionformer.dynamic_embed_fuser.0.bias, motion_head.motionformer.dynamic_embed_fuser.2.weight, motion_head.motionformer.dynamic_embed_fuser.2.bias, motion_head.motionformer.in_query_fuser.0.weight, motion_head.motionformer.in_query_fuser.0.bias, motion_head.motionformer.in_query_fuser.2.weight, motion_head.motionformer.in_query_fuser.2.bias, motion_head.motionformer.out_query_fuser.0.weight, motion_head.motionformer.out_query_fuser.0.bias, motion_head.motionformer.out_query_fuser.2.weight, motion_head.motionformer.out_query_fuser.2.bias, motion_head.layer_track_query_fuser.0.weight, motion_head.layer_track_query_fuser.0.bias, motion_head.layer_track_query_fuser.1.weight, motion_head.layer_track_query_fuser.1.bias, motion_head.agent_level_embedding_layer.0.weight, motion_head.agent_level_embedding_layer.0.bias, motion_head.agent_level_embedding_layer.2.weight, motion_head.agent_level_embedding_layer.2.bias, motion_head.scene_level_ego_embedding_layer.0.weight, motion_head.scene_level_ego_embedding_layer.0.bias, motion_head.scene_level_ego_embedding_layer.2.weight, motion_head.scene_level_ego_embedding_layer.2.bias, motion_head.scene_level_offset_embedding_layer.0.weight, motion_head.scene_level_offset_embedding_layer.0.bias, motion_head.scene_level_offset_embedding_layer.2.weight, motion_head.scene_level_offset_embedding_layer.2.bias, motion_head.boxes_query_embedding_layer.0.weight, motion_head.boxes_query_embedding_layer.0.bias, motion_head.boxes_query_embedding_layer.2.weight, motion_head.boxes_query_embedding_layer.2.bias, motion_head.traj_cls_branches.0.0.weight, motion_head.traj_cls_branches.0.0.bias, motion_head.traj_cls_branches.0.1.weight, motion_head.traj_cls_branches.0.1.bias, motion_head.traj_cls_branches.0.3.weight, motion_head.traj_cls_branches.0.3.bias, motion_head.traj_cls_branches.0.4.weight, motion_head.traj_cls_branches.0.4.bias, motion_head.traj_cls_branches.0.6.weight, motion_head.traj_cls_branches.0.6.bias, motion_head.traj_cls_branches.1.0.weight, motion_head.traj_cls_branches.1.0.bias, motion_head.traj_cls_branches.1.1.weight, motion_head.traj_cls_branches.1.1.bias, motion_head.traj_cls_branches.1.3.weight, motion_head.traj_cls_branches.1.3.bias, motion_head.traj_cls_branches.1.4.weight, motion_head.traj_cls_branches.1.4.bias, motion_head.traj_cls_branches.1.6.weight, motion_head.traj_cls_branches.1.6.bias, motion_head.traj_cls_branches.2.0.weight, motion_head.traj_cls_branches.2.0.bias, motion_head.traj_cls_branches.2.1.weight, motion_head.traj_cls_branches.2.1.bias, motion_head.traj_cls_branches.2.3.weight, motion_head.traj_cls_branches.2.3.bias, motion_head.traj_cls_branches.2.4.weight, motion_head.traj_cls_branches.2.4.bias, motion_head.traj_cls_branches.2.6.weight, motion_head.traj_cls_branches.2.6.bias, motion_head.traj_reg_branches.0.0.weight, motion_head.traj_reg_branches.0.0.bias, motion_head.traj_reg_branches.0.2.weight, motion_head.traj_reg_branches.0.2.bias, motion_head.traj_reg_branches.0.4.weight, motion_head.traj_reg_branches.0.4.bias, motion_head.traj_reg_branches.1.0.weight, motion_head.traj_reg_branches.1.0.bias, motion_head.traj_reg_branches.1.2.weight, motion_head.traj_reg_branches.1.2.bias, motion_head.traj_reg_branches.1.4.weight, motion_head.traj_reg_branches.1.4.bias, motion_head.traj_reg_branches.2.0.weight, motion_head.traj_reg_branches.2.0.bias, motion_head.traj_reg_branches.2.2.weight, motion_head.traj_reg_branches.2.2.bias, motion_head.traj_reg_branches.2.4.weight, motion_head.traj_reg_branches.2.4.bias, planning_head.traj_mean, planning_head.traj_std, planning_head.bev_track_bridge.bev_pos_embed, planning_head.bev_track_bridge.bev_compress.0.weight, planning_head.bev_track_bridge.bev_compress.0.bias, planning_head.bev_track_bridge.bev_compress.2.weight, planning_head.bev_track_bridge.bev_compress.2.bias, planning_head.bev_track_bridge.track_proj.0.weight, planning_head.bev_track_bridge.track_proj.0.bias, planning_head.bev_track_bridge.track_proj.1.weight, planning_head.bev_track_bridge.track_proj.1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.in_proj_weight, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.in_proj_bias, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.out_proj.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.out_proj.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.linear1.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.linear1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.linear2.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.linear2.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.norm1.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.norm1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.norm2.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.norm2.bias, planning_head.ego_bridge.ego_fuser.0.weight, planning_head.ego_bridge.ego_fuser.0.bias, planning_head.ego_bridge.ego_fuser.1.weight, planning_head.ego_bridge.ego_fuser.1.bias, planning_head.ego_bridge.command_embed.weight, planning_head.ego_bridge.routing_fuser.0.weight, planning_head.ego_bridge.routing_fuser.0.bias, planning_head.ego_bridge.routing_fuser.1.weight, planning_head.ego_bridge.routing_fuser.1.bias, planning_head.t_embedder.mlp.0.weight, planning_head.t_embedder.mlp.0.bias, planning_head.t_embedder.mlp.2.weight, planning_head.t_embedder.mlp.2.bias, planning_head.ego_time_pe.pe, planning_head.preproj.fc1.weight, planning_head.preproj.fc1.bias, planning_head.preproj.fc2.weight, planning_head.preproj.fc2.bias, planning_head.vector_in.fc1.weight, planning_head.vector_in.fc1.bias, planning_head.vector_in.fc2.weight, planning_head.vector_in.fc2.bias, planning_head.routing_in.fc1.weight, planning_head.routing_in.fc1.bias, planning_head.routing_in.fc2.weight, planning_head.routing_in.fc2.bias, planning_head.context_in.fc1.weight, planning_head.context_in.fc1.bias, planning_head.context_in.fc2.weight, planning_head.context_in.fc2.bias, planning_head.dit_blocks.0.self_attn.in_proj_weight, planning_head.dit_blocks.0.self_attn.in_proj_bias, planning_head.dit_blocks.0.self_attn.out_proj.weight, planning_head.dit_blocks.0.self_attn.out_proj.bias, planning_head.dit_blocks.0.cross_attn.in_proj_weight, planning_head.dit_blocks.0.cross_attn.in_proj_bias, planning_head.dit_blocks.0.cross_attn.out_proj.weight, planning_head.dit_blocks.0.cross_attn.out_proj.bias, planning_head.dit_blocks.0.ffn.0.weight, planning_head.dit_blocks.0.ffn.0.bias, planning_head.dit_blocks.0.ffn.2.weight, planning_head.dit_blocks.0.ffn.2.bias, planning_head.dit_blocks.0.adaLN_modulation.1.weight, planning_head.dit_blocks.0.adaLN_modulation.1.bias, planning_head.dit_blocks.1.self_attn.in_proj_weight, planning_head.dit_blocks.1.self_attn.in_proj_bias, planning_head.dit_blocks.1.self_attn.out_proj.weight, planning_head.dit_blocks.1.self_attn.out_proj.bias, planning_head.dit_blocks.1.cross_attn.in_proj_weight, planning_head.dit_blocks.1.cross_attn.in_proj_bias, planning_head.dit_blocks.1.cross_attn.out_proj.weight, planning_head.dit_blocks.1.cross_attn.out_proj.bias, planning_head.dit_blocks.1.ffn.0.weight, planning_head.dit_blocks.1.ffn.0.bias, planning_head.dit_blocks.1.ffn.2.weight, planning_head.dit_blocks.1.ffn.2.bias, planning_head.dit_blocks.1.adaLN_modulation.1.weight, planning_head.dit_blocks.1.adaLN_modulation.1.bias, planning_head.final_layer.linear.weight, planning_head.final_layer.linear.bias, planning_head.final_layer.adaLN_modulation.1.weight, planning_head.final_layer.adaLN_modulation.1.bias
-
-2026-07-04 16:53:07,532 - mmdet - INFO - Start running, host: guo@guo-Legion-Y7000-IRX9, work_dir: /home/guo/UniAD-Diffusion/UniAD/work_dirs/base_e2e_diffusion
-2026-07-04 16:53:07,532 - mmdet - INFO - Start running, host: guo@guo-Legion-Y7000-IRX9, work_dir: /home/guo/UniAD-Diffusion/UniAD/work_dirs/base_e2e_diffusion
-2026-07-04 16:53:07,532 - mmdet - INFO - Hooks will be executed in the following order:
-before_run:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_epoch:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_iter:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_train_iter:
-(ABOVE_NORMAL) OptimizerHook                      
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_train_epoch:
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_epoch:
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_epoch:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_run:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-2026-07-04 16:53:07,532 - mmdet - INFO - Hooks will be executed in the following order:
-before_run:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_epoch:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_iter:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_train_iter:
-(ABOVE_NORMAL) OptimizerHook                      
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_train_epoch:
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_epoch:
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_epoch:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_run:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-2026-07-04 16:53:07,533 - mmdet - INFO - workflow: [('train', 1)], max: 20 epochs
-2026-07-04 16:53:07,533 - mmdet - INFO - workflow: [('train', 1)], max: 20 epochs
-2026-07-04 16:53:07,533 - mmdet - INFO - Checkpoints will be saved to /home/guo/UniAD-Diffusion/UniAD/work_dirs/base_e2e_diffusion by HardDiskBackend.
-2026-07-04 16:53:07,533 - mmdet - INFO - Checkpoints will be saved to /home/guo/UniAD-Diffusion/UniAD/work_dirs/base_e2e_diffusion by HardDiskBackend.
-projects.mmdet3d_plugin
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.240 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-WARNING!!!!, Only can be used for obtain inference speed!!!!
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.134 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-WARNING!!!!, Only can be used for obtain inference speed!!!!
-2026-07-04 16:53:09,642 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-04 16:53:09,649 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-04 16:53:09,662 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-04 16:53:09,671 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-04 16:53:10,843 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-04 16:53:10,851 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-04 16:53:10,866 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-04 16:53:10,877 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-04 16:53:16,579 - shapely.geos - INFO - Self-intersection at or near point 134.36374450633136 1091.2903070826083
-2026-07-04 16:53:16,590 - shapely.geos - INFO - Self-intersection at or near point 165.02390945024581 1095.7013529720464
-2026-07-04 16:53:19,522 - shapely.geos - INFO - Self-intersection at or near point 134.36374450633136 1091.2903070826083
-2026-07-04 16:53:19,533 - shapely.geos - INFO - Self-intersection at or near point 165.02390945024581 1095.7013529720464
-2026-07-04 16:53:25,305 - mmdet - INFO - Epoch [1][5/323]	lr: 3.867e-05, eta: 6:22:08, time: 3.552, data_time: 0.557, memory: 5786, track.frame_0_loss_cls_0: 1.0125, track.frame_0_loss_bbox_0: 1.5445, track.frame_0_loss_past_trajs_0: 9.8549, track.frame_0_loss_cls_1: 0.8882, track.frame_0_loss_bbox_1: 1.3471, track.frame_0_loss_past_trajs_1: 9.8575, track.frame_0_loss_cls_2: 0.7917, track.frame_0_loss_bbox_2: 1.2905, track.frame_0_loss_past_trajs_2: 9.8575, track.frame_0_loss_cls_3: 0.6539, track.frame_0_loss_bbox_3: 1.2873, track.frame_0_loss_past_trajs_3: 9.8559, track.frame_0_loss_cls_4: 0.6338, track.frame_0_loss_bbox_4: 1.2692, track.frame_0_loss_past_trajs_4: 9.8577, track.frame_0_loss_cls_5: 0.6161, track.frame_0_loss_bbox_5: 1.2988, track.frame_0_loss_past_trajs_5: 9.8579, map.loss_cls: 1.3850, map.loss_bbox: 1.5838, map.loss_iou: 2.2218, map.loss_mask_things: 1.8560, map.loss_mask_stuff: 0.0070, map.d0.loss_mask_things_f: 1.9028, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8514, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8508, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8566, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0075, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0069, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0071, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0071, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0069, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0072, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 1.0675, map.d0.loss_bbox: 1.5341, map.d0.loss_iou: 2.1874, map.d1.loss_cls: 1.2208, map.d1.loss_bbox: 1.5908, map.d1.loss_iou: 2.1909, map.d2.loss_cls: 1.2391, map.d2.loss_bbox: 1.5961, map.d2.loss_iou: 2.1959, map.d3.loss_cls: 1.3465, map.d3.loss_bbox: 1.6066, map.d3.loss_iou: 2.1644, map.d4.loss_cls: 1.2940, map.d4.loss_bbox: 1.5754, map.d4.loss_iou: 2.1821, motion.loss_traj: 119.7947, motion.l_class: 1.8315, motion.l_reg: 226.4537, motion.min_ade: 12.5298, motion.min_fde: 22.6085, motion.mr: 0.5433, motion.d0.loss_traj: 119.1553, motion.d0.l_class: 1.8033, motion.d0.l_reg: 225.2155, motion.d0.min_ade: 12.5157, motion.d0.min_fde: 22.5836, motion.d0.mr: 0.5433, motion.d1.loss_traj: 119.7464, motion.d1.l_class: 1.7910, motion.d1.l_reg: 226.4107, motion.d1.min_ade: 12.5190, motion.d1.min_fde: 22.5822, motion.d1.mr: 0.5433, planning.loss_flow_matching: 218.5387, planning.loss_ade_aux: 3.6446, loss: 692.2043, grad_norm: 725.5391
-2026-07-04 16:53:25,305 - mmdet - INFO - Epoch [1][5/323]	lr: 3.867e-05, eta: 6:22:08, time: 3.552, data_time: 0.557, memory: 5786, track.frame_0_loss_cls_0: 1.0125, track.frame_0_loss_bbox_0: 1.5445, track.frame_0_loss_past_trajs_0: 9.8549, track.frame_0_loss_cls_1: 0.8882, track.frame_0_loss_bbox_1: 1.3471, track.frame_0_loss_past_trajs_1: 9.8575, track.frame_0_loss_cls_2: 0.7917, track.frame_0_loss_bbox_2: 1.2905, track.frame_0_loss_past_trajs_2: 9.8575, track.frame_0_loss_cls_3: 0.6539, track.frame_0_loss_bbox_3: 1.2873, track.frame_0_loss_past_trajs_3: 9.8559, track.frame_0_loss_cls_4: 0.6338, track.frame_0_loss_bbox_4: 1.2692, track.frame_0_loss_past_trajs_4: 9.8577, track.frame_0_loss_cls_5: 0.6161, track.frame_0_loss_bbox_5: 1.2988, track.frame_0_loss_past_trajs_5: 9.8579, map.loss_cls: 1.3850, map.loss_bbox: 1.5838, map.loss_iou: 2.2218, map.loss_mask_things: 1.8560, map.loss_mask_stuff: 0.0070, map.d0.loss_mask_things_f: 1.9028, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8514, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8508, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8566, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0075, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0069, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0071, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0071, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0069, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0072, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 1.0675, map.d0.loss_bbox: 1.5341, map.d0.loss_iou: 2.1874, map.d1.loss_cls: 1.2208, map.d1.loss_bbox: 1.5908, map.d1.loss_iou: 2.1909, map.d2.loss_cls: 1.2391, map.d2.loss_bbox: 1.5961, map.d2.loss_iou: 2.1959, map.d3.loss_cls: 1.3465, map.d3.loss_bbox: 1.6066, map.d3.loss_iou: 2.1644, map.d4.loss_cls: 1.2940, map.d4.loss_bbox: 1.5754, map.d4.loss_iou: 2.1821, motion.loss_traj: 119.7947, motion.l_class: 1.8315, motion.l_reg: 226.4537, motion.min_ade: 12.5298, motion.min_fde: 22.6085, motion.mr: 0.5433, motion.d0.loss_traj: 119.1553, motion.d0.l_class: 1.8033, motion.d0.l_reg: 225.2155, motion.d0.min_ade: 12.5157, motion.d0.min_fde: 22.5836, motion.d0.mr: 0.5433, motion.d1.loss_traj: 119.7464, motion.d1.l_class: 1.7910, motion.d1.l_reg: 226.4107, motion.d1.min_ade: 12.5190, motion.d1.min_fde: 22.5822, motion.d1.mr: 0.5433, planning.loss_flow_matching: 218.5387, planning.loss_ade_aux: 3.6446, loss: 692.2043, grad_norm: 725.5391
-2026-07-04 16:53:28,264 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-04 16:53:28,270 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-04 16:53:28,283 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-04 16:53:28,291 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+p.d5.loss_mask_stuff_f: 0.0000, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.0000, map.d0.loss_bbox: 0.0000, map.d0.loss_iou: 0.0000, map.d1.loss_cls: 0.0000, map.d1.loss_bbox: 0.0000, map.d1.loss_iou: 0.0000, map.d2.loss_cls: 0.0000, map.d2.loss_bbox: 0.0000, map.d2.loss_iou: 0.0000, map.d3.loss_cls: 0.0000, map.d3.loss_bbox: 0.0000, map.d3.loss_iou: 0.0000, map.d4.loss_cls: 0.0000, map.d4.loss_bbox: 0.0000, map.d4.loss_iou: 0.0000, motion.loss_traj: 0.0000, motion.l_class: 0.0000, motion.l_reg: 0.0000, motion.min_ade: 0.0000, motion.min_fde: 0.0000, motion.mr: 0.0000, motion.d0.loss_traj: 0.0000, motion.d0.l_class: 0.0000, motion.d0.l_reg: 0.0000, motion.d0.min_ade: 0.0000, motion.d0.min_fde: 0.0000, motion.d0.mr: 0.0000, motion.d1.loss_traj: 0.0000, motion.d1.l_class: 0.0000, motion.d1.l_reg: 0.0000, motion.d1.min_ade: 0.0000, motion.d1.min_fde: 0.0000, motion.d1.mr: 0.0000, planning.loss_flow_matching: 0.0000, planning.loss_ade_aux: 0.0000, loss: 0.0000, grad_norm: nan
+2026-07-04 18:18:43,633 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:18:43,640 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:18:43,654 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:18:43,664 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:18:51,846 - mmdet - INFO - Epoch [5][320/323]	lr: 9.046e-05, eta: 3:59:22, time: 2.758, data_time: 0.015, memory: 5786, track.frame_0_loss_cls_0: 0.0000, track.frame_0_loss_bbox_0: 0.0000, track.frame_0_loss_past_trajs_0: 0.0000, track.frame_0_loss_cls_1: 0.0000, track.frame_0_loss_bbox_1: 0.0000, track.frame_0_loss_past_trajs_1: 0.0000, track.frame_0_loss_cls_2: 0.0000, track.frame_0_loss_bbox_2: 0.0000, track.frame_0_loss_past_trajs_2: 0.0000, track.frame_0_loss_cls_3: 0.0000, track.frame_0_loss_bbox_3: 0.0000, track.frame_0_loss_past_trajs_3: 0.0000, track.frame_0_loss_cls_4: 0.0000, track.frame_0_loss_bbox_4: 0.0000, track.frame_0_loss_past_trajs_4: 0.0000, track.frame_0_loss_cls_5: 0.0000, track.frame_0_loss_bbox_5: 0.0000, track.frame_0_loss_past_trajs_5: 0.0000, map.loss_cls: 0.0000, map.loss_bbox: 0.0000, map.loss_iou: 0.0000, map.loss_mask_things: 0.0000, map.loss_mask_stuff: 0.0000, map.d0.loss_mask_things_f: 0.0000, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.0000, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.0000, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.0000, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0000, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0000, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0000, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0000, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0000, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0000, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.0000, map.d0.loss_bbox: 0.0000, map.d0.loss_iou: 0.0000, map.d1.loss_cls: 0.0000, map.d1.loss_bbox: 0.0000, map.d1.loss_iou: 0.0000, map.d2.loss_cls: 0.0000, map.d2.loss_bbox: 0.0000, map.d2.loss_iou: 0.0000, map.d3.loss_cls: 0.0000, map.d3.loss_bbox: 0.0000, map.d3.loss_iou: 0.0000, map.d4.loss_cls: 0.0000, map.d4.loss_bbox: 0.0000, map.d4.loss_iou: 0.0000, motion.loss_traj: 0.0000, motion.l_class: 0.0000, motion.l_reg: 0.0000, motion.min_ade: 0.0000, motion.min_fde: 0.0000, motion.mr: 0.0000, motion.d0.loss_traj: 0.0000, motion.d0.l_class: 0.0000, motion.d0.l_reg: 0.0000, motion.d0.min_ade: 0.0000, motion.d0.min_fde: 0.0000, motion.d0.mr: 0.0000, motion.d1.loss_traj: 0.0000, motion.d1.l_class: 0.0000, motion.d1.l_reg: 0.0000, motion.d1.min_ade: 0.0000, motion.d1.min_fde: 0.0000, motion.d1.mr: 0.0000, planning.loss_flow_matching: 0.0000, planning.loss_ade_aux: 0.0000, loss: 0.0000, grad_norm: nan
+2026-07-04 18:18:51,846 - mmdet - INFO - Epoch [5][320/323]	lr: 9.046e-05, eta: 3:59:22, time: 2.758, data_time: 0.015, memory: 5786, track.frame_0_loss_cls_0: 0.0000, track.frame_0_loss_bbox_0: 0.0000, track.frame_0_loss_past_trajs_0: 0.0000, track.frame_0_loss_cls_1: 0.0000, track.frame_0_loss_bbox_1: 0.0000, track.frame_0_loss_past_trajs_1: 0.0000, track.frame_0_loss_cls_2: 0.0000, track.frame_0_loss_bbox_2: 0.0000, track.frame_0_loss_past_trajs_2: 0.0000, track.frame_0_loss_cls_3: 0.0000, track.frame_0_loss_bbox_3: 0.0000, track.frame_0_loss_past_trajs_3: 0.0000, track.frame_0_loss_cls_4: 0.0000, track.frame_0_loss_bbox_4: 0.0000, track.frame_0_loss_past_trajs_4: 0.0000, track.frame_0_loss_cls_5: 0.0000, track.frame_0_loss_bbox_5: 0.0000, track.frame_0_loss_past_trajs_5: 0.0000, map.loss_cls: 0.0000, map.loss_bbox: 0.0000, map.loss_iou: 0.0000, map.loss_mask_things: 0.0000, map.loss_mask_stuff: 0.0000, map.d0.loss_mask_things_f: 0.0000, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.0000, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.0000, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.0000, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0000, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0000, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0000, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0000, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0000, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0000, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.0000, map.d0.loss_bbox: 0.0000, map.d0.loss_iou: 0.0000, map.d1.loss_cls: 0.0000, map.d1.loss_bbox: 0.0000, map.d1.loss_iou: 0.0000, map.d2.loss_cls: 0.0000, map.d2.loss_bbox: 0.0000, map.d2.loss_iou: 0.0000, map.d3.loss_cls: 0.0000, map.d3.loss_bbox: 0.0000, map.d3.loss_iou: 0.0000, map.d4.loss_cls: 0.0000, map.d4.loss_bbox: 0.0000, map.d4.loss_iou: 0.0000, motion.loss_traj: 0.0000, motion.l_class: 0.0000, motion.l_reg: 0.0000, motion.min_ade: 0.0000, motion.min_fde: 0.0000, motion.mr: 0.0000, motion.d0.loss_traj: 0.0000, motion.d0.l_class: 0.0000, motion.d0.l_reg: 0.0000, motion.d0.min_ade: 0.0000, motion.d0.min_fde: 0.0000, motion.d0.mr: 0.0000, motion.d1.loss_traj: 0.0000, motion.d1.l_class: 0.0000, motion.d1.l_reg: 0.0000, motion.d1.min_ade: 0.0000, motion.d1.min_fde: 0.0000, motion.d1.mr: 0.0000, planning.loss_flow_matching: 0.0000, planning.loss_ade_aux: 0.0000, loss: 0.0000, grad_norm: nan
+2026-07-04 18:19:00,301 - mmdet - INFO - Saving checkpoint at 5 epochs
+2026-07-04 18:19:00,301 - mmdet - INFO - Saving checkpoint at 5 epochs
+[                                                  ] 0/81, elapsed: 0s, ETA:2026-07-04 18:19:01,526 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:01,532 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:01,534 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:01,540 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:01,550 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:01,556 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:01,561 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:01,566 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:02,374 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:02,383 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:02,388 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:02,397 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:02,402 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:02,414 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:02,416 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:02,428 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:03,165 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:03,175 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:03,196 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:03,209 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[                                  ] 1/81, 0.4 task/s, elapsed: 2s, ETA:   183s2026-07-04 18:19:03,788 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:03,797 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:03,815 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:03,827 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[                                  ] 2/81, 0.6 task/s, elapsed: 4s, ETA:   139s2026-07-04 18:19:05,003 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:05,010 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:05,025 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:05,035 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>                                 ] 3/81, 0.6 task/s, elapsed: 5s, ETA:   124s2026-07-04 18:19:06,227 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:06,235 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:06,249 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:06,260 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>                                 ] 4/81, 0.7 task/s, elapsed: 6s, ETA:   115s2026-07-04 18:19:07,453 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:07,460 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:07,475 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:07,485 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>                                ] 5/81, 0.7 task/s, elapsed: 7s, ETA:   110s2026-07-04 18:19:08,682 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:08,690 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:08,705 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:08,715 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>                                ] 6/81, 0.7 task/s, elapsed: 8s, ETA:   105s2026-07-04 18:19:09,899 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:09,907 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:09,922 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:09,932 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>                               ] 7/81, 0.7 task/s, elapsed: 10s, ETA:   102s2026-07-04 18:19:11,127 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:11,134 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:11,150 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:11,160 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>                              ] 8/81, 0.7 task/s, elapsed: 11s, ETA:    99s2026-07-04 18:19:12,356 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:12,364 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:12,380 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:12,392 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>                              ] 9/81, 0.7 task/s, elapsed: 12s, ETA:    97s2026-07-04 18:19:13,595 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:13,603 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:13,620 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:13,632 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>                             ] 10/81, 0.7 task/s, elapsed: 13s, ETA:    95s2026-07-04 18:19:14,826 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:14,834 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:14,852 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:14,863 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>                            ] 11/81, 0.8 task/s, elapsed: 15s, ETA:    93s2026-07-04 18:19:16,061 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:16,069 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:16,086 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:16,098 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>                            ] 12/81, 0.8 task/s, elapsed: 16s, ETA:    91s2026-07-04 18:19:17,301 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:17,309 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:17,327 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:17,339 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>                           ] 13/81, 0.8 task/s, elapsed: 17s, ETA:    89s2026-07-04 18:19:18,537 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:18,545 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:18,563 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:18,575 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>                           ] 14/81, 0.8 task/s, elapsed: 18s, ETA:    87s2026-07-04 18:19:19,774 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:19,782 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:19,800 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:19,811 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>                           ] 15/81, 0.8 task/s, elapsed: 20s, ETA:    86s2026-07-04 18:19:20,992 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:21,000 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:21,018 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:21,030 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>                          ] 16/81, 0.8 task/s, elapsed: 21s, ETA:    84s2026-07-04 18:19:22,280 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:22,293 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:22,321 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:22,341 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>                          ] 17/81, 0.8 task/s, elapsed: 22s, ETA:    83s2026-07-04 18:19:23,865 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:23,898 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:23,970 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:24,019 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>                         ] 18/81, 0.8 task/s, elapsed: 24s, ETA:    83s2026-07-04 18:19:25,367 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:25,400 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:25,471 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:25,518 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>                         ] 19/81, 0.7 task/s, elapsed: 25s, ETA:    83s2026-07-04 18:19:27,839 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:27,907 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:28,051 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:28,150 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>                         ] 20/81, 0.7 task/s, elapsed: 27s, ETA:    84s2026-07-04 18:19:30,778 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+[>>>>>>>>                        ] 21/81, 0.7 task/s, elapsed: 29s, ETA:    84s2026-07-04 18:19:30,847 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:30,992 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:31,090 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>                        ] 22/81, 0.7 task/s, elapsed: 31s, ETA:    84s2026-07-04 18:19:34,163 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:34,197 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:34,269 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:34,317 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>                       ] 23/81, 0.7 task/s, elapsed: 33s, ETA:    84s2026-07-04 18:19:35,948 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:35,982 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:36,055 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:36,103 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>                       ] 24/81, 0.7 task/s, elapsed: 35s, ETA:    82s2026-07-04 18:19:37,595 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:37,629 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+[>>>>>>>>>                       ] 25/81, 0.7 task/s, elapsed: 36s, ETA:    81s2026-07-04 18:19:37,720 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:37,770 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:39,016 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:39,038 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:39,084 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:39,113 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>                      ] 26/81, 0.7 task/s, elapsed: 38s, ETA:    80s2026-07-04 18:19:40,062 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:40,080 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:40,117 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:40,141 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>                      ] 27/81, 0.7 task/s, elapsed: 39s, ETA:    78s2026-07-04 18:19:40,830 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:40,849 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:40,887 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:40,912 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:41,724 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:41,741 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:41,775 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+[>>>>>>>>>>>                     ] 28/81, 0.7 task/s, elapsed: 40s, ETA:    76s2026-07-04 18:19:41,798 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-04 18:19:42,397 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:42,415 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:42,449 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:42,473 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>                     ] 29/81, 0.7 task/s, elapsed: 42s, ETA:    75s2026-07-04 18:19:43,330 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:43,346 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:43,377 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:43,399 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>                     ] 30/81, 0.7 task/s, elapsed: 43s, ETA:    73s2026-07-04 18:19:44,478 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:44,490 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:44,517 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:44,535 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>                    ] 31/81, 0.7 task/s, elapsed: 44s, ETA:    71s2026-07-04 18:19:45,711 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:45,720 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:45,740 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:45,754 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>                    ] 32/81, 0.7 task/s, elapsed: 45s, ETA:    70s2026-07-04 18:19:46,949 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:46,957 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:46,975 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:46,987 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>>                   ] 33/81, 0.7 task/s, elapsed: 47s, ETA:    68s2026-07-04 18:19:48,183 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:48,191 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:48,208 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:48,219 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>>                   ] 34/81, 0.7 task/s, elapsed: 48s, ETA:    66s2026-07-04 18:19:49,414 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:49,422 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:49,440 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:49,451 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>>                   ] 35/81, 0.7 task/s, elapsed: 49s, ETA:    65s2026-07-04 18:19:50,647 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-04 18:19:50,655 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-04 18:19:50,671 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-04 18:19:50,682 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 81/81, 0.8 task/s, elapsed: 106s, ETA:     0sStart to convert detection format...
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 81/81, 2990.1 task/s, elapsed: 0s, ETA:     0s
+Results writes to val/work_dirs/base_e2e_diffusion/Sat_Jul__4_16_58_36_2026/results_nusc.json
+Start to convert detection format...
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 81/81, 4594.4 task/s, elapsed: 0s, ETA:     0s
+Results writes to val/work_dirs/base_e2e_diffusion/Sat_Jul__4_16_58_36_2026/results_nusc_det.json
+Initializing nuScenes detection evaluation
+Loaded results from val/work_dirs/base_e2e_diffusion/Sat_Jul__4_16_58_36_2026/results_nusc_det.json. Found detections for 81 samples.
+Loading annotations for mini_val split from nuScenes version: v1.0-mini
+100%|██████████| 81/81 [00:00<00:00, 148.94it/s]
+Loaded ground truth annotations for 81 samples.
+Filtering predictions
 Traceback (most recent call last):
   File "/home/guo/UniAD-Diffusion/UniAD/tools/train.py", line 260, in <module>
     main()
@@ -184,41 +190,25 @@ Traceback (most recent call last):
     runner.run(data_loaders, cfg.workflow)
   File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 136, in run
     epoch_runner(data_loaders[i], **kwargs)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 53, in train
-    self.run_iter(data_batch, train_mode=True, **kwargs)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 31, in run_iter
-    outputs = self.model.train_step(data_batch, self.optimizer,
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/parallel/data_parallel.py", line 77, in train_step
-    return self.module.train_step(*inputs[0], **kwargs[0])
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet/models/detectors/base.py", line 248, in train_step
-    losses = self(**data)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 146, in forward
-    return self.forward_train(**kwargs)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 116, in new_func
-    return old_func(*args, **kwargs)
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 251, in forward_train
-    losses_seg, outs_seg = self.seg_head.forward_train(
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 116, in new_func
-    return old_func(*args, **kwargs)
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/panseg_head.py", line 1335, in forward_train
-    losses_seg = self.loss(*loss_inputs, img_metas=img_metas)
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 205, in new_func
-    return old_func(*args, **kwargs)
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/panseg_head.py", line 513, in loss
-    things_ratio, stuff_ratio = self.loss_single_panoptic(
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/panseg_head.py", line 908, in loss_single_panoptic
-    loss_cls, loss_iou, loss_bbox, pos_inds_mask_list, num_total_pos_thing = self.get_filter_results_and_loss(
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/panseg_head.py", line 815, in get_filter_results_and_loss
-    bbox_weights_list, num_total_pos_thing, num_total_neg_thing, pos_inds_list, neg_inds_list = self.filter_query(
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/panseg_head.py", line 603, in filter_query
-    bbox_weights_list, pos_inds_list, neg_inds_list) = multi_apply(
-  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet/core/utils/misc.py", line 30, in multi_apply
-    return tuple(map(list, zip(*map_results)))
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/panseg_head.py", line 641, in _filter_query_single
-    pos_ind_mask, neg_ind_mask, assign_result = self.assigner_filter.assign(
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/seg_head_plugin/seg_assigner.py", line 280, in assign
-    matched_row_inds, matched_col_inds = linear_sum_assignment(cost)
-ValueError: matrix contains invalid numeric entries
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 58, in train
+    self.call_hook('after_train_epoch')
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/base_runner.py", line 317, in call_hook
+    getattr(hook, fn_name)(self)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/hooks/evaluation.py", line 271, in after_train_epoch
+    self._do_evaluate(runner)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmdet/core/evaluation/eval_hooks.py", line 63, in _do_evaluate
+    key_score = self.evaluate(runner, results)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/hooks/evaluation.py", line 367, in evaluate
+    eval_res = self.dataloader.dataset.evaluate(
+  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/datasets/nuscenes_e2e_dataset.py", line 1427, in evaluate
+    results_dict = self._evaluate_single(
+  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/datasets/nuscenes_e2e_dataset.py", line 1519, in _evaluate_single
+    self.nusc_eval = NuScenesEval_custom(
+  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/datasets/eval_utils/nuscenes_eval.py", line 527, in __init__
+    self.pred_boxes = filter_eval_boxes(nusc, self.pred_boxes, self.cfg.class_range, verbose=verbose)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/nuscenes/eval/common/loaders.py", line 219, in filter_eval_boxes
+    class_field = _get_box_class_field(eval_boxes)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/nuscenes/eval/common/loaders.py", line 283, in _get_box_class_field
+    raise Exception('Error: Invalid box type: %s' % box)
+Exception: Error: Invalid box type: None
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 

@@ -522,6 +522,14 @@ class NuScenesEval_custom(NuScenesEval):
 
         # Filter boxes (distance, points per box, etc.).
 
+        # 安全过滤：移除 detection_name 为 None 的无效预测框
+        # 当模型参数含 NaN 时，类别预测可能输出无效值，导致 detection_name=None
+        for sample_token in self.pred_boxes.sample_tokens:
+            self.pred_boxes.boxes[sample_token] = [
+                b for b in self.pred_boxes.boxes[sample_token]
+                if b.detection_name is not None
+            ]
+
         if verbose:
             print('Filtering predictions')
         self.pred_boxes = filter_eval_boxes(nusc, self.pred_boxes, self.cfg.class_range, verbose=verbose)

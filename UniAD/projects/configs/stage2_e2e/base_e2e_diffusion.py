@@ -166,9 +166,11 @@ data = dict(
 total_epochs = 20
 runner = dict(type="EpochBasedRunner", max_epochs=total_epochs)
 
-# ---- 评估间隔：每 5 个 epoch 评估一次（Mini 数据快）----
+# ---- 评估间隔：只在最后 epoch 评估一次 ----
+# DiT 初期参数不稳定（loss 全 0 / grad_norm=nan），中途评估会因为检测框为 None 而崩溃。
+# 改为仅在训练结束时（第 20 epoch）做一次评估，此时模型已充分收敛。
 evaluation = dict(
-    interval=5,
+    interval=20,
     planning_evaluation_strategy="uniad",
 )
 

@@ -126,9 +126,24 @@ optimizer = dict(
 )
 
 # 梯度裁剪（覆盖 base_e2e.py 的 max_norm=35）
-# DiT 规划头初期 loss 较大（FM loss 量级可能在 100~500），梯度也更大，
-# 将 max_norm 收紧为 1.0，防止初期梯度爆炸导致 NaN 传播到其他子头（如 seg_head）
-optimizer_config = dict(grad_clip=dict(max_norm=1.0, norm_type=2))
+# max_norm=35 与原始 UniAD 保持一致，final_layer 零初始化后 FM loss 已正常，
+# 不需要过于激进的裁剪；但保留裁剪作为安全网，防止极端 batch 导致的偶发爆炸。
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+
+# 各任务头 loss 权重（覆盖 base_e2e.py 默认值）
+# 问题根源：motion.l_reg 量级约 226，远超其他子头（track~5, map~5, planning~1），
+# 导致整体梯度被 motion head 主导，爆炸后参数变 NaN。
+# 解决：将 motion 权重降至 0.5，使其对总梯度的贡献与其他子头相当（226×0.5=113）。
+# planning 权重不变（1.0），保证规划头有充足学习信号。
+model = dict(
+    task_loss_weight=dict(
+        track=1.0,
+        map=1.0,
+        motion=0.5,    # 降低：motion.l_reg≈226 量级过大，降权后约113，减少梯度主导效应
+        occ=1.0,
+        planning=1.0,
+    )
+)
 
 # =====================================================================================
 # 加载权重

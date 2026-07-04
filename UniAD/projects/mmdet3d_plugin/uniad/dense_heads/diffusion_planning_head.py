@@ -968,6 +968,11 @@ class DiffusionPlanningHead(nn.Module):
         # DiT 预测速度场
         pred    = self._dit_forward(z_t, context, t_emb, ego_ctx, eg_rout)  # (B, T, 2)
 
+        # 数值安全保护：DiT 初期随机权重可能产生极大的输出（数百甚至更大），
+        # clamp 到 [-100, 100] 防止 (pred-target)^2 产生 NaN/Inf，
+        # 100 远大于归一化空间的正常值范围（约 -5 ~ 5），不影响正常收敛。
+        pred    = torch.clamp(pred, -100.0, 100.0)
+
         # ================================================================
         # ⑥ 计算损失
         # ================================================================
@@ -977,6 +982,8 @@ class DiffusionPlanningHead(nn.Module):
         # 分母：有效步数 × output_dim，避免不同序列长度导致损失不均衡
         fm_loss = ((pred - target) ** 2 * mask_e).sum() / (mask_e.sum() * self.output_dim + 1e-6)
         fm_loss = fm_loss * self.flow_matching_loss_weight
+        # 最终保险：防止极端情况下 loss 仍为 NaN/Inf（如 mask 全零）
+        fm_loss = torch.nan_to_num(fm_loss, nan=0.0, posinf=100.0)
         losses  = {'loss_flow_matching': fm_loss}
 
         # ================================================================

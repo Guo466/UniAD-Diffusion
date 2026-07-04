@@ -128,7 +128,10 @@ def custom_train_detector(model,
     if fp16_cfg is not None:
         optimizer_config = Fp16OptimizerHook(
             **cfg.optimizer_config, **fp16_cfg, distributed=distributed)
-    elif distributed and 'type' not in cfg.optimizer_config:
+    elif 'type' not in cfg.optimizer_config:
+        # 修复：原代码单卡时直接传字典，导致 grad_clip 配置被忽略。
+        # 无论单卡还是多卡，只要没有指定 type，都构建 OptimizerHook，
+        # 确保 optimizer_config 中的 grad_clip 参数被正确执行。
         optimizer_config = OptimizerHook(**cfg.optimizer_config)
     else:
         optimizer_config = cfg.optimizer_config
@@ -192,4 +195,3 @@ def custom_train_detector(model,
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
     runner.run(data_loaders, cfg.workflow)
-

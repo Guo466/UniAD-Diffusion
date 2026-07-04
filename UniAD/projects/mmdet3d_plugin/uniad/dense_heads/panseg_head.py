@@ -1312,6 +1312,11 @@ class PansegformerHead(SegDETRHead):
                 - losses_seg (dict): 所有损失项（cls/bbox/iou/mask）
                 - pred_seg_dict (dict): 前向推理输出字典（供下游模块使用）
         """
+        # 数值安全保护：其他子头（motion/planning）的梯度爆炸会污染共享 BEV 特征，
+        # 导致 seg_head 的 bbox_pred/cls_score 含有 NaN，进而使匈牙利匹配崩溃。
+        # 在 BEV 特征入口处截断 NaN，保证本子头的 forward 不受其他子头梯度影响。
+        if bev_feat is not None:
+            bev_feat = torch.nan_to_num(bev_feat, nan=0.0, posinf=1e4, neginf=-1e4)
         # 位置解码前向传播
         pred_seg_dict = self(bev_feat)
 

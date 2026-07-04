@@ -516,6 +516,12 @@ class SegDETRHead(
                 - neg_inds (Tensor): Sampled negative indices for each image.
         """
         num_bboxes = bbox_pred.size(0)
+        # 数值安全保护：其他子头（如 motion/planning）的梯度爆炸可能导致
+        # bbox_pred / cls_score 含有 NaN/Inf，进而使匈牙利匹配的 cost matrix
+        # 出现无效值，引发 scipy.linear_sum_assignment 报错。
+        # 用 nan_to_num 将 NaN→0、Inf→极大/极小值，保证匹配可以正常进行。
+        bbox_pred = torch.nan_to_num(bbox_pred, nan=0.0, posinf=1e4, neginf=-1e4)
+        cls_score = torch.nan_to_num(cls_score, nan=0.0, posinf=1e4, neginf=-1e4)
         # assigner and sampler
         assign_result = self.assigner.assign(bbox_pred, cls_score, gt_bboxes,
                                             gt_labels, img_meta,

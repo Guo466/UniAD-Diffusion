@@ -234,6 +234,11 @@ class UniAD(UniADTrack):
         bev_embed = outs_track["bev_embed"]  # BEV 特征图，(H*W, B, 256)，用于所有后续任务
         bev_pos   = outs_track["bev_pos"]    # BEV 位置编码，配合 Transformer 使用
 
+        # 数值安全保护：上一个 iter 的梯度爆炸可能使模型参数含有 NaN/Inf，
+        # 导致本 iter 的 BEV 特征输出就带有 NaN，进而传染到所有子头。
+        # 在共享 BEV 特征流入各子头之前统一截断，保证各子头 forward 不受污染。
+        bev_embed = torch.nan_to_num(bev_embed, nan=0.0, posinf=1e4, neginf=-1e4)
+
         # 只取最后一帧的 img_metas（前几帧仅用于构建历史 BEV，不参与后续任务）
         img_metas = [each[len_queue-1] for each in img_metas]
 

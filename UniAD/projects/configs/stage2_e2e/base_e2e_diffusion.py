@@ -70,14 +70,18 @@ model = dict(
         sample_steps=5,            # 推理时 Euler ODE 积分步数（越大越精确，但更慢）
 
         # ---- Flow Matching 损失 ----
-        flow_matching_loss_weight=1.0,
+        # 权重 0.5：平衡「初期防崩」与「后期充分监督」两个目标：
+        #   - 初期（未收敛）：FM loss ≈ 400 × 0.5 = 200，配合 max_norm=1.0 的梯度裁剪，
+        #     梯度被安全截断，不会产生 NaN
+        #   - 后期（收敛后）：FM loss ≈ 1~2 × 0.5 = 0.5~1.0，与其他任务头量级相当，
+        #     规划头能得到足够的学习信号，不被 track/seg/motion 梯度淹没
+        flow_matching_loss_weight=0.5,
 
         # ---- ADE 辅助损失（加速收敛，让 DiT 在短期训练内追上回归方法）----
         # 改进：在归一化空间计算，量纲与 FM loss 完全一致（均约 0~2，无量纲）
-        # 因此权重可以直接与 flow_matching_loss_weight 对齐：
-        #   flow_matching_loss_weight=1.0：监督速度场方向（FM 核心任务）
-        #   ade_loss_weight=0.5：          监督轨迹估计（辅助加速收敛）
-        # 两者量纲相同，0.5 的比例让辅助损失起引导作用但不压制 FM 训练
+        # 权重设计：
+        #   flow_matching_loss_weight=0.5：监督速度场方向（FM 核心任务）
+        #   ade_loss_weight=0.5：          监督轨迹估计（与 FM 权重一致，双损失同等重要）
         # 设为 0 可完全关闭（退回纯 FM 训练）
         ade_loss_weight=0.5,
 
@@ -122,6 +126,11 @@ optimizer = dict(
     ),
     weight_decay=0.01,
 )
+
+# 梯度裁剪（覆盖 base_e2e.py 的 max_norm=35）
+# DiT 规划头初期 loss 较大（FM loss 量级可能在 100~500），梯度也更大，
+# 将 max_norm 收紧为 1.0，防止初期梯度爆炸导致 NaN 传播到其他子头（如 seg_head）
+optimizer_config = dict(grad_clip=dict(max_norm=1.0, norm_type=2))
 
 # =====================================================================================
 # 加载权重

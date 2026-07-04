@@ -637,6 +637,11 @@ class PansegformerHead(SegDETRHead):
         """
         num_bboxes = bbox_pred.size(0)
 
+        # 数值安全保护：梯度爆炸可能导致 bbox_pred/cls_score 含 NaN/Inf，
+        # 在传入 assigner_filter 之前截断，防止 cost matrix 无效引发崩溃。
+        bbox_pred = torch.nan_to_num(bbox_pred, nan=0.0, posinf=1e4, neginf=-1e4)
+        cls_score = torch.nan_to_num(cls_score, nan=0.0, posinf=1e4, neginf=-1e4)
+
         # 匈牙利匹配（返回正样本掩码、负样本掩码、匹配结果）
         pos_ind_mask, neg_ind_mask, assign_result = self.assigner_filter.assign(
             bbox_pred, cls_score, gt_bboxes, gt_labels, img_meta, gt_bboxes_ignore)
@@ -746,6 +751,10 @@ class PansegformerHead(SegDETRHead):
         """
         num_bboxes = bbox_pred.size(0)
         gt_masks = gt_masks.float()
+
+        # 数值安全保护：梯度爆炸可能导致 bbox_pred/cls_score 含 NaN/Inf
+        bbox_pred = torch.nan_to_num(bbox_pred, nan=0.0, posinf=1e4, neginf=-1e4)
+        cls_score = torch.nan_to_num(cls_score, nan=0.0, posinf=1e4, neginf=-1e4)
 
         # 带掩码的匈牙利匹配（assigner_with_mask 同时考虑掩码代价）
         assign_result = self.assigner_with_mask.assign(

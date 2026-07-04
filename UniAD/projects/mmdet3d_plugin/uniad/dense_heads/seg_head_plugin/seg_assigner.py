@@ -277,6 +277,8 @@ class HungarianAssigner_filter(BaseAssigner):
         result=None
         for i in range(min(self.max_pos, 300//num_gts)):
             cost = cost.cpu()
+            # 数值安全保护：cost matrix 含 NaN/Inf 会导致 linear_sum_assignment 崩溃
+            cost = torch.nan_to_num(cost, nan=0.0, posinf=1e6, neginf=-1e6)
             matched_row_inds, matched_col_inds = linear_sum_assignment(cost)
             
             matched_row_inds = torch.from_numpy(matched_row_inds).to(
@@ -431,6 +433,8 @@ class HungarianAssigner_multi_info(BaseAssigner):
         if linear_sum_assignment is None:
             raise ImportError('Please run "pip install scipy" '
                               'to install scipy first.')
+        # 数值安全保护：cost matrix 含 NaN/Inf 会导致 linear_sum_assignment 崩溃
+        cost = torch.nan_to_num(cost, nan=0.0, posinf=1e6, neginf=-1e6)
         matched_row_inds, matched_col_inds = linear_sum_assignment(cost)
         matched_row_inds = torch.from_numpy(matched_row_inds).to(
             bbox_pred.device)

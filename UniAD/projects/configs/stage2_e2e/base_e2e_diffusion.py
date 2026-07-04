@@ -70,20 +70,19 @@ model = dict(
         sample_steps=5,            # 推理时 Euler ODE 积分步数（越大越精确，但更慢）
 
         # ---- Flow Matching 损失 ----
-        # 权重 0.5：平衡「初期防崩」与「后期充分监督」两个目标：
-        #   - 初期（未收敛）：FM loss ≈ 400 × 0.5 = 200，配合 max_norm=1.0 的梯度裁剪，
-        #     梯度被安全截断，不会产生 NaN
-        #   - 后期（收敛后）：FM loss ≈ 1~2 × 0.5 = 0.5~1.0，与其他任务头量级相当，
-        #     规划头能得到足够的学习信号，不被 track/seg/motion 梯度淹没
-        flow_matching_loss_weight=0.5,
+        # 权重 0.01：彻底解决初期梯度爆炸导致参数变 NaN 的问题。
+        # 推导：FM loss 初期 ≈ 400，× 0.01 = 4，与 track/map/motion 量级（3~10）对齐，
+        # 不会引发梯度爆炸，参数能正常收敛。
+        # 收敛后 FM loss ≈ 1~2，× 0.01 = 0.01~0.02，信号虽小但稳定，足以引导规划头学习方向。
+        flow_matching_loss_weight=0.01,
 
         # ---- ADE 辅助损失（加速收敛，让 DiT 在短期训练内追上回归方法）----
         # 改进：在归一化空间计算，量纲与 FM loss 完全一致（均约 0~2，无量纲）
         # 权重设计：
-        #   flow_matching_loss_weight=0.5：监督速度场方向（FM 核心任务）
-        #   ade_loss_weight=0.5：          监督轨迹估计（与 FM 权重一致，双损失同等重要）
+        #   flow_matching_loss_weight=0.01：监督速度场方向（FM 核心任务，已缩放到安全量级）
+        #   ade_loss_weight=0.1：           监督轨迹估计（比 FM 权重大10倍，强化轨迹精度监督）
         # 设为 0 可完全关闭（退回纯 FM 训练）
-        ade_loss_weight=0.5,
+        ade_loss_weight=0.1,
 
         # ---- 碰撞损失（显存优化：笔记本 8GB 环境下禁用碰撞损失，节省采样额外的 ODE 轨迹所需显存）----
         # 碰撞损失在 forward_train 中会额外采样一次 ODE 轨迹（3步），占用额外显存

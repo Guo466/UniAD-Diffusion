@@ -700,14 +700,27 @@ class DiffusionPlanningHead(nn.Module):
             )
 
         # ----------------------------------------------------------------
-        # 【关键初始化】FinalLayer 输出头零初始化
+        # 【关键初始化】DiT 全链路零/小值初始化，确保初始 pred ≈ 0
         # ----------------------------------------------------------------
-        # DiT 论文标准做法：将 final_layer.linear 的权重和偏置初始化为零。
-        # 效果：初始时 pred ≈ 0，使得 FM loss 初始值 ≈ ||0 - target||² ≈ ||noise||² ≈ 1，
-        #       与其他子头 (track~5, map~5, motion~120) 量级接近，不会引发梯度爆炸。
-        # 对比：默认 Kaiming 初始化会使初始 pred 量级达到 10~30，导致 FM loss ≈ 400+。
+        # 问题根源：即使 final_layer.linear 权重为零，
+        #   若上游 preproj/dit_blocks 输出量级很大，AdaLN 的 scale 参数
+        #   会放大输入，最终 pred 依然不为零。
+        # 解决方案：对整个输出链路做零初始化：
+        #   1. final_layer.linear        → 零初始化（直接截断输出）
+        #   2. final_layer.adaLN_modulation 最后一层 → 零初始化（AdaLN scale/shift=0）
+        #   3. 每个 DiTBlock.adaLN_modulation 最后一层 → 零初始化（所有调制参数为0）
+        # 效果：初始时整个 DiT 输出 pred = 0，FM loss = ||noise||² ≈ 1，不爆炸。
+
+        # final_layer 输出投影
         nn.init.zeros_(self.final_layer.linear.weight)
         nn.init.zeros_(self.final_layer.linear.bias)
+        # final_layer AdaLN 调制层
+        nn.init.zeros_(self.final_layer.adaLN_modulation[-1].weight)
+        nn.init.zeros_(self.final_layer.adaLN_modulation[-1].bias)
+        # 每个 DiTBlock 的 AdaLN 调制层
+        for block in self.dit_blocks:
+            nn.init.zeros_(block.adaLN_modulation[-1].weight)
+            nn.init.zeros_(block.adaLN_modulation[-1].bias)
 
     # ------------------------------------------------------------------
     # 【辅助方法】轨迹归一化 / 反归一化

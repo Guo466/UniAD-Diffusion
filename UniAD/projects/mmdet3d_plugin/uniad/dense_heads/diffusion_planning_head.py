@@ -699,6 +699,16 @@ class DiffusionPlanningHead(nn.Module):
                 nn.Conv2d(embed_dims // 4, embed_dims, 1),             # 升维：64→256
             )
 
+        # ----------------------------------------------------------------
+        # 【关键初始化】FinalLayer 输出头零初始化
+        # ----------------------------------------------------------------
+        # DiT 论文标准做法：将 final_layer.linear 的权重和偏置初始化为零。
+        # 效果：初始时 pred ≈ 0，使得 FM loss 初始值 ≈ ||0 - target||² ≈ ||noise||² ≈ 1，
+        #       与其他子头 (track~5, map~5, motion~120) 量级接近，不会引发梯度爆炸。
+        # 对比：默认 Kaiming 初始化会使初始 pred 量级达到 10~30，导致 FM loss ≈ 400+。
+        nn.init.zeros_(self.final_layer.linear.weight)
+        nn.init.zeros_(self.final_layer.linear.bias)
+
     # ------------------------------------------------------------------
     # 【辅助方法】轨迹归一化 / 反归一化
     # ------------------------------------------------------------------

@@ -637,6 +637,8 @@ class DiffusionPlanningHead(nn.Module):
         self.flow_matching_loss_weight = flow_matching_loss_weight
         self.ade_loss_weight           = ade_loss_weight  # ADE 辅助损失权重
         self.planning_eval             = planning_eval
+        # 训练迭代计数器（用于早期诊断，只在前 N 个 iter 打印详细信息）
+        self._iter_count               = 0
         self.use_col_optim             = use_col_optim
         self.embed_dims                = embed_dims
 
@@ -1018,6 +1020,64 @@ class DiffusionPlanningHead(nn.Module):
         # clamp 到 [-100, 100] 防止 (pred-target)^2 产生 NaN/Inf，
         # 100 远大于归一化空间的正常值范围（约 -5 ~ 5），不影响正常收敛。
         pred    = torch.clamp(pred, -100.0, 100.0)
+
+        # ================================================================
+        # 【早期诊断】前 100 个 iter 打印关键指标，验证初始化是否正确
+        # ================================================================
+        self._iter_count += 1
+        _DIAG_ITERS = 100   # 诊断窗口：只在前 100 个 iter 打印
+        _DIAG_FREQ  = 5     # 每 5 个 iter 打印一次（与 log_config.interval 对齐）
+        if self._iter_count <= _DIAG_ITERS and self._iter_count % _DIAG_FREQ == 0:
+            with torch.no_grad():
+                # ----- 关键中间量 -----
+                pred_abs_max  = pred.abs().max().item()
+                pred_abs_mean = pred.abs().mean().item()
+                target_rms    = target.pow(2).mean().sqrt().item()
+                gt_norm_rms   = gt_norm.pow(2).mean().sqrt().item()
+                gt_delta_max  = torch.cat([
+                    gt_traj[:, :1, :], gt_traj[:, 1:, :] - gt_traj[:, :-1, :]
+                ], dim=1).abs().max().item()
+                t_val_mean    = t.mean().item()
+
+                # ----- 判断是否在预期范围内 -----
+                # 预期：
+                #   pred_abs_max   < 1.0  （初始化后 pred≈0，之后逐渐增大）
+                #   gt_norm_rms    ≈ 1.0  （归一化后应接近标准正态）
+                #   target_rms     ≈ 1.4  （两个独立正态之差，std≈sqrt(2)≈1.41）
+                #   理论 fm_loss   ≈ 2.0  （pred≈0 时 = ||target||² ≈ 2）
+                pred_ok    = pred_abs_max < 5.0    # 初期应接近 0，10iter 内不应超 5
+                gtnorm_ok  = 0.3 < gt_norm_rms < 5.0  # 归一化后不应过大或过小
+                has_nan_p  = torch.isnan(pred).any().item()
+                has_nan_t  = torch.isnan(target).any().item()
+                has_nan_gn = torch.isnan(gt_norm).any().item()
+
+                # ----- 打印 -----
+                sep = "=" * 70
+                print(f"\n{sep}")
+                print(f"[DiT 早期诊断] iter={self._iter_count}  t_mean={t_val_mean:.3f}")
+                print(f"  【GT 轨迹原始】 gt_delta_max = {gt_delta_max:.4f} m  "
+                      f"（正常：每步 0.2~2m）")
+                print(f"  【GT 归一化后】 gt_norm_rms  = {gt_norm_rms:.4f}  "
+                      f"{'✅ 正常' if gtnorm_ok else '❌ 异常！应接近 1.0，说明 traj_mean/std 设置有误'}")
+                print(f"  【target(v*)】  target_rms   = {target_rms:.4f}  "
+                      f"（理论值 ≈ 1.41，= sqrt(2)）")
+                print(f"  【DiT 输出】    pred_abs_max = {pred_abs_max:.4f}  "
+                      f"{'✅ 正常' if pred_ok else '❌ 异常！初始应≈0，说明零初始化未生效'}")
+                print(f"  【DiT 输出】    pred_abs_mean= {pred_abs_mean:.4f}")
+                print(f"  【NaN 检测】    pred={has_nan_p} target={has_nan_t} gt_norm={has_nan_gn}  "
+                      f"{'✅ 无 NaN' if not (has_nan_p or has_nan_t or has_nan_gn) else '❌ 存在 NaN！'}")
+
+                # 理论 fm_loss（pred≈0 时）= ||target||² = target_rms² ≈ 2
+                theory_fm = target_rms ** 2
+                print(f"  【理论初始 FM loss】≈ {theory_fm:.4f}  "
+                      f"（实际将打印在 planning.loss_flow_matching 中）")
+
+                # 梯度爆炸风险预警
+                risk_level = "🟢 低" if pred_abs_max < 1.0 else (
+                    "🟡 中" if pred_abs_max < 10.0 else "🔴 高！建议立即停止检查初始化"
+                )
+                print(f"  【梯度爆炸风险】{risk_level}  (pred_abs_max={pred_abs_max:.2f})")
+                print(sep)
 
         # ================================================================
         # ⑥ 计算损失

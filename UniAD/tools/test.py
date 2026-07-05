@@ -58,19 +58,53 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
 
         # ---- 规划指标累积 ----
         if eval_planning and 'planning' in result[0]:
-            seg       = result[0]['planning']['planning_gt']['segmentation']
-            sdc_plan  = result[0]['planning']['planning_gt']['sdc_planning']
-            sdc_mask  = result[0]['planning']['planning_gt']['sdc_planning_mask']
-            pred_traj = result[0]['planning']['result_planning']['sdc_traj']
-            planning_metrics(
-                pred_traj[:, :6, :2],
-                sdc_plan[0][0, :, :6, :2],
-                sdc_mask[0][0, :, :6, :2],
-                seg[0][:, [1, 2, 3, 4, 5, 6]]
-            )
-            result[0]['planning_traj']    = pred_traj
-            result[0]['planning_traj_gt'] = sdc_plan
-            result[0]['command']          = result[0]['planning']['planning_gt']['command']
+            try:
+                planning_gt   = result[0]['planning']['planning_gt']
+                seg           = planning_gt['segmentation']        # list[Tensor(B,T+1,H,W)]
+                sdc_plan      = planning_gt['sdc_planning']        # list[Tensor(B,n_modes,T,3)] or Tensor
+                sdc_mask      = planning_gt['sdc_planning_mask']   # 同上
+                command       = planning_gt['command']
+                pred_traj     = result[0]['planning']['result_planning']['sdc_traj']  # (B,T,2)
+
+                # sdc_plan/sdc_mask 可能是 list（数据并行）或直接 Tensor
+                sp = sdc_plan[0] if isinstance(sdc_plan, (list, tuple)) else sdc_plan
+                sm = sdc_mask[0] if isinstance(sdc_mask, (list, tuple)) else sdc_mask
+                sg = seg[0]      if isinstance(seg,      (list, tuple)) else seg
+
+                # sp: (B, n_modes, T, 3) 或 (n_modes, T, 3)
+                # 取 command 对应的模态（与 multi_gpu_test 保持一致取第0个 sample 的第0个模态）
+                if sp.dim() == 4:          # (B, n_modes, T, 3)
+                    sp_traj = sp[0, 0:1, :6, :2]   # (1, 6, 2)
+                    sm_traj = sm[0, 0:1, :6, :2]   # (1, 6, 2)
+                elif sp.dim() == 3:        # (n_modes, T, 3)
+                    sp_traj = sp[0:1, :6, :2]       # (1, 6, 2)
+                    sm_traj = sm[0:1, :6, :2]       # (1, 6, 2)
+                else:
+                    sp_traj = sp[:, :6, :2]
+                    sm_traj = sm[:, :6, :2]
+
+                # seg: (T, H, W) 或 (B, T, H, W) → 取前 6 个未来帧
+                if sg.dim() == 4:
+                    seg_fut = sg[0, [1,2,3,4,5,6]]   # (6, H, W)
+                else:
+                    seg_fut = sg[[1,2,3,4,5,6]]       # (6, H, W)
+                seg_fut = seg_fut.unsqueeze(0)         # (1, 6, H, W)
+
+                # pred_traj: (B,T,2) → 取前6步
+                pred6 = pred_traj[:, :6, :2]           # (1, 6, 2)
+
+                if i == 0:
+                    print(f'\n[PlanMetric debug] pred={pred6.shape}  '
+                          f'gt={sp_traj.shape}  mask={sm_traj.shape}  seg={seg_fut.shape}')
+
+                planning_metrics(pred6, sp_traj, sm_traj, seg_fut)
+
+                result[0]['planning_traj']    = pred_traj
+                result[0]['planning_traj_gt'] = sdc_plan
+                result[0]['command']          = command
+            except Exception as e:
+                if i == 0:
+                    print(f'\n[PlanMetric WARNING] 第{i}帧规划指标累积失败: {e}')
 
         # ---- OCC 指标累积 ----
         if eval_occ:

@@ -985,10 +985,27 @@ class DiffusionPlanningHead(nn.Module):
 
         # 归一化（当前 mean=0, std=1，即恒等变换），并用 mask 清零无效步
         gt_norm    = self.normalize_traj(gt_delta) * traj_mask.unsqueeze(-1).float()
-        # 安全截断：差分坐标正常范围约 ±10m，截断到 ±15 防止极端异常帧导致 loss 爆炸
-        # （转弯帧 y 方向 ~4m，静止帧 ~0m，均在 ±15 范围内；超出的是数据异常）
-        gt_norm    = torch.clamp(gt_norm, -15.0, 15.0)
+        # 安全截断：差分坐标正常范围约 ±10m，截断到 ±10 防止极端异常帧导致 loss 爆炸
+        # 【收紧到±10】：gt_delta_max=29m 的异常帧中 gt_norm y方向约15，
+        #   target=gt_norm-noise 最大约18，(pred-target)^2 约324，梯度极大；
+        #   截断到±10 后，target 最大约11，fm_loss 约12，梯度降低约60%。
+        gt_norm    = torch.clamp(gt_norm, -10.0, 10.0)
         # gt_norm: (B, T, output_dim)，这是 Flow Matching 的"目标分布" x_data
+
+        # 【极端 batch 跳过保护】：如果 gt_delta_max > 20m，说明数据异常（如地图误差），
+        # 直接返回零损失跳过该 batch，防止一个异常样本炸掉整个模型参数。
+        # 正常驾驶场景每步位移不超过 10m（高速 120km/h 下 0.5s 约 16m，但 mini 数据集是城区）
+        with torch.no_grad():
+            _gt_delta_max_val = gt_delta.abs().max().item()
+        if _gt_delta_max_val > 20.0:
+            self._iter_count += 1
+            print(f"[DiT WARNING] iter={self._iter_count:04d} gt_delta_max={_gt_delta_max_val:.1f}m > 20m，"
+                  f"跳过该 batch 的 FM loss 防止梯度爆炸")
+            _zero = gt_norm.sum() * 0.0  # 保持计算图连通，梯度为0
+            losses = {'loss_flow_matching': _zero}
+            if self.ade_loss_weight > 0:
+                losses['loss_ade_aux'] = _zero
+            return losses
 
         # ================================================================
         # ⑤ Flow Matching 核心训练逻辑

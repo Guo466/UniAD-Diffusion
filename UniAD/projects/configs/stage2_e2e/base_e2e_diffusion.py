@@ -123,7 +123,7 @@ model = dict(
 
 optimizer = dict(
     type="AdamW",
-    lr=1e-4,
+    lr=2e-5,   # 从1e-4→2e-5：DiT初期参数对大lr非常敏感，极端batch(gt_delta>10m)一步就炸
     paramwise_cfg=dict(
         custom_keys={
             "img_backbone": dict(lr_mult=0.1),

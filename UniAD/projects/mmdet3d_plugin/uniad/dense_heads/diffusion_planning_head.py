@@ -992,14 +992,16 @@ class DiffusionPlanningHead(nn.Module):
         gt_norm    = torch.clamp(gt_norm, -10.0, 10.0)
         # gt_norm: (B, T, output_dim)，这是 Flow Matching 的"目标分布" x_data
 
-        # 【极端 batch 跳过保护】：如果 gt_delta_max > 20m，说明数据异常（如地图误差），
+        # 【极端 batch 跳过保护】：如果 gt_delta_max > 10m，说明数据异常（如地图误差），
         # 直接返回零损失跳过该 batch，防止一个异常样本炸掉整个模型参数。
-        # 正常驾驶场景每步位移不超过 10m（高速 120km/h 下 0.5s 约 16m，但 mini 数据集是城区）
+        # 分析：iter=38 中 gt_delta_max=17.9m（低于原20m阈值），target ≈ 13，
+        #   (pred-target)^2 ≈ 169，梯度仍然极大，clip 后仍炸。
+        # 城区驾驶场景：0.5s 每步最大约 6~8m（60km/h=8.3m/s），设阈值 10m 足够宽松。
         with torch.no_grad():
             _gt_delta_max_val = gt_delta.abs().max().item()
-        if _gt_delta_max_val > 20.0:
+        if _gt_delta_max_val > 10.0:
             self._iter_count += 1
-            print(f"[DiT WARNING] iter={self._iter_count:04d} gt_delta_max={_gt_delta_max_val:.1f}m > 20m，"
+            print(f"[DiT WARNING] iter={self._iter_count:04d} gt_delta_max={_gt_delta_max_val:.1f}m > 10m，"
                   f"跳过该 batch 的 FM loss 防止梯度爆炸")
             _zero = gt_norm.sum() * 0.0  # 保持计算图连通，梯度为0
             _skip_losses = {'loss_flow_matching': _zero}

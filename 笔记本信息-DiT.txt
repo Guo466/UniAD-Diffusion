@@ -1,144 +1,168 @@
-+----------------------+-------------+-------------+---------------+
-|         car          |    0.4857   |    0.7103   |     0.0598    |
-|        truck         |    0.6688   |    0.6042   |     0.0209    |
-|         bus          |    1.6773   |    2.7676   |     0.9206    |
-|       trailer        |    1.0000   |    1.0000   |     1.0000    |
-| construction_vehicle |    1.0000   |    1.0000   |     1.0000    |
-|      pedestrian      |    0.7817   |    1.1352   |     0.1593    |
-|      motorcycle      |    0.6423   |    0.6396   |     0.0000    |
-|       bicycle        |    0.8046   |    0.8515   |     0.0222    |
-|     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
-|       barrier        |    1.0000   |    1.0000   |     1.0000    |
-+----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_22_14_51_2026
-mAP: 0.1876
-mATE: 0.8018
-mASE: 0.8338
-mAOE: 0.5587
-mAVE: 0.4771
-mAAE: 0.2828
-NDS: 0.2984
-Eval time: 1.1s
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ find ~/UniAD/UniAD/projects/work_dirs -name "*.pth" 2>/dev/null
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ find ~/UniAD/UniAD/work_dir/uniad_mini -name "*.pth" 2>/dev/null
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_8.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_15.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_6.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_13.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_9.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_3.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_19.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_14.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_4.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_16.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_20.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_17.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_12.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_10.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_7.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_5.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_1.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/latest.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_18.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_2.pth
+/home/guo/UniAD/UniAD/work_dir/uniad_mini/epoch_11.pth
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls ~/UniAD/UniAD/work_dir/uniad_mini/ 2>/dev/null
+20260701_094237.log       20260701_101822.log       epoch_10.pth  epoch_15.pth  epoch_1.pth   epoch_5.pth  latest.pth
+20260701_094343.log       20260701_101822.log.json  epoch_11.pth  epoch_16.pth  epoch_20.pth  epoch_6.pth  tf_logs
+20260701_100100.log       20260701_103111.log       epoch_12.pth  epoch_17.pth  epoch_2.pth   epoch_7.pth
+20260701_101106.log       20260701_103111.log.json  epoch_13.pth  epoch_18.pth  epoch_3.pth   epoch_8.pth
+20260701_101106.log.json  base_e2e_mini.py          epoch_14.pth  epoch_19.pth  epoch_4.pth   epoch_9.pth
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ cat ~/UniAD/UniAD/projects/configs/stage2_e2e/base_e2e_mini.py 
+# =====================================================================================
+# UniAD 原版 Stage2 — nuScenes Mini 适配配置
+#
+# 用途：在 mini 数据集上训练 UniAD 原版规划头（PlanningHeadSingleMode），
+#       作为 base_e2e_diffusion.py（DiT 版本）的公平对比基线。
+#
+# 实验设计原则（唯一变量只有规划头）：
+#   - 相同起点权重：uniad_base_track_map.pth
+#   - 相同数据集：nuScenes mini
+#   - 相同训练轮次：20 epoch
+#   - 相同显存优化：queue_length=1, num_query=300, occ_head=None
+#   - 唯一区别：planning_head 使用原版 PlanningHeadSingleMode
+#
+# 使用方法：
+#   训练：python tools/train.py projects/configs/stage2_e2e/base_e2e_mini.py \
+#             --no-validate
+#   测试：python tools/test.py projects/configs/stage2_e2e/base_e2e_mini.py \
+#             work_dir/uniad_mini/latest.pth --out output/uniad_mini_results.pkl \
+#             --launcher none
+# =====================================================================================
 
-Per-class results:
-Object Class	AP	ATE	ASE	AOE	AVE	AAE
-car	0.347	0.458	0.754	0.103	0.206	0.074
-truck	0.256	0.937	0.778	0.058	0.097	0.000
-bus	0.656	0.378	0.866	0.043	0.742	0.003
-trailer	0.000	1.000	1.000	1.000	1.000	1.000
-construction_vehicle	0.000	1.000	1.000	1.000	1.000	1.000
-pedestrian	0.364	0.648	0.315	0.389	0.276	0.186
-motorcycle	0.084	0.749	0.829	1.075	0.060	0.000
-bicycle	0.169	0.847	0.795	0.361	0.435	0.000
-traffic_cone	0.000	1.000	1.000	nan	nan	nan
-barrier	0.000	1.000	1.000	1.000	nan	nan
-evaluate EPA motion metrics...
-Accumulating metric data...
-Calculating metrics...
-+----------------------+-------------+-------------+---------------+
-|     class names      | min_ade_err | min_fde_err | miss_rate_err |
-+----------------------+-------------+-------------+---------------+
-|         car          |    0.2742   |    0.2922   |     0.0005    |
-|        truck         |    0.4276   |    0.3641   |     0.0593    |
-|         bus          |    1.1296   |    0.6276   |     0.5095    |
-|       trailer        |    1.0000   |    1.0000   |     1.0000    |
-| construction_vehicle |    1.0000   |    1.0000   |     1.0000    |
-|      pedestrian      |    0.5055   |    0.5873   |     0.0000    |
-|      motorcycle      |    0.5565   |    0.5481   |     0.0000    |
-|       bicycle        |    0.4884   |    0.5648   |     0.0000    |
-|     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
-|       barrier        |    1.0000   |    1.0000   |     1.0000    |
-+----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_22_14_51_2026
-mAP: 0.0499
-mATE: 0.6886
-mASE: 0.8316
-mAOE: 0.5560
-mAVE: 0.4170
-mAAE: 0.2932
-NDS: 0.2463
-Eval time: 0.5s
+# 继承原版 Stage2 完整配置
+_base_ = ["./base_e2e.py"]
 
-Per-class results:
-Object Class	AP	ATE	ASE	AOE	AVE	AAE
-car	0.197	0.339	0.755	0.088	0.113	0.071
-truck	0.075	0.492	0.780	0.049	0.213	0.000
-bus	0.049	0.401	0.865	0.078	0.435	0.034
-trailer	0.000	1.000	1.000	1.000	1.000	1.000
-construction_vehicle	0.000	1.000	1.000	1.000	1.000	1.000
-pedestrian	0.137	0.483	0.297	0.366	0.203	0.241
-motorcycle	0.031	0.663	0.827	1.149	0.069	0.000
-bicycle	0.011	0.507	0.792	0.274	0.304	0.000
-traffic_cone	0.000	1.000	1.000	nan	nan	nan
-barrier	0.000	1.000	1.000	1.000	nan	nan
-evaluate EPA motion metrics...
-Accumulating metric data...
-772 140 1913
-EPA  car 0.3669628836018668
-33 5 95
-EPA  truck 0.3210525977839371
-9 0 33
-EPA  bus 0.27272719008266966
-0 0 0
-EPA  trailer 0.0
-0 0 0
-EPA  construction_vehicle 0.0
-422 133 1067
-EPA  pedestrian 0.33317712902364455
-39 6 214
-EPA  motorcycle 0.16822429120447238
-10 6 36
-EPA  bicycle 0.19444439043211376
-0 0 0
-EPA  traffic_cone 0.0
-0 0 0
-EPA  barrier 0.0
-Calculating metrics...
-+----------------------+-------------+-------------+---------------+
-|     class names      | min_ade_err | min_fde_err | miss_rate_err |
-+----------------------+-------------+-------------+---------------+
-|         car          |    0.3561   |    0.3668   |     0.0004    |
-|        truck         |    0.6782   |    0.6127   |     0.0205    |
-|         bus          |    1.1296   |    0.6276   |     0.5095    |
-|       trailer        |    1.0000   |    1.0000   |     1.0000    |
-| construction_vehicle |    1.0000   |    1.0000   |     1.0000    |
-|      pedestrian      |    0.6121   |    0.6891   |     0.0071    |
-|      motorcycle      |    0.6640   |    0.6613   |     0.0000    |
-|       bicycle        |    0.7213   |    0.7289   |     0.0000    |
-|     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
-|       barrier        |    1.0000   |    1.0000   |     1.0000    |
-+----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_22_14_51_2026
-mAP: 0.0989
-mATE: 0.8050
-mASE: 0.8328
-mAOE: 0.5676
-mAVE: 0.4076
-mAAE: 0.2901
-NDS: 0.2592
-Eval time: 0.9s
+# ---- 数据集路径 ----
+# 注意：笔记本上 data/infos/ 目录只有完整数据集的 pkl，没有 mini 子集
+# 两个实验（UniAD 原版 vs DiT 版）均使用相同数据，对比公平
+_mini_info_root = "data/infos/"
+_mini_data_root  = "data/nuscenes/"
 
-Per-class results:
-Object Class	AP	ATE	ASE	AOE	AVE	AAE
-car	0.270	0.438	0.754	0.105	0.110	0.071
-truck	0.241	0.943	0.777	0.059	0.094	0.000
-bus	0.049	0.401	0.865	0.078	0.435	0.034
-trailer	0.000	1.000	1.000	1.000	1.000	1.000
-construction_vehicle	0.000	1.000	1.000	1.000	1.000	1.000
-pedestrian	0.232	0.631	0.308	0.364	0.217	0.217
-motorcycle	0.080	0.756	0.828	1.106	0.062	0.000
-bicycle	0.117	0.881	0.796	0.397	0.343	0.000
-traffic_cone	0.000	1.000	1.000	nan	nan	nan
-barrier	0.000	1.000	1.000	1.000	nan	nan
-{'pts_bbox_NuScenes/car_AP_dist_0.5': 0.1819, 'pts_bbox_NuScenes/car_AP_dist_1.0': 0.426, 'pts_bbox_NuScenes/car_AP_dist_2.0': 0.6089, 'pts_bbox_NuScenes/car_AP_dist_4.0': 0.7397, 'pts_bbox_NuScenes/car_trans_err': 0.5032, 'pts_bbox_NuScenes/car_scale_err': 0.7539, 'pts_bbox_NuScenes/car_orient_err': 0.1196, 'pts_bbox_NuScenes/car_vel_err': 0.1891, 'pts_bbox_NuScenes/car_attr_err': 0.0721, 'pts_bbox_NuScenes/mATE': 0.7415, 'pts_bbox_NuScenes/mASE': 0.7717, 'pts_bbox_NuScenes/mAOE': 0.602, 'pts_bbox_NuScenes/mAVE': 0.4769, 'pts_bbox_NuScenes/mAAE': 0.284, 'pts_bbox_NuScenes/truck_AP_dist_0.5': 0.1106, 'pts_bbox_NuScenes/truck_AP_dist_1.0': 0.297, 'pts_bbox_NuScenes/truck_AP_dist_2.0': 0.6218, 'pts_bbox_NuScenes/truck_AP_dist_4.0': 0.7522, 'pts_bbox_NuScenes/truck_trans_err': 0.7859, 'pts_bbox_NuScenes/truck_scale_err': 0.7792, 'pts_bbox_NuScenes/truck_orient_err': 0.0631, 'pts_bbox_NuScenes/truck_vel_err': 0.1245, 'pts_bbox_NuScenes/truck_attr_err': 0.0059, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_trans_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_scale_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_orient_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_vel_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_attr_err': 1.0, 'pts_bbox_NuScenes/bus_AP_dist_0.5': 0.2833, 'pts_bbox_NuScenes/bus_AP_dist_1.0': 0.7516, 'pts_bbox_NuScenes/bus_AP_dist_2.0': 0.8209, 'pts_bbox_NuScenes/bus_AP_dist_4.0': 0.8556, 'pts_bbox_NuScenes/bus_trans_err': 0.4203, 'pts_bbox_NuScenes/bus_scale_err': 0.8665, 'pts_bbox_NuScenes/bus_orient_err': 0.0432, 'pts_bbox_NuScenes/bus_vel_err': 0.6967, 'pts_bbox_NuScenes/bus_attr_err': 0.0136, 'pts_bbox_NuScenes/trailer_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/trailer_trans_err': 1.0, 'pts_bbox_NuScenes/trailer_scale_err': 1.0, 'pts_bbox_NuScenes/trailer_orient_err': 1.0, 'pts_bbox_NuScenes/trailer_vel_err': 1.0, 'pts_bbox_NuScenes/trailer_attr_err': 1.0, 'pts_bbox_NuScenes/barrier_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/barrier_trans_err': 1.0, 'pts_bbox_NuScenes/barrier_scale_err': 1.0, 'pts_bbox_NuScenes/barrier_orient_err': 1.0, 'pts_bbox_NuScenes/barrier_vel_err': nan, 'pts_bbox_NuScenes/barrier_attr_err': nan, 'pts_bbox_NuScenes/motorcycle_AP_dist_0.5': 0.0132, 'pts_bbox_NuScenes/motorcycle_AP_dist_1.0': 0.2471, 'pts_bbox_NuScenes/motorcycle_AP_dist_2.0': 0.4343, 'pts_bbox_NuScenes/motorcycle_AP_dist_4.0': 0.5896, 'pts_bbox_NuScenes/motorcycle_trans_err': 0.7786, 'pts_bbox_NuScenes/motorcycle_scale_err': 0.8247, 'pts_bbox_NuScenes/motorcycle_orient_err': 1.0846, 'pts_bbox_NuScenes/motorcycle_vel_err': 0.0533, 'pts_bbox_NuScenes/motorcycle_attr_err': 0.0, 'pts_bbox_NuScenes/bicycle_AP_dist_0.5': 0.0012, 'pts_bbox_NuScenes/bicycle_AP_dist_1.0': 0.0612, 'pts_bbox_NuScenes/bicycle_AP_dist_2.0': 0.3359, 'pts_bbox_NuScenes/bicycle_AP_dist_4.0': 0.3848, 'pts_bbox_NuScenes/bicycle_trans_err': 0.8801, 'pts_bbox_NuScenes/bicycle_scale_err': 0.8004, 'pts_bbox_NuScenes/bicycle_orient_err': 0.6741, 'pts_bbox_NuScenes/bicycle_vel_err': 0.4424, 'pts_bbox_NuScenes/bicycle_attr_err': 0.0, 'pts_bbox_NuScenes/pedestrian_AP_dist_0.5': 0.0631, 'pts_bbox_NuScenes/pedestrian_AP_dist_1.0': 0.3092, 'pts_bbox_NuScenes/pedestrian_AP_dist_2.0': 0.563, 'pts_bbox_NuScenes/pedestrian_AP_dist_4.0': 0.7198, 'pts_bbox_NuScenes/pedestrian_trans_err': 0.7239, 'pts_bbox_NuScenes/pedestrian_scale_err': 0.3227, 'pts_bbox_NuScenes/pedestrian_orient_err': 0.4332, 'pts_bbox_NuScenes/pedestrian_vel_err': 0.3089, 'pts_bbox_NuScenes/pedestrian_attr_err': 0.1807, 'pts_bbox_NuScenes/traffic_cone_AP_dist_0.5': 0.1697, 'pts_bbox_NuScenes/traffic_cone_AP_dist_1.0': 0.2797, 'pts_bbox_NuScenes/traffic_cone_AP_dist_2.0': 0.3092, 'pts_bbox_NuScenes/traffic_cone_AP_dist_4.0': 0.3339, 'pts_bbox_NuScenes/traffic_cone_trans_err': 0.3226, 'pts_bbox_NuScenes/traffic_cone_scale_err': 0.3698, 'pts_bbox_NuScenes/traffic_cone_orient_err': nan, 'pts_bbox_NuScenes/traffic_cone_vel_err': nan, 'pts_bbox_NuScenes/traffic_cone_attr_err': nan, 'pts_bbox_NuScenes/NDS': 0.3532010438955697, 'pts_bbox_NuScenes/mAP': 0.2816130837129648, 'pts_bbox_NuScenes/amota': 0.32831397887631014, 'pts_bbox_NuScenes/amotp': 1.4933175487319286, 'pts_bbox_NuScenes/recall': 0.4422578362469027, 'pts_bbox_NuScenes/motar': 0.8371796869740047, 'pts_bbox_NuScenes/gt': 611.5, 'pts_bbox_NuScenes/mota': 0.3624980979364881, 'pts_bbox_NuScenes/motp': 0.6967013875032046, 'pts_bbox_NuScenes/mt': 28.0, 'pts_bbox_NuScenes/ml': 59.0, 'pts_bbox_NuScenes/faf': 68.25928612060609, 'pts_bbox_NuScenes/tp': 1658.0, 'pts_bbox_NuScenes/fp': 290.0, 'pts_bbox_NuScenes/fn': 1939.0, 'pts_bbox_NuScenes/ids': 72.0, 'pts_bbox_NuScenes/frag': 64.0, 'pts_bbox_NuScenes/tid': 2.5322368421052635, 'pts_bbox_NuScenes/lgd': 4.029751461988304, 'drivable_iou': 0.6950254440307617, 'lanes_iou': 0.009373359382152557, 'divider_iou': 0.0284257959574461, 'crossing_iou': 0.0, 'contour_iou': 0.0050329058431088924}
-{'pts_bbox_NuScenes/car_AP_dist_0.5': 0.1819, 'pts_bbox_NuScenes/car_AP_dist_1.0': 0.426, 'pts_bbox_NuScenes/car_AP_dist_2.0': 0.6089, 'pts_bbox_NuScenes/car_AP_dist_4.0': 0.7397, 'pts_bbox_NuScenes/car_trans_err': 0.5032, 'pts_bbox_NuScenes/car_scale_err': 0.7539, 'pts_bbox_NuScenes/car_orient_err': 0.1196, 'pts_bbox_NuScenes/car_vel_err': 0.1891, 'pts_bbox_NuScenes/car_attr_err': 0.0721, 'pts_bbox_NuScenes/mATE': 0.7415, 'pts_bbox_NuScenes/mASE': 0.7717, 'pts_bbox_NuScenes/mAOE': 0.602, 'pts_bbox_NuScenes/mAVE': 0.4769, 'pts_bbox_NuScenes/mAAE': 0.284, 'pts_bbox_NuScenes/truck_AP_dist_0.5': 0.1106, 'pts_bbox_NuScenes/truck_AP_dist_1.0': 0.297, 'pts_bbox_NuScenes/truck_AP_dist_2.0': 0.6218, 'pts_bbox_NuScenes/truck_AP_dist_4.0': 0.7522, 'pts_bbox_NuScenes/truck_trans_err': 0.7859, 'pts_bbox_NuScenes/truck_scale_err': 0.7792, 'pts_bbox_NuScenes/truck_orient_err': 0.0631, 'pts_bbox_NuScenes/truck_vel_err': 0.1245, 'pts_bbox_NuScenes/truck_attr_err': 0.0059, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_trans_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_scale_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_orient_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_vel_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_attr_err': 1.0, 'pts_bbox_NuScenes/bus_AP_dist_0.5': 0.2833, 'pts_bbox_NuScenes/bus_AP_dist_1.0': 0.7516, 'pts_bbox_NuScenes/bus_AP_dist_2.0': 0.8209, 'pts_bbox_NuScenes/bus_AP_dist_4.0': 0.8556, 'pts_bbox_NuScenes/bus_trans_err': 0.4203, 'pts_bbox_NuScenes/bus_scale_err': 0.8665, 'pts_bbox_NuScenes/bus_orient_err': 0.0432, 'pts_bbox_NuScenes/bus_vel_err': 0.6967, 'pts_bbox_NuScenes/bus_attr_err': 0.0136, 'pts_bbox_NuScenes/trailer_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/trailer_trans_err': 1.0, 'pts_bbox_NuScenes/trailer_scale_err': 1.0, 'pts_bbox_NuScenes/trailer_orient_err': 1.0, 'pts_bbox_NuScenes/trailer_vel_err': 1.0, 'pts_bbox_NuScenes/trailer_attr_err': 1.0, 'pts_bbox_NuScenes/barrier_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/barrier_trans_err': 1.0, 'pts_bbox_NuScenes/barrier_scale_err': 1.0, 'pts_bbox_NuScenes/barrier_orient_err': 1.0, 'pts_bbox_NuScenes/barrier_vel_err': nan, 'pts_bbox_NuScenes/barrier_attr_err': nan, 'pts_bbox_NuScenes/motorcycle_AP_dist_0.5': 0.0132, 'pts_bbox_NuScenes/motorcycle_AP_dist_1.0': 0.2471, 'pts_bbox_NuScenes/motorcycle_AP_dist_2.0': 0.4343, 'pts_bbox_NuScenes/motorcycle_AP_dist_4.0': 0.5896, 'pts_bbox_NuScenes/motorcycle_trans_err': 0.7786, 'pts_bbox_NuScenes/motorcycle_scale_err': 0.8247, 'pts_bbox_NuScenes/motorcycle_orient_err': 1.0846, 'pts_bbox_NuScenes/motorcycle_vel_err': 0.0533, 'pts_bbox_NuScenes/motorcycle_attr_err': 0.0, 'pts_bbox_NuScenes/bicycle_AP_dist_0.5': 0.0012, 'pts_bbox_NuScenes/bicycle_AP_dist_1.0': 0.0612, 'pts_bbox_NuScenes/bicycle_AP_dist_2.0': 0.3359, 'pts_bbox_NuScenes/bicycle_AP_dist_4.0': 0.3848, 'pts_bbox_NuScenes/bicycle_trans_err': 0.8801, 'pts_bbox_NuScenes/bicycle_scale_err': 0.8004, 'pts_bbox_NuScenes/bicycle_orient_err': 0.6741, 'pts_bbox_NuScenes/bicycle_vel_err': 0.4424, 'pts_bbox_NuScenes/bicycle_attr_err': 0.0, 'pts_bbox_NuScenes/pedestrian_AP_dist_0.5': 0.0631, 'pts_bbox_NuScenes/pedestrian_AP_dist_1.0': 0.3092, 'pts_bbox_NuScenes/pedestrian_AP_dist_2.0': 0.563, 'pts_bbox_NuScenes/pedestrian_AP_dist_4.0': 0.7198, 'pts_bbox_NuScenes/pedestrian_trans_err': 0.7239, 'pts_bbox_NuScenes/pedestrian_scale_err': 0.3227, 'pts_bbox_NuScenes/pedestrian_orient_err': 0.4332, 'pts_bbox_NuScenes/pedestrian_vel_err': 0.3089, 'pts_bbox_NuScenes/pedestrian_attr_err': 0.1807, 'pts_bbox_NuScenes/traffic_cone_AP_dist_0.5': 0.1697, 'pts_bbox_NuScenes/traffic_cone_AP_dist_1.0': 0.2797, 'pts_bbox_NuScenes/traffic_cone_AP_dist_2.0': 0.3092, 'pts_bbox_NuScenes/traffic_cone_AP_dist_4.0': 0.3339, 'pts_bbox_NuScenes/traffic_cone_trans_err': 0.3226, 'pts_bbox_NuScenes/traffic_cone_scale_err': 0.3698, 'pts_bbox_NuScenes/traffic_cone_orient_err': nan, 'pts_bbox_NuScenes/traffic_cone_vel_err': nan, 'pts_bbox_NuScenes/traffic_cone_attr_err': nan, 'pts_bbox_NuScenes/NDS': 0.3532010438955697, 'pts_bbox_NuScenes/mAP': 0.2816130837129648, 'pts_bbox_NuScenes/amota': 0.32831397887631014, 'pts_bbox_NuScenes/amotp': 1.4933175487319286, 'pts_bbox_NuScenes/recall': 0.4422578362469027, 'pts_bbox_NuScenes/motar': 0.8371796869740047, 'pts_bbox_NuScenes/gt': 611.5, 'pts_bbox_NuScenes/mota': 0.3624980979364881, 'pts_bbox_NuScenes/motp': 0.6967013875032046, 'pts_bbox_NuScenes/mt': 28.0, 'pts_bbox_NuScenes/ml': 59.0, 'pts_bbox_NuScenes/faf': 68.25928612060609, 'pts_bbox_NuScenes/tp': 1658.0, 'pts_bbox_NuScenes/fp': 290.0, 'pts_bbox_NuScenes/fn': 1939.0, 'pts_bbox_NuScenes/ids': 72.0, 'pts_bbox_NuScenes/frag': 64.0, 'pts_bbox_NuScenes/tid': 2.5322368421052635, 'pts_bbox_NuScenes/lgd': 4.029751461988304, 'drivable_iou': 0.6950254440307617, 'lanes_iou': 0.009373359382152557, 'divider_iou': 0.0284257959574461, 'crossing_iou': 0.0, 'contour_iou': 0.0050329058431088924}
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ grep -E "eval_init|PlanMetric|planning|L2|col|obj_" ~/UniAD-Diffusion/UniAD/logs/eval_uniad_original_*.log | tail -20
-unexpected key in source state_dict: occ_head.bev_light_proj.conv_layers.0.conv.weight, occ_head.bev_light_proj.conv_layers.0.bn.weight, occ_head.bev_light_proj.conv_layers.0.bn.bias, occ_head.bev_light_proj.conv_layers.0.bn.running_mean, occ_head.bev_light_proj.conv_layers.0.bn.running_var, occ_head.bev_light_proj.conv_layers.0.bn.num_batches_tracked, occ_head.bev_light_proj.conv_layers.1.conv.weight, occ_head.bev_light_proj.conv_layers.1.bn.weight, occ_head.bev_light_proj.conv_layers.1.bn.bias, occ_head.bev_light_proj.conv_layers.1.bn.running_mean, occ_head.bev_light_proj.conv_layers.1.bn.running_var, occ_head.bev_light_proj.conv_layers.1.bn.num_batches_tracked, occ_head.bev_light_proj.conv_layers.2.conv.weight, occ_head.bev_light_proj.conv_layers.2.bn.weight, occ_head.bev_light_proj.conv_layers.2.bn.bias, occ_head.bev_light_proj.conv_layers.2.bn.running_mean, occ_head.bev_light_proj.conv_layers.2.bn.running_var, occ_head.bev_light_proj.conv_layers.2.bn.num_batches_tracked, occ_head.bev_light_proj.conv_layers.3.weight, occ_head.bev_light_proj.conv_layers.3.bias, occ_head.base_downscale.0.layers.conv_down_project.weight, occ_head.base_downscale.0.layers.abn_down_project.0.weight, occ_head.base_downscale.0.layers.abn_down_project.0.bias, occ_head.base_downscale.0.layers.abn_down_project.0.running_mean, occ_head.base_downscale.0.layers.abn_down_project.0.running_var, occ_head.base_downscale.0.layers.abn_down_project.0.num_batches_tracked, occ_head.base_downscale.0.layers.conv.weight, occ_head.base_downscale.0.layers.abn.0.weight, occ_head.base_downscale.0.layers.abn.0.bias, occ_head.base_downscale.0.layers.abn.0.running_mean, occ_head.base_downscale.0.layers.abn.0.running_var, occ_head.base_downscale.0.layers.abn.0.num_batches_tracked, occ_head.base_downscale.0.layers.conv_up_project.weight, occ_head.base_downscale.0.layers.abn_up_project.0.weight, occ_head.base_downscale.0.layers.abn_up_project.0.bias, occ_head.base_downscale.0.layers.abn_up_project.0.running_mean, occ_head.base_downscale.0.layers.abn_up_project.0.running_var, occ_head.base_downscale.0.layers.abn_up_project.0.num_batches_tracked, occ_head.base_downscale.0.projection.conv_skip_proj.weight, occ_head.base_downscale.0.projection.bn_skip_proj.weight, occ_head.base_downscale.0.projection.bn_skip_proj.bias, occ_head.base_downscale.0.projection.bn_skip_proj.running_mean, occ_head.base_downscale.0.projection.bn_skip_proj.running_var, occ_head.base_downscale.0.projection.bn_skip_proj.num_batches_tracked, occ_head.base_downscale.1.layers.conv_down_project.weight, occ_head.base_downscale.1.layers.abn_down_project.0.weight, occ_head.base_downscale.1.layers.abn_down_project.0.bias, occ_head.base_downscale.1.layers.abn_down_project.0.running_mean, occ_head.base_downscale.1.layers.abn_down_project.0.running_var, occ_head.base_downscale.1.layers.abn_down_project.0.num_batches_tracked, occ_head.base_downscale.1.layers.conv.weight, occ_head.base_downscale.1.layers.abn.0.weight, occ_head.base_downscale.1.layers.abn.0.bias, occ_head.base_downscale.1.layers.abn.0.running_mean, occ_head.base_downscale.1.layers.abn.0.running_var, occ_head.base_downscale.1.layers.abn.0.num_batches_tracked, occ_head.base_downscale.1.layers.conv_up_project.weight, occ_head.base_downscale.1.layers.abn_up_project.0.weight, occ_head.base_downscale.1.layers.abn_up_project.0.bias, occ_head.base_downscale.1.layers.abn_up_project.0.running_mean, occ_head.base_downscale.1.layers.abn_up_project.0.running_var, occ_head.base_downscale.1.layers.abn_up_project.0.num_batches_tracked, occ_head.base_downscale.1.projection.conv_skip_proj.weight, occ_head.base_downscale.1.projection.bn_skip_proj.weight, occ_head.base_downscale.1.projection.bn_skip_proj.bias, occ_head.base_downscale.1.projection.bn_skip_proj.running_mean, occ_head.base_downscale.1.projection.bn_skip_proj.running_var, occ_head.base_downscale.1.projection.bn_skip_proj.num_batches_tracked, occ_head.transformer_decoder.layers.0.attentions.0.attn.in_proj_weight, occ_head.transformer_decoder.layers.0.attentions.0.attn.in_proj_bias, occ_head.transformer_decoder.layers.0.attentions.0.attn.out_proj.weight, occ_head.transformer_decoder.layers.0.attentions.0.attn.out_proj.bias, occ_head.transformer_decoder.layers.0.attentions.1.attn.in_proj_weight, occ_head.transformer_decoder.layers.0.attentions.1.attn.in_proj_bias, occ_head.transformer_decoder.layers.0.attentions.1.attn.out_proj.weight, occ_head.transformer_decoder.layers.0.attentions.1.attn.out_proj.bias, occ_head.transformer_decoder.layers.0.ffns.0.layers.0.0.weight, occ_head.transformer_decoder.layers.0.ffns.0.layers.0.0.bias, occ_head.transformer_decoder.layers.0.ffns.0.layers.1.weight, occ_head.transformer_decoder.layers.0.ffns.0.layers.1.bias, occ_head.transformer_decoder.layers.0.norms.0.weight, occ_head.transformer_decoder.layers.0.norms.0.bias, occ_head.transformer_decoder.layers.0.norms.1.weight, occ_head.transformer_decoder.layers.0.norms.1.bias, occ_head.transformer_decoder.layers.0.norms.2.weight, occ_head.transformer_decoder.layers.0.norms.2.bias, occ_head.transformer_decoder.layers.1.attentions.0.attn.in_proj_weight, occ_head.transformer_decoder.layers.1.attentions.0.attn.in_proj_bias, occ_head.transformer_decoder.layers.1.attentions.0.attn.out_proj.weight, occ_head.transformer_decoder.layers.1.attentions.0.attn.out_proj.bias, occ_head.transformer_decoder.layers.1.attentions.1.attn.in_proj_weight, occ_head.transformer_decoder.layers.1.attentions.1.attn.in_proj_bias, occ_head.transformer_decoder.layers.1.attentions.1.attn.out_proj.weight, occ_head.transformer_decoder.layers.1.attentions.1.attn.out_proj.bias, occ_head.transformer_decoder.layers.1.ffns.0.layers.0.0.weight, occ_head.transformer_decoder.layers.1.ffns.0.layers.0.0.bias, occ_head.transformer_decoder.layers.1.ffns.0.layers.1.weight, occ_head.transformer_decoder.layers.1.ffns.0.layers.1.bias, occ_head.transformer_decoder.layers.1.norms.0.weight, occ_head.transformer_decoder.layers.1.norms.0.bias, occ_head.transformer_decoder.layers.1.norms.1.weight, occ_head.transformer_decoder.layers.1.norms.1.bias, occ_head.transformer_decoder.layers.1.norms.2.weight, occ_head.transformer_decoder.layers.1.norms.2.bias, occ_head.transformer_decoder.layers.2.attentions.0.attn.in_proj_weight, occ_head.transformer_decoder.layers.2.attentions.0.attn.in_proj_bias, occ_head.transformer_decoder.layers.2.attentions.0.attn.out_proj.weight, occ_head.transformer_decoder.layers.2.attentions.0.attn.out_proj.bias, occ_head.transformer_decoder.layers.2.attentions.1.attn.in_proj_weight, occ_head.transformer_decoder.layers.2.attentions.1.attn.in_proj_bias, occ_head.transformer_decoder.layers.2.attentions.1.attn.out_proj.weight, occ_head.transformer_decoder.layers.2.attentions.1.attn.out_proj.bias, occ_head.transformer_decoder.layers.2.ffns.0.layers.0.0.weight, occ_head.transformer_decoder.layers.2.ffns.0.layers.0.0.bias, occ_head.transformer_decoder.layers.2.ffns.0.layers.1.weight, occ_head.transformer_decoder.layers.2.ffns.0.layers.1.bias, occ_head.transformer_decoder.layers.2.norms.0.weight, occ_head.transformer_decoder.layers.2.norms.0.bias, occ_head.transformer_decoder.layers.2.norms.1.weight, occ_head.transformer_decoder.layers.2.norms.1.bias, occ_head.transformer_decoder.layers.2.norms.2.weight, occ_head.transformer_decoder.layers.2.norms.2.bias, occ_head.transformer_decoder.layers.3.attentions.0.attn.in_proj_weight, occ_head.transformer_decoder.layers.3.attentions.0.attn.in_proj_bias, occ_head.transformer_decoder.layers.3.attentions.0.attn.out_proj.weight, occ_head.transformer_decoder.layers.3.attentions.0.attn.out_proj.bias, occ_head.transformer_decoder.layers.3.attentions.1.attn.in_proj_weight, occ_head.transformer_decoder.layers.3.attentions.1.attn.in_proj_bias, occ_head.transformer_decoder.layers.3.attentions.1.attn.out_proj.weight, occ_head.transformer_decoder.layers.3.attentions.1.attn.out_proj.bias, occ_head.transformer_decoder.layers.3.ffns.0.layers.0.0.weight, occ_head.transformer_decoder.layers.3.ffns.0.layers.0.0.bias, occ_head.transformer_decoder.layers.3.ffns.0.layers.1.weight, occ_head.transformer_decoder.layers.3.ffns.0.layers.1.bias, occ_head.transformer_decoder.layers.3.norms.0.weight, occ_head.transformer_decoder.layers.3.norms.0.bias, occ_head.transformer_decoder.layers.3.norms.1.weight, occ_head.transformer_decoder.layers.3.norms.1.bias, occ_head.transformer_decoder.layers.3.norms.2.weight, occ_head.transformer_decoder.layers.3.norms.2.bias, occ_head.transformer_decoder.layers.4.attentions.0.attn.in_proj_weight, occ_head.transformer_decoder.layers.4.attentions.0.attn.in_proj_bias, occ_head.transformer_decoder.layers.4.attentions.0.attn.out_proj.weight, occ_head.transformer_decoder.layers.4.attentions.0.attn.out_proj.bias, occ_head.transformer_decoder.layers.4.attentions.1.attn.in_proj_weight, occ_head.transformer_decoder.layers.4.attentions.1.attn.in_proj_bias, occ_head.transformer_decoder.layers.4.attentions.1.attn.out_proj.weight, occ_head.transformer_decoder.layers.4.attentions.1.attn.out_proj.bias, occ_head.transformer_decoder.layers.4.ffns.0.layers.0.0.weight, occ_head.transformer_decoder.layers.4.ffns.0.layers.0.0.bias, occ_head.transformer_decoder.layers.4.ffns.0.layers.1.weight, occ_head.transformer_decoder.layers.4.ffns.0.layers.1.bias, occ_head.transformer_decoder.layers.4.norms.0.weight, occ_head.transformer_decoder.layers.4.norms.0.bias, occ_head.transformer_decoder.layers.4.norms.1.weight, occ_head.transformer_decoder.layers.4.norms.1.bias, occ_head.transformer_decoder.layers.4.norms.2.weight, occ_head.transformer_decoder.layers.4.norms.2.bias, occ_head.transformer_decoder.post_norm.weight, occ_head.transformer_decoder.post_norm.bias, occ_head.temporal_mlps.0.layers.0.weight, occ_head.temporal_mlps.0.layers.0.bias, occ_head.temporal_mlps.0.layers.1.weight, occ_head.temporal_mlps.0.layers.1.bias, occ_head.temporal_mlps.1.layers.0.weight, occ_head.temporal_mlps.1.layers.0.bias, occ_head.temporal_mlps.1.layers.1.weight, occ_head.temporal_mlps.1.layers.1.bias, occ_head.temporal_mlps.2.layers.0.weight, occ_head.temporal_mlps.2.layers.0.bias, occ_head.temporal_mlps.2.layers.1.weight, occ_head.temporal_mlps.2.layers.1.bias, occ_head.temporal_mlps.3.layers.0.weight, occ_head.temporal_mlps.3.layers.0.bias, occ_head.temporal_mlps.3.layers.1.weight, occ_head.temporal_mlps.3.layers.1.bias, occ_head.temporal_mlps.4.layers.0.weight, occ_head.temporal_mlps.4.layers.0.bias, occ_head.temporal_mlps.4.layers.1.weight, occ_head.temporal_mlps.4.layers.1.bias, occ_head.downscale_convs.0.layers.conv_down_project.weight, occ_head.downscale_convs.0.layers.abn_down_project.0.weight, occ_head.downscale_convs.0.layers.abn_down_project.0.bias, occ_head.downscale_convs.0.layers.abn_down_project.0.running_mean, occ_head.downscale_convs.0.layers.abn_down_project.0.running_var, occ_head.downscale_convs.0.layers.abn_down_project.0.num_batches_tracked, occ_head.downscale_convs.0.layers.conv.weight, occ_head.downscale_convs.0.layers.abn.0.weight, occ_head.downscale_convs.0.layers.abn.0.bias, occ_head.downscale_convs.0.layers.abn.0.running_mean, occ_head.downscale_convs.0.layers.abn.0.running_var, occ_head.downscale_convs.0.layers.abn.0.num_batches_tracked, occ_head.downscale_convs.0.layers.conv_up_project.weight, occ_head.downscale_convs.0.layers.abn_up_project.0.weight, occ_head.downscale_convs.0.layers.abn_up_project.0.bias, occ_head.downscale_convs.0.layers.abn_up_project.0.running_mean, occ_head.downscale_convs.0.layers.abn_up_project.0.running_var, occ_head.downscale_convs.0.layers.abn_up_project.0.num_batches_tracked, occ_head.downscale_convs.0.projection.conv_skip_proj.weight, occ_head.downscale_convs.0.projection.bn_skip_proj.weight, occ_head.downscale_convs.0.projection.bn_skip_proj.bias, occ_head.downscale_convs.0.projection.bn_skip_proj.running_mean, occ_head.downscale_convs.0.projection.bn_skip_proj.running_var, occ_head.downscale_convs.0.projection.bn_skip_proj.num_batches_tracked, occ_head.downscale_convs.1.layers.conv_down_project.weight, occ_head.downscale_convs.1.layers.abn_down_project.0.weight, occ_head.downscale_convs.1.layers.abn_down_project.0.bias, occ_head.downscale_convs.1.layers.abn_down_project.0.running_mean, occ_head.downscale_convs.1.layers.abn_down_project.0.running_var, occ_head.downscale_convs.1.layers.abn_down_project.0.num_batches_tracked, occ_head.downscale_convs.1.layers.conv.weight, occ_head.downscale_convs.1.layers.abn.0.weight, occ_head.downscale_convs.1.layers.abn.0.bias, occ_head.downscale_convs.1.layers.abn.0.running_mean, occ_head.downscale_convs.1.layers.abn.0.running_var, occ_head.downscale_convs.1.layers.abn.0.num_batches_tracked, occ_head.downscale_convs.1.layers.conv_up_project.weight, occ_head.downscale_convs.1.layers.abn_up_project.0.weight, occ_head.downscale_convs.1.layers.abn_up_project.0.bias, occ_head.downscale_convs.1.layers.abn_up_project.0.running_mean, occ_head.downscale_convs.1.layers.abn_up_project.0.running_var, occ_head.downscale_convs.1.layers.abn_up_project.0.num_batches_tracked, occ_head.downscale_convs.1.projection.conv_skip_proj.weight, occ_head.downscale_convs.1.projection.bn_skip_proj.weight, occ_head.downscale_convs.1.projection.bn_skip_proj.bias, occ_head.downscale_convs.1.projection.bn_skip_proj.running_mean, occ_head.downscale_convs.1.projection.bn_skip_proj.running_var, occ_head.downscale_convs.1.projection.bn_skip_proj.num_batches_tracked, occ_head.downscale_convs.2.layers.conv_down_project.weight, occ_head.downscale_convs.2.layers.abn_down_project.0.weight, occ_head.downscale_convs.2.layers.abn_down_project.0.bias, occ_head.downscale_convs.2.layers.abn_down_project.0.running_mean, occ_head.downscale_convs.2.layers.abn_down_project.0.running_var, occ_head.downscale_convs.2.layers.abn_down_project.0.num_batches_tracked, occ_head.downscale_convs.2.layers.conv.weight, occ_head.downscale_convs.2.layers.abn.0.weight, occ_head.downscale_convs.2.layers.abn.0.bias, occ_head.downscale_convs.2.layers.abn.0.running_mean, occ_head.downscale_convs.2.layers.abn.0.running_var, occ_head.downscale_convs.2.layers.abn.0.num_batches_tracked, occ_head.downscale_convs.2.layers.conv_up_project.weight, occ_head.downscale_convs.2.layers.abn_up_project.0.weight, occ_head.downscale_convs.2.layers.abn_up_project.0.bias, occ_head.downscale_convs.2.layers.abn_up_project.0.running_mean, occ_head.downscale_convs.2.layers.abn_up_project.0.running_var, occ_head.downscale_convs.2.layers.abn_up_project.0.num_batches_tracked, occ_head.downscale_convs.2.projection.conv_skip_proj.weight, occ_head.downscale_convs.2.projection.bn_skip_proj.weight, occ_head.downscale_convs.2.projection.bn_skip_proj.bias, occ_head.downscale_convs.2.projection.bn_skip_proj.running_mean, occ_head.downscale_convs.2.projection.bn_skip_proj.running_var, occ_head.downscale_convs.2.projection.bn_skip_proj.num_batches_tracked, occ_head.downscale_convs.3.layers.conv_down_project.weight, occ_head.downscale_convs.3.layers.abn_down_project.0.weight, occ_head.downscale_convs.3.layers.abn_down_project.0.bias, occ_head.downscale_convs.3.layers.abn_down_project.0.running_mean, occ_head.downscale_convs.3.layers.abn_down_project.0.running_var, occ_head.downscale_convs.3.layers.abn_down_project.0.num_batches_tracked, occ_head.downscale_convs.3.layers.conv.weight, occ_head.downscale_convs.3.layers.abn.0.weight, occ_head.downscale_convs.3.layers.abn.0.bias, occ_head.downscale_convs.3.layers.abn.0.running_mean, occ_head.downscale_convs.3.layers.abn.0.running_var, occ_head.downscale_convs.3.layers.abn.0.num_batches_tracked, occ_head.downscale_convs.3.layers.conv_up_project.weight, occ_head.downscale_convs.3.layers.abn_up_project.0.weight, occ_head.downscale_convs.3.layers.abn_up_project.0.bias, occ_head.downscale_convs.3.layers.abn_up_project.0.running_mean, occ_head.downscale_convs.3.layers.abn_up_project.0.running_var, occ_head.downscale_convs.3.layers.abn_up_project.0.num_batches_tracked, occ_head.downscale_convs.3.projection.conv_skip_proj.weight, occ_head.downscale_convs.3.projection.bn_skip_proj.weight, occ_head.downscale_convs.3.projection.bn_skip_proj.bias, occ_head.downscale_convs.3.projection.bn_skip_proj.running_mean, occ_head.downscale_convs.3.projection.bn_skip_proj.running_var, occ_head.downscale_convs.3.projection.bn_skip_proj.num_batches_tracked, occ_head.downscale_convs.4.layers.conv_down_project.weight, occ_head.downscale_convs.4.layers.abn_down_project.0.weight, occ_head.downscale_convs.4.layers.abn_down_project.0.bias, occ_head.downscale_convs.4.layers.abn_down_project.0.running_mean, occ_head.downscale_convs.4.layers.abn_down_project.0.running_var, occ_head.downscale_convs.4.layers.abn_down_project.0.num_batches_tracked, occ_head.downscale_convs.4.layers.conv.weight, occ_head.downscale_convs.4.layers.abn.0.weight, occ_head.downscale_convs.4.layers.abn.0.bias, occ_head.downscale_convs.4.layers.abn.0.running_mean, occ_head.downscale_convs.4.layers.abn.0.running_var, occ_head.downscale_convs.4.layers.abn.0.num_batches_tracked, occ_head.downscale_convs.4.layers.conv_up_project.weight, occ_head.downscale_convs.4.layers.abn_up_project.0.weight, occ_head.downscale_convs.4.layers.abn_up_project.0.bias, occ_head.downscale_convs.4.layers.abn_up_project.0.running_mean, occ_head.downscale_convs.4.layers.abn_up_project.0.running_var, occ_head.downscale_convs.4.layers.abn_up_project.0.num_batches_tracked, occ_head.downscale_convs.4.projection.conv_skip_proj.weight, occ_head.downscale_convs.4.projection.bn_skip_proj.weight, occ_head.downscale_convs.4.projection.bn_skip_proj.bias, occ_head.downscale_convs.4.projection.bn_skip_proj.running_mean, occ_head.downscale_convs.4.projection.bn_skip_proj.running_var, occ_head.downscale_convs.4.projection.bn_skip_proj.num_batches_tracked, occ_head.upsample_adds.0.upsample_layer.1.weight, occ_head.upsample_adds.0.upsample_layer.2.weight, occ_head.upsample_adds.0.upsample_layer.2.bias, occ_head.upsample_adds.0.upsample_layer.2.running_mean, occ_head.upsample_adds.0.upsample_layer.2.running_var, occ_head.upsample_adds.0.upsample_layer.2.num_batches_tracked, occ_head.upsample_adds.1.upsample_layer.1.weight, occ_head.upsample_adds.1.upsample_layer.2.weight, occ_head.upsample_adds.1.upsample_layer.2.bias, occ_head.upsample_adds.1.upsample_layer.2.running_mean, occ_head.upsample_adds.1.upsample_layer.2.running_var, occ_head.upsample_adds.1.upsample_layer.2.num_batches_tracked, occ_head.upsample_adds.2.upsample_layer.1.weight, occ_head.upsample_adds.2.upsample_layer.2.weight, occ_head.upsample_adds.2.upsample_layer.2.bias, occ_head.upsample_adds.2.upsample_layer.2.running_mean, occ_head.upsample_adds.2.upsample_layer.2.running_var, occ_head.upsample_adds.2.upsample_layer.2.num_batches_tracked, occ_head.upsample_adds.3.upsample_layer.1.weight, occ_head.upsample_adds.3.upsample_layer.2.weight, occ_head.upsample_adds.3.upsample_layer.2.bias, occ_head.upsample_adds.3.upsample_layer.2.running_mean, occ_head.upsample_adds.3.upsample_layer.2.running_var, occ_head.upsample_adds.3.upsample_layer.2.num_batches_tracked, occ_head.upsample_adds.4.upsample_layer.1.weight, occ_head.upsample_adds.4.upsample_layer.2.weight, occ_head.upsample_adds.4.upsample_layer.2.bias, occ_head.upsample_adds.4.upsample_layer.2.running_mean, occ_head.upsample_adds.4.upsample_layer.2.running_var, occ_head.upsample_adds.4.upsample_layer.2.num_batches_tracked, occ_head.dense_decoder.layers.0.conv.1.weight, occ_head.dense_decoder.layers.0.conv.2.weight, occ_head.dense_decoder.layers.0.conv.2.bias, occ_head.dense_decoder.layers.0.conv.2.running_mean, occ_head.dense_decoder.layers.0.conv.2.running_var, occ_head.dense_decoder.layers.0.conv.2.num_batches_tracked, occ_head.dense_decoder.layers.0.conv.4.weight, occ_head.dense_decoder.layers.0.conv.5.weight, occ_head.dense_decoder.layers.0.conv.5.bias, occ_head.dense_decoder.layers.0.conv.5.running_mean, occ_head.dense_decoder.layers.0.conv.5.running_var, occ_head.dense_decoder.layers.0.conv.5.num_batches_tracked, occ_head.dense_decoder.layers.0.up.weight, occ_head.dense_decoder.layers.0.up.bias, occ_head.dense_decoder.layers.1.conv.1.weight, occ_head.dense_decoder.layers.1.conv.2.weight, occ_head.dense_decoder.layers.1.conv.2.bias, occ_head.dense_decoder.layers.1.conv.2.running_mean, occ_head.dense_decoder.layers.1.conv.2.running_var, occ_head.dense_decoder.layers.1.conv.2.num_batches_tracked, occ_head.dense_decoder.layers.1.conv.4.weight, occ_head.dense_decoder.layers.1.conv.5.weight, occ_head.dense_decoder.layers.1.conv.5.bias, occ_head.dense_decoder.layers.1.conv.5.running_mean, occ_head.dense_decoder.layers.1.conv.5.running_var, occ_head.dense_decoder.layers.1.conv.5.num_batches_tracked, occ_head.dense_decoder.layers.1.up.weight, occ_head.dense_decoder.layers.1.up.bias, occ_head.mode_fuser.0.weight, occ_head.mode_fuser.0.bias, occ_head.mode_fuser.1.weight, occ_head.mode_fuser.1.bias, occ_head.multi_query_fuser.0.weight, occ_head.multi_query_fuser.0.bias, occ_head.multi_query_fuser.1.weight, occ_head.multi_query_fuser.1.bias, occ_head.multi_query_fuser.3.weight, occ_head.multi_query_fuser.3.bias, occ_head.query_to_occ_feat.layers.0.weight, occ_head.query_to_occ_feat.layers.0.bias, occ_head.query_to_occ_feat.layers.1.weight, occ_head.query_to_occ_feat.layers.1.bias, occ_head.query_to_occ_feat.layers.2.weight, occ_head.query_to_occ_feat.layers.2.bias, occ_head.temporal_mlp_for_mask.layers.0.weight, occ_head.temporal_mlp_for_mask.layers.0.bias, occ_head.temporal_mlp_for_mask.layers.1.weight, occ_head.temporal_mlp_for_mask.layers.1.bias, occ_head.temporal_mlp_for_mask.layers.2.weight, occ_head.temporal_mlp_for_mask.layers.2.bias, planning_head.navi_embed.weight, planning_head.reg_branch.0.weight, planning_head.reg_branch.0.bias, planning_head.reg_branch.2.weight, planning_head.reg_branch.2.bias, planning_head.attn_module.layers.0.self_attn.in_proj_weight, planning_head.attn_module.layers.0.self_attn.in_proj_bias, planning_head.attn_module.layers.0.self_attn.out_proj.weight, planning_head.attn_module.layers.0.self_attn.out_proj.bias, planning_head.attn_module.layers.0.multihead_attn.in_proj_weight, planning_head.attn_module.layers.0.multihead_attn.in_proj_bias, planning_head.attn_module.layers.0.multihead_attn.out_proj.weight, planning_head.attn_module.layers.0.multihead_attn.out_proj.bias, planning_head.attn_module.layers.0.linear1.weight, planning_head.attn_module.layers.0.linear1.bias, planning_head.attn_module.layers.0.linear2.weight, planning_head.attn_module.layers.0.linear2.bias, planning_head.attn_module.layers.0.norm1.weight, planning_head.attn_module.layers.0.norm1.bias, planning_head.attn_module.layers.0.norm2.weight, planning_head.attn_module.layers.0.norm2.bias, planning_head.attn_module.layers.0.norm3.weight, planning_head.attn_module.layers.0.norm3.bias, planning_head.attn_module.layers.1.self_attn.in_proj_weight, planning_head.attn_module.layers.1.self_attn.in_proj_bias, planning_head.attn_module.layers.1.self_attn.out_proj.weight, planning_head.attn_module.layers.1.self_attn.out_proj.bias, planning_head.attn_module.layers.1.multihead_attn.in_proj_weight, planning_head.attn_module.layers.1.multihead_attn.in_proj_bias, planning_head.attn_module.layers.1.multihead_attn.out_proj.weight, planning_head.attn_module.layers.1.multihead_attn.out_proj.bias, planning_head.attn_module.layers.1.linear1.weight, planning_head.attn_module.layers.1.linear1.bias, planning_head.attn_module.layers.1.linear2.weight, planning_head.attn_module.layers.1.linear2.bias, planning_head.attn_module.layers.1.norm1.weight, planning_head.attn_module.layers.1.norm1.bias, planning_head.attn_module.layers.1.norm2.weight, planning_head.attn_module.layers.1.norm2.bias, planning_head.attn_module.layers.1.norm3.weight, planning_head.attn_module.layers.1.norm3.bias, planning_head.attn_module.layers.2.self_attn.in_proj_weight, planning_head.attn_module.layers.2.self_attn.in_proj_bias, planning_head.attn_module.layers.2.self_attn.out_proj.weight, planning_head.attn_module.layers.2.self_attn.out_proj.bias, planning_head.attn_module.layers.2.multihead_attn.in_proj_weight, planning_head.attn_module.layers.2.multihead_attn.in_proj_bias, planning_head.attn_module.layers.2.multihead_attn.out_proj.weight, planning_head.attn_module.layers.2.multihead_attn.out_proj.bias, planning_head.attn_module.layers.2.linear1.weight, planning_head.attn_module.layers.2.linear1.bias, planning_head.attn_module.layers.2.linear2.weight, planning_head.attn_module.layers.2.linear2.bias, planning_head.attn_module.layers.2.norm1.weight, planning_head.attn_module.layers.2.norm1.bias, planning_head.attn_module.layers.2.norm2.weight, planning_head.attn_module.layers.2.norm2.bias, planning_head.attn_module.layers.2.norm3.weight, planning_head.attn_module.layers.2.norm3.bias, planning_head.mlp_fuser.0.weight, planning_head.mlp_fuser.0.bias, planning_head.mlp_fuser.1.weight, planning_head.mlp_fuser.1.bias, planning_head.pos_embed.weight, planning_head.bev_adapter.0.0.weight, planning_head.bev_adapter.0.0.bias, planning_head.bev_adapter.0.2.weight, planning_head.bev_adapter.0.2.bias, planning_head.bev_adapter.1.0.weight, planning_head.bev_adapter.1.0.bias, planning_head.bev_adapter.1.2.weight, planning_head.bev_adapter.1.2.bias, planning_head.bev_adapter.2.0.weight, planning_head.bev_adapter.2.0.bias, planning_head.bev_adapter.2.2.weight, planning_head.bev_adapter.2.2.bias
-missing keys in source state_dict: planning_head.traj_mean, planning_head.traj_std, planning_head.bev_track_bridge.bev_pos_embed, planning_head.bev_track_bridge.bev_compress.0.weight, planning_head.bev_track_bridge.bev_compress.0.bias, planning_head.bev_track_bridge.bev_compress.2.weight, planning_head.bev_track_bridge.bev_compress.2.bias, planning_head.bev_track_bridge.track_proj.0.weight, planning_head.bev_track_bridge.track_proj.0.bias, planning_head.bev_track_bridge.track_proj.1.weight, planning_head.bev_track_bridge.track_proj.1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.in_proj_weight, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.in_proj_bias, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.out_proj.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.out_proj.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.linear1.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.linear1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.linear2.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.linear2.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.norm1.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.norm1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.norm2.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.norm2.bias, planning_head.ego_bridge.ego_fuser.0.weight, planning_head.ego_bridge.ego_fuser.0.bias, planning_head.ego_bridge.ego_fuser.1.weight, planning_head.ego_bridge.ego_fuser.1.bias, planning_head.ego_bridge.command_embed.weight, planning_head.ego_bridge.routing_fuser.0.weight, planning_head.ego_bridge.routing_fuser.0.bias, planning_head.ego_bridge.routing_fuser.1.weight, planning_head.ego_bridge.routing_fuser.1.bias, planning_head.t_embedder.mlp.0.weight, planning_head.t_embedder.mlp.0.bias, planning_head.t_embedder.mlp.2.weight, planning_head.t_embedder.mlp.2.bias, planning_head.ego_time_pe.pe, planning_head.preproj.fc1.weight, planning_head.preproj.fc1.bias, planning_head.preproj.fc2.weight, planning_head.preproj.fc2.bias, planning_head.vector_in.fc1.weight, planning_head.vector_in.fc1.bias, planning_head.vector_in.fc2.weight, planning_head.vector_in.fc2.bias, planning_head.routing_in.fc1.weight, planning_head.routing_in.fc1.bias, planning_head.routing_in.fc2.weight, planning_head.routing_in.fc2.bias, planning_head.context_in.fc1.weight, planning_head.context_in.fc1.bias, planning_head.context_in.fc2.weight, planning_head.context_in.fc2.bias, planning_head.dit_blocks.0.self_attn.in_proj_weight, planning_head.dit_blocks.0.self_attn.in_proj_bias, planning_head.dit_blocks.0.self_attn.out_proj.weight, planning_head.dit_blocks.0.self_attn.out_proj.bias, planning_head.dit_blocks.0.cross_attn.in_proj_weight, planning_head.dit_blocks.0.cross_attn.in_proj_bias, planning_head.dit_blocks.0.cross_attn.out_proj.weight, planning_head.dit_blocks.0.cross_attn.out_proj.bias, planning_head.dit_blocks.0.ffn.0.weight, planning_head.dit_blocks.0.ffn.0.bias, planning_head.dit_blocks.0.ffn.2.weight, planning_head.dit_blocks.0.ffn.2.bias, planning_head.dit_blocks.0.adaLN_modulation.1.weight, planning_head.dit_blocks.0.adaLN_modulation.1.bias, planning_head.dit_blocks.1.self_attn.in_proj_weight, planning_head.dit_blocks.1.self_attn.in_proj_bias, planning_head.dit_blocks.1.self_attn.out_proj.weight, planning_head.dit_blocks.1.self_attn.out_proj.bias, planning_head.dit_blocks.1.cross_attn.in_proj_weight, planning_head.dit_blocks.1.cross_attn.in_proj_bias, planning_head.dit_blocks.1.cross_attn.out_proj.weight, planning_head.dit_blocks.1.cross_attn.out_proj.bias, planning_head.dit_blocks.1.ffn.0.weight, planning_head.dit_blocks.1.ffn.0.bias, planning_head.dit_blocks.1.ffn.2.weight, planning_head.dit_blocks.1.ffn.2.bias, planning_head.dit_blocks.1.adaLN_modulation.1.weight, planning_head.dit_blocks.1.adaLN_modulation.1.bias, planning_head.final_layer.linear.weight, planning_head.final_layer.linear.bias, planning_head.final_layer.adaLN_modulation.1.weight, planning_head.final_layer.adaLN_modulation.1.bias
-[eval_init] model=UniAD  eval_planning=True  eval_occ=False  planning_head=DiffusionPlanningHead
-[PlanMetric debug] pred=torch.Size([1, 6, 2])  gt=torch.Size([1, 6, 2])  mask=torch.Size([1, 6, 2])  seg=torch.Size([1, 6, 200, 200])
-|                 uniad's definition planning metrics                  |
-|   obj_col   | 0.0000 | 0.0000 | 0.0123 |  0.0370 |  0.0494 |  0.0988 |
-| obj_box_col | 0.0000 | 0.0370 | 0.0617 |  0.1481 |  0.1728 |  0.1728 |
-|      L2     | 4.0267 | 6.3982 | 8.3344 | 10.8050 | 11.8661 | 13.3318 |
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 
+# =====================================================================================
+# 显存优化（与 base_e2e_diffusion.py 完全相同，保证公平对比）
+# =====================================================================================
+model = dict(
+    # 只使用当前帧，省去历史帧 BEV 缓存（节省约 1.5 GB）
+    queue_length=1,
+    # track query 从 900 减到 300（节省约 0.5 GB）
+    num_query=300,
+    seg_head=dict(
+        num_query=100,
+        num_things_classes=3,
+        num_stuff_classes=1,
+    ),
+    # 禁用 OccHead（节省约 1.0~1.5 GB，与 DiT 版本保持一致）
+    occ_head=None,
+    # 规划头：PlanningHeadSingleMode（唯一与 DiT 版本不同的地方）
+    # 完整写出所有参数，避免继承 base_e2e.py 的默认值导致报错
+    planning_head=dict(
+        type='PlanningHeadSingleMode',
+        embed_dims=256,
+        planning_steps=6,
+        # ADE 轨迹损失（必须提供，不能为 None）
+        loss_planning=dict(type='PlanningLoss'),
+        # 碰撞损失：occ_head=None 时无法使用，改为空列表
+        # （不能传 None，PlanningHeadSingleMode 会对它做迭代）
+        loss_collision=[],
+        # 碰撞避免优化：occ_head=None 时无法启用
+        use_col_optim=False,
+        col_optim_args=dict(occ_filter_range=5.0, sigma=1.0, alpha_collision=5.0),
+        # 训练时评估：显存优化，关闭
+        planning_eval=False,
+        # BEV Adapter：显存优化，关闭
+        with_adapter=False,
+        # BEV token 降采样：40000 → 64（与 DiT 版本 n_bev_tokens=64 完全一致）
+        # 原版 PlanningHeadSingleMode 对 40000 个 BEV token 做 cross-attn，8GB 显存不够
+        # 采样到 64 后显存正常，且与 DiT 版本的 BEV 信息量完全相同，保证对比公平
+        n_bev_tokens=64,
+    ),
+)
+
+# =====================================================================================
+# 训练超参数（与 DiT 版本保持一致）
+# =====================================================================================
+optimizer = dict(
+    type="AdamW",
+    lr=1e-4,
+    paramwise_cfg=dict(
+        custom_keys={
+            "img_backbone": dict(lr_mult=0.1),
+        }
+    ),
+    weight_decay=0.01,
+)
+
+# 起点权重（与 DiT 版本相同，从 Stage1 fine-tune）
+load_from = "ckpts/uniad_base_track_map.pth"
+find_unused_parameters = True
+
+# =====================================================================================
+# 数据配置（与 DiT 版本完全相同）
+# =====================================================================================
+data = dict(
+    samples_per_gpu=1,
+    workers_per_gpu=2,
+    train=dict(
+        ann_file=_mini_info_root + "nuscenes_infos_temporal_train.pkl",
+        data_root=_mini_data_root,
+        queue_length=1,
+    ),
+    val=dict(
+        ann_file=_mini_info_root + "nuscenes_infos_temporal_val.pkl",
+        data_root=_mini_data_root,
+    ),
+    test=dict(
+        ann_file=_mini_info_root + "nuscenes_infos_temporal_val.pkl",
+        data_root=_mini_data_root,
+    ),
+)
+
+# =====================================================================================
+# 训练轮次（与 DiT 版本相同：20 epoch）
+# =====================================================================================
+total_epochs = 20
+runner = dict(type="EpochBasedRunner", max_epochs=total_epochs)
+
+evaluation = dict(
+    interval=5,
+    planning_evaluation_strategy="uniad",
+)
+
+lr_config = dict(
+    policy="CosineAnnealing",
+    warmup="linear",
+    warmup_iters=50,
+    warmup_ratio=1.0 / 3,
+    min_lr_ratio=1e-3,
+)
+
+log_config = dict(
+    interval=5,
+    hooks=[
+        dict(type="TextLoggerHook"),
+        dict(type="TensorboardLoggerHook"),
+    ],
+)
+
+# 输出目录（与 DiT 版本区分）
+work_dir = "work_dir/uniad_mini"(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 

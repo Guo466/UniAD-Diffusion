@@ -33,7 +33,7 @@
 thr_0.8191	1.000	0.625	0.242	57	95	23	72	0	23	23	0	0
 
 Calculating metrics...
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026/track
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026/track
 
 ### Final results ###
 
@@ -65,13 +65,13 @@ IDS	52
 FRAG	36
 TID	1.79
 LGD	2.58
-Eval time: 16.1s
+Eval time: 16.0s
 
 Rendering curves
 Initializing nuScenes detection evaluation
-Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026/results_nusc.json. Found detections for 81 samples.
+Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026/results_nusc.json. Found detections for 81 samples.
 Loading annotations for mini_val split from nuScenes version: v1.0-mini
-100%|██████████| 81/81 [00:00<00:00, 97.90it/s] 
+100%|██████████| 81/81 [00:00<00:00, 98.35it/s] 
 Loaded ground truth annotations for 81 samples.
 Filtering predictions
 => Original number of boxes: 6010
@@ -102,7 +102,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
 mAP: 0.0808
 mATE: 0.9245
 mASE: 0.9081
@@ -110,7 +110,7 @@ mAOE: 0.8507
 mAVE: 0.8349
 mAAE: 0.7836
 NDS: 0.1102
-Eval time: 3.0s
+Eval time: 3.7s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -141,7 +141,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
 mAP: 0.0337
 mATE: 0.8849
 mASE: 0.9051
@@ -149,7 +149,7 @@ mAOE: 0.8355
 mAVE: 0.7938
 mAAE: 0.7845
 NDS: 0.0965
-Eval time: 1.0s
+Eval time: 1.9s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -200,7 +200,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
 mAP: 0.0552
 mATE: 0.9224
 mASE: 0.9060
@@ -225,9 +225,9 @@ barrier	0.000	1.000	1.000	1.000	nan	nan
 --------------------------------------------------
 Evaluate on detection category...
 Initializing nuScenes detection evaluation
-Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026/results_nusc.json. Found detections for 81 samples.
+Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026/results_nusc.json. Found detections for 81 samples.
 Loading annotations for mini_val split from nuScenes version: v1.0-mini
-100%|██████████| 81/81 [00:00<00:00, 97.19it/s] 
+100%|██████████| 81/81 [00:00<00:00, 96.28it/s] 
 Loaded ground truth annotations for 81 samples.
 Filtering predictions
 => Original number of boxes: 6010
@@ -256,7 +256,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
 mAP: 0.2970
 mATE: 0.8259
 mASE: 0.8365
@@ -264,7 +264,7 @@ mAOE: 0.6055
 mAVE: 0.6039
 mAAE: 0.3317
 NDS: 0.3282
-Eval time: 0.8s
+Eval time: 1.4s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -295,7 +295,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
 mAP: 0.0814
 mATE: 0.7258
 mASE: 0.8544
@@ -303,7 +303,7 @@ mAOE: 0.6427
 mAVE: 0.4899
 mAAE: 0.4784
 NDS: 0.2216
-Eval time: 0.9s
+Eval time: 1.0s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -354,7 +354,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_19_20_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
 mAP: 0.1420
 mATE: 0.8319
 mASE: 0.8358

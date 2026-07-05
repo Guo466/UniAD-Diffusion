@@ -27,11 +27,26 @@ from projects.mmdet3d_plugin.uniad.dense_heads.planning_head_plugin import Plann
 
 
 def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
-    """单卡版本的 UniAD 推理，保留 planning_traj/traj/command 等可视化所需字段。"""
+    """单卡版本的 UniAD 推理，支持 planning / occ 指标累积（与 custom_multi_gpu_test 对齐）。"""
     model.eval()
 
     eval_planning = hasattr(model.module, 'with_planning_head') \
                     and model.module.with_planning_head
+    eval_occ = hasattr(model.module, 'with_occ_head') \
+               and model.module.with_occ_head
+
+    if eval_planning:
+        planning_metrics = PlanningMetric().cuda()
+
+    if eval_occ:
+        from projects.mmdet3d_plugin.uniad.dense_heads.occ_head_plugin import (
+            IntersectionOverUnion, PanopticMetric)
+        EVALUATION_RANGES = {'30x30': (70, 130), '100x100': (0, 200)}
+        n_classes = 2
+        iou_metrics = {k: IntersectionOverUnion(n_classes).cuda() for k in EVALUATION_RANGES}
+        panoptic_metrics = {k: PanopticMetric(n_classes=n_classes, temporally_consistent=True).cuda()
+                            for k in EVALUATION_RANGES}
+        num_occ = 0
 
     bbox_results = []
     dataset = data_loader.dataset
@@ -41,11 +56,37 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
         with torch.no_grad():
             result = model(return_loss=False, rescale=True, **data)
 
-        # 提取规划轨迹字段（可视化必需）
+        # ---- 规划指标累积 ----
         if eval_planning and 'planning' in result[0]:
-            result[0]['planning_traj'] = result[0]['planning']['result_planning']['sdc_traj']
-            result[0]['planning_traj_gt'] = result[0]['planning']['planning_gt']['sdc_planning']
-            result[0]['command'] = result[0]['planning']['planning_gt']['command']
+            seg       = result[0]['planning']['planning_gt']['segmentation']
+            sdc_plan  = result[0]['planning']['planning_gt']['sdc_planning']
+            sdc_mask  = result[0]['planning']['planning_gt']['sdc_planning_mask']
+            pred_traj = result[0]['planning']['result_planning']['sdc_traj']
+            planning_metrics(
+                pred_traj[:, :6, :2],
+                sdc_plan[0][0, :, :6, :2],
+                sdc_mask[0][0, :, :6, :2],
+                seg[0][:, [1, 2, 3, 4, 5, 6]]
+            )
+            result[0]['planning_traj']    = pred_traj
+            result[0]['planning_traj_gt'] = sdc_plan
+            result[0]['command']          = result[0]['planning']['planning_gt']['command']
+
+        # ---- OCC 指标累积 ----
+        if eval_occ:
+            occ_has_invalid = data.get('gt_occ_has_invalid_frame', [None])[0]
+            occ_to_eval = (occ_has_invalid is not None and not occ_has_invalid.item()) \
+                          and 'occ' in result[0]
+            if occ_to_eval:
+                num_occ += 1
+                for key, grid in EVALUATION_RANGES.items():
+                    lim = slice(grid[0], grid[1])
+                    iou_metrics[key](
+                        result[0]['occ']['seg_out'][..., lim, lim].contiguous(),
+                        result[0]['occ']['seg_gt'][..., lim, lim].contiguous())
+                    panoptic_metrics[key](
+                        result[0]['occ']['ins_seg_out'][..., lim, lim].contiguous().detach(),
+                        result[0]['occ']['ins_seg_gt'][..., lim, lim].contiguous())
 
         # 清理不需要序列化的大字段
         result[0].pop('occ', None)
@@ -54,7 +95,27 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
         bbox_results.extend(result)
         prog_bar.update()
 
-    return dict(bbox_results=bbox_results)
+    ret = dict(bbox_results=bbox_results)
+
+    if eval_planning:
+        ret['planning_results_computed'] = planning_metrics.compute()
+        planning_metrics.reset()
+
+    if eval_occ:
+        occ_results = {}
+        for key, grid in EVALUATION_RANGES.items():
+            panoptic_scores = panoptic_metrics[key].compute()
+            for pk, val in panoptic_scores.items():
+                occ_results[pk] = occ_results.get(pk, []) + [100 * val[1].item()]
+            panoptic_metrics[key].reset()
+            iou_scores = iou_metrics[key].compute()
+            occ_results['iou'] = occ_results.get('iou', []) + [100 * iou_scores[1].item()]
+            iou_metrics[key].reset()
+        occ_results['num_occ']   = num_occ
+        occ_results['ratio_occ'] = num_occ / len(dataset)
+        ret['occ_results_computed'] = occ_results
+
+    return ret
 
 
 def parse_args():

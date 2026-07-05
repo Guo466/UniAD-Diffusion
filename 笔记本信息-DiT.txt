@@ -1,94 +1,17 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ PYTHONPATH=. python tools/dry_run_diffusion_planning.py projects/configs/stage2_e2e/base_e2e_diffusion.py projects/work_dirs/stage2_e2e/base_e2e_diffusion/latest.pth 
-=================================================================
-  UniAD-Diffusion  DiffusionPlanningHead  端到端验证脚本
-=================================================================
-
-[环境]  torch=2.0.1+cu118  device=cuda
-
-[1] 导入 DiffusionPlanningHead 模块 ...
-    ✓ 导入成功
-
-[2] 桥接层单元测试 ...
-    ✓ BEVToContextBridge  context=torch.Size([1, 84, 256])  mask=torch.Size([1, 84, 84])
-    ✓ EgoContextBridge    ego_ctx=torch.Size([1, 1, 256])  ego_routing=torch.Size([1, 1, 256])
-    ✓ DiTBlock            in=torch.Size([1, 6, 256]) → out=torch.Size([1, 6, 256])
-
-[3] 构建 DiffusionPlanningHead ...
-    ✓ 构建成功
-      总参数量     :    9,645,378  (9.65M)
-      可训练参数量 :    9,645,378  (9.65M)
-      各子模块参数量：
-        dit_blocks                    :  4,736,000  (4.736M)
-        bev_track_bridge              :  3,755,776  (3.756M)
-        ego_bridge                    :    264,448  (0.264M)
-        bev_adapter                   :    164,160  (0.164M)
-        final_layer                   :    132,098  (0.132M)
-        t_embedder                    :    131,584  (0.132M)
-        vector_in                     :    131,584  (0.132M)
-        routing_in                    :    131,584  (0.132M)
-        context_in                    :    131,584  (0.132M)
-        preproj                       :     66,560  (0.067M)
-        ego_time_pe                   :          0  (0.000M)
-        loss_collision                :          0  (0.000M)
-
-[4] 输入张量 shapes：
-      bev_embed      : torch.Size([40000, 1, 256])  (H*W=40000, B=1, D=256)
-      sdc_traj_query : torch.Size([3, 1, 6, 256])
-      sdc_track_query: torch.Size([1, 256])
-      track_query    : torch.Size([1, 20, 256])
-      gt_traj        : torch.Size([1, 1, 6, 3])
-      command        : [1]
-
-[5] 训练前向（forward_train）...
-[DiT iter=0001] ✅ pred_max=0.0000  gt_norm_rms=0.566  gt_delta_max=0.8000m  fm_loss=2.048  nan(p/t/g)=False/False/False
-    ✓ 前向成功  耗时 61.8ms
-      损失字典：
-        loss_flow_matching = 2.048345
-        loss_ade_aux = 0.178762
-      sdc_traj shape : torch.Size([1, 6, 2])  ✓ 接口兼容
-
-[6] 反向传播（backward）...
-    ✓ 反向传播成功   total_loss = 2.227106
-      有效梯度参数：114  NaN梯度参数：0
-      ✓ 无 NaN 梯度
-
-[7] 推理前向（forward_test）...
-    ✓ 推理成功  耗时 15.1ms
-      sdc_traj shape : torch.Size([1, 6, 2])
-      预测轨迹（ego 坐标系，单位：米）：
-        t=0.5s : x=+1.576m  y=-8.861m
-        t=1.0s : x=+0.877m  y=-8.441m
-        t=1.5s : x=+0.350m  y=-15.100m
-        t=2.0s : x=+0.090m  y=-16.880m
-        t=2.5s : x=-1.761m  y=-20.055m
-        t=3.0s : x=-0.778m  y=-19.024m
-
-[8] 无 agent 场景测试（track_query=None）...
-    ✓ 无 agent 推理成功  shape=torch.Size([1, 6, 2])
-
-=================================================================
-  ✅ 所有测试通过！DiffusionPlanningHead 端到端验证完成。
-=================================================================
-
-  融合架构概览（方案A）：
-
-  UniAD 已有模块（不变）          → 新增 DiffusionPlanningHead
-  ─────────────────────────          ─────────────────────────────────
-  BEVFormer                            BEVToContextBridge
-   bev_embed(H*W,B,256) ────────────→  BEV 压缩：200×200 → 8×8=64 token
-                                        Agent Encoder（2层 Transformer）
-  TrackHead                              context: (B, N_agent+64, 256)
-   track_query(B,N,256) ────────────→ 
-                                       EgoContextBridge
-  MotionHead                             ego_context: (B, 1, 256)
-   sdc_traj_query  ─────────────────→   ego_routing:  (B, 1, 256)
-   sdc_track_query ─────────────────→   (融合 command 导航嵌入)
-  
-  OccHead（可选）                       DiT 解码器（4层 DiTBlock）
-                                         训练：Flow Matching MSE Loss
-                                         推理：Euler ODE（5步采样）
-                                          ↓
-                                         ego 未来轨迹：(B, 6, 2)
-                                         6步 × 0.5s = 3秒规划视野
-  
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ PYTHONPATH=. python tools/test.py projects/configs/stage2_e2e/base_e2e_diffusion.py projects/work_dirs/stage2_e2e/base_e2e_diffusion/latest.pth --eval bbox --out /tmp/uniad_eval_results.pkl 2>&1 | tee logs/eval_$(date +%m%d_%H%M).log
+tee: logs/eval_0705_2041.log: 没有那个文件或目录
+/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import packaging  # type: ignore[attr-defined]
+projects.mmdet3d_plugin
+Traceback (most recent call last):
+  File "/home/guo/UniAD-Diffusion/UniAD/tools/test.py", line 296, in <module>
+    main()
+  File "/home/guo/UniAD-Diffusion/UniAD/tools/test.py", line 217, in main
+    init_dist(args.launcher, **cfg.dist_params)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/dist_utils.py", line 41, in init_dist
+    _init_dist_pytorch(backend, **kwargs)
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/dist_utils.py", line 52, in _init_dist_pytorch
+    rank = int(os.environ['RANK'])
+  File "/home/guo/miniforge3/envs/uniad/lib/python3.9/os.py", line 679, in __getitem__
+    raise KeyError(key) from None
+KeyError: 'RANK'

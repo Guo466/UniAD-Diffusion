@@ -671,18 +671,30 @@ class DiffusionPlanningHead(nn.Module):
         self.final_layer  = FinalLayer(hidden_size=embed_dims, output_size=output_dim)
 
         # ---- 轨迹归一化统计量（register_buffer）----
-        # 【修改说明】关闭归一化（mean=0, std=1）
-        # 原因：nuScenes 数据中转弯帧的 y 方向单步位移可达 3~4m，
-        #       而原来的 traj_std_y=0.15 极度低估了真实标准差，
-        #       导致归一化后 gt_norm_y ≈ 4/0.15 ≈ 27，FM loss 爆炸到 1000+。
-        # 解决方案：令 mean=0, std=1（恒等变换），在差分坐标空间直接做 FM，
-        #   差分值量级：x 方向 0~3m/step，y 方向 0~4m/step（含转弯）
-        #   FM noise 也在同量级（std ≈ 1~4），训练可正常收敛。
+        # 【修改说明 v3】使用数据驱动的经验标准差归一化差分坐标
+        #
+        # 问题历程：
+        #   v1: traj_std=[0.15, 0.15] → gt_norm_y = 4/0.15 = 27，FM loss 爆炸
+        #   v2: traj_std=[1.0, 1.0]（恒等）→ gt_norm_y = 6.48m 量级太大，
+        #       target = gt_norm - noise ≈ 6.5，fm_loss ≈ 42，梯度持续偏大，
+        #       累积 40 iter 后参数 NaN（iter=42 崩溃，gt_delta=6.48m 正常直行！）
+        #   v3（当前）: 使用经验 std，将 gt_delta 归一化到 O(1) 量级：
+        #       x 方向：nuScenes 城区直行多，x 差分 std 约 0.5m，
+        #               设 std_x=1.0（宽松，避免转弯时 x 被过度放大）
+        #       y 方向：正常城区速度 30~50km/h，0.5s 约 4~7m，std 约 3.5m，
+        #               设 std_y=3.5，归一化后 6.48m → 1.85（正常 O(1)）
+        #
+        # 归一化后的理论期望：
+        #   gt_norm_rms ≈ 1~2（正常行驶），fm_loss 初始 ≈ (0-1.5)^2 = 2.25 ✓
+        #   极端 batch（gt_delta=6.48m）→ gt_norm_y=1.85，fm_loss=3.4 ✓
+        #   跳过阈值从原来的 >10m（差分空间）等效于 >2.9（归一化空间），合理
         self.register_buffer(
             'traj_mean', torch.tensor([0.0, 0.0] if output_dim == 2 else [0.0, 0.0, 0.0])
         )
         self.register_buffer(
-            'traj_std',  torch.tensor([1.0, 1.0] if output_dim == 2 else [1.0, 1.0, 1.0])
+            # std_x=1.0：x 方向差分较小（城区横向位移少），归一化宽松，避免放大误差
+            # std_y=3.5：y 方向差分约 2~6m/step（城区 30~50km/h），3.5 使 gt_norm_y≈1~2
+            'traj_std',  torch.tensor([1.0, 3.5] if output_dim == 2 else [1.0, 3.5, 1.0])
         )
 
         # ---- 碰撞损失（兼容 PlanningHeadSingleMode 接口）----
@@ -985,11 +997,10 @@ class DiffusionPlanningHead(nn.Module):
 
         # 归一化（当前 mean=0, std=1，即恒等变换），并用 mask 清零无效步
         gt_norm    = self.normalize_traj(gt_delta) * traj_mask.unsqueeze(-1).float()
-        # 安全截断：差分坐标正常范围约 ±10m，截断到 ±10 防止极端异常帧导致 loss 爆炸
-        # 【收紧到±10】：gt_delta_max=29m 的异常帧中 gt_norm y方向约15，
-        #   target=gt_norm-noise 最大约18，(pred-target)^2 约324，梯度极大；
-        #   截断到±10 后，target 最大约11，fm_loss 约12，梯度降低约60%。
-        gt_norm    = torch.clamp(gt_norm, -10.0, 10.0)
+        # 安全截断：归一化后正常值约 ±1~2（std_y=3.5 时，6m/step → 1.71），
+        # 截断到 ±5 对应原始 y 方向 17.5m（远超任何合法驾驶场景），
+        # 这条防线配合跳过保护（>10m）提供双重保护。
+        gt_norm    = torch.clamp(gt_norm, -5.0, 5.0)
         # gt_norm: (B, T, output_dim)，这是 Flow Matching 的"目标分布" x_data
 
         # 【极端 batch 跳过保护】：如果 gt_delta_max > 10m，说明数据异常（如地图误差），

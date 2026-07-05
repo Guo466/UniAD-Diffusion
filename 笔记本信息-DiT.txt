@@ -1,8 +1,3 @@
-  self._expression.resetCache()
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/matplotlib/_mathtext.py:2237: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
-  result = self._expression.parseString(s)
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/matplotlib/_mathtext.py:2300: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
-  return self._math_expression.parseString(toks[0][1:-1])
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/matplotlib/_mathtext.py:2245: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
   self._expression.resetCache()
 /home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/matplotlib/_mathtext.py:2237: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
@@ -33,7 +28,7 @@
 thr_0.8191	1.000	0.625	0.242	57	95	23	72	0	23	23	0	0
 
 Calculating metrics...
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026/track
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026/track
 
 ### Final results ###
 
@@ -69,9 +64,9 @@ Eval time: 16.0s
 
 Rendering curves
 Initializing nuScenes detection evaluation
-Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026/results_nusc.json. Found detections for 81 samples.
+Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026/results_nusc.json. Found detections for 81 samples.
 Loading annotations for mini_val split from nuScenes version: v1.0-mini
-100%|██████████| 81/81 [00:00<00:00, 98.35it/s] 
+100%|██████████| 81/81 [00:00<00:00, 97.90it/s] 
 Loaded ground truth annotations for 81 samples.
 Filtering predictions
 => Original number of boxes: 6010
@@ -102,7 +97,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026
 mAP: 0.0808
 mATE: 0.9245
 mASE: 0.9081
@@ -110,7 +105,7 @@ mAOE: 0.8507
 mAVE: 0.8349
 mAAE: 0.7836
 NDS: 0.1102
-Eval time: 3.7s
+Eval time: 3.6s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -141,7 +136,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026
 mAP: 0.0337
 mATE: 0.8849
 mASE: 0.9051
@@ -149,7 +144,7 @@ mAOE: 0.8355
 mAVE: 0.7938
 mAAE: 0.7845
 NDS: 0.0965
-Eval time: 1.9s
+Eval time: 1.0s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -200,7 +195,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026
 mAP: 0.0552
 mATE: 0.9224
 mASE: 0.9060
@@ -225,9 +220,9 @@ barrier	0.000	1.000	1.000	1.000	nan	nan
 --------------------------------------------------
 Evaluate on detection category...
 Initializing nuScenes detection evaluation
-Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026/results_nusc.json. Found detections for 81 samples.
+Loaded results from test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026/results_nusc.json. Found detections for 81 samples.
 Loading annotations for mini_val split from nuScenes version: v1.0-mini
-100%|██████████| 81/81 [00:00<00:00, 96.28it/s] 
+100%|██████████| 81/81 [00:00<00:00, 95.68it/s] 
 Loaded ground truth annotations for 81 samples.
 Filtering predictions
 => Original number of boxes: 6010
@@ -256,7 +251,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026
 mAP: 0.2970
 mATE: 0.8259
 mASE: 0.8365
@@ -295,7 +290,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026
 mAP: 0.0814
 mATE: 0.7258
 mASE: 0.8544
@@ -303,7 +298,7 @@ mAOE: 0.6427
 mAVE: 0.4899
 mAAE: 0.4784
 NDS: 0.2216
-Eval time: 1.0s
+Eval time: 1.7s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -354,7 +349,7 @@ Calculating metrics...
 |     traffic_cone     |    1.0000   |    1.0000   |     1.0000    |
 |       barrier        |    1.0000   |    1.0000   |     1.0000    |
 +----------------------+-------------+-------------+---------------+
-Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_28_31_2026
+Saving metrics to: test/base_e2e_diffusion/Sun_Jul__5_21_36_17_2026
 mAP: 0.1420
 mATE: 0.8319
 mASE: 0.8358
@@ -362,7 +357,7 @@ mAOE: 0.6268
 mAVE: 0.4192
 mAAE: 0.3621
 NDS: 0.2634
-Eval time: 1.8s
+Eval time: 2.3s
 
 Per-class results:
 Object Class	AP	ATE	ASE	AOE	AVE	AAE
@@ -378,4 +373,9 @@ traffic_cone	0.000	1.000	1.000	nan	nan	nan
 barrier	0.000	1.000	1.000	1.000	nan	nan
 {'pts_bbox_NuScenes/car_AP_dist_0.5': 0.2199, 'pts_bbox_NuScenes/car_AP_dist_1.0': 0.4466, 'pts_bbox_NuScenes/car_AP_dist_2.0': 0.6302, 'pts_bbox_NuScenes/car_AP_dist_4.0': 0.7175, 'pts_bbox_NuScenes/car_trans_err': 0.474, 'pts_bbox_NuScenes/car_scale_err': 0.7585, 'pts_bbox_NuScenes/car_orient_err': 0.1424, 'pts_bbox_NuScenes/car_vel_err': 0.2422, 'pts_bbox_NuScenes/car_attr_err': 0.0986, 'pts_bbox_NuScenes/mATE': 0.7759, 'pts_bbox_NuScenes/mASE': 0.7852, 'pts_bbox_NuScenes/mAOE': 0.6526, 'pts_bbox_NuScenes/mAVE': 0.6048, 'pts_bbox_NuScenes/mAAE': 0.3309, 'pts_bbox_NuScenes/truck_AP_dist_0.5': 0.2017, 'pts_bbox_NuScenes/truck_AP_dist_1.0': 0.4003, 'pts_bbox_NuScenes/truck_AP_dist_2.0': 0.6429, 'pts_bbox_NuScenes/truck_AP_dist_4.0': 0.7504, 'pts_bbox_NuScenes/truck_trans_err': 0.5868, 'pts_bbox_NuScenes/truck_scale_err': 0.7956, 'pts_bbox_NuScenes/truck_orient_err': 0.1012, 'pts_bbox_NuScenes/truck_vel_err': 0.1217, 'pts_bbox_NuScenes/truck_attr_err': 0.007, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_trans_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_scale_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_orient_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_vel_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_attr_err': 1.0, 'pts_bbox_NuScenes/bus_AP_dist_0.5': 0.0437, 'pts_bbox_NuScenes/bus_AP_dist_1.0': 0.6972, 'pts_bbox_NuScenes/bus_AP_dist_2.0': 0.9199, 'pts_bbox_NuScenes/bus_AP_dist_4.0': 0.9199, 'pts_bbox_NuScenes/bus_trans_err': 0.6725, 'pts_bbox_NuScenes/bus_scale_err': 0.8684, 'pts_bbox_NuScenes/bus_orient_err': 0.0602, 'pts_bbox_NuScenes/bus_vel_err': 1.0844, 'pts_bbox_NuScenes/bus_attr_err': 0.3495, 'pts_bbox_NuScenes/trailer_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/trailer_trans_err': 1.0, 'pts_bbox_NuScenes/trailer_scale_err': 1.0, 'pts_bbox_NuScenes/trailer_orient_err': 1.0, 'pts_bbox_NuScenes/trailer_vel_err': 1.0, 'pts_bbox_NuScenes/trailer_attr_err': 1.0, 'pts_bbox_NuScenes/barrier_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/barrier_trans_err': 1.0, 'pts_bbox_NuScenes/barrier_scale_err': 1.0, 'pts_bbox_NuScenes/barrier_orient_err': 1.0, 'pts_bbox_NuScenes/barrier_vel_err': nan, 'pts_bbox_NuScenes/barrier_attr_err': nan, 'pts_bbox_NuScenes/motorcycle_AP_dist_0.5': 0.0419, 'pts_bbox_NuScenes/motorcycle_AP_dist_1.0': 0.1873, 'pts_bbox_NuScenes/motorcycle_AP_dist_2.0': 0.3761, 'pts_bbox_NuScenes/motorcycle_AP_dist_4.0': 0.4924, 'pts_bbox_NuScenes/motorcycle_trans_err': 0.8179, 'pts_bbox_NuScenes/motorcycle_scale_err': 0.8249, 'pts_bbox_NuScenes/motorcycle_orient_err': 1.2211, 'pts_bbox_NuScenes/motorcycle_vel_err': 0.0784, 'pts_bbox_NuScenes/motorcycle_attr_err': 0.0172, 'pts_bbox_NuScenes/bicycle_AP_dist_0.5': 0.0002, 'pts_bbox_NuScenes/bicycle_AP_dist_1.0': 0.0524, 'pts_bbox_NuScenes/bicycle_AP_dist_2.0': 0.283, 'pts_bbox_NuScenes/bicycle_AP_dist_4.0': 0.3523, 'pts_bbox_NuScenes/bicycle_trans_err': 0.997, 'pts_bbox_NuScenes/bicycle_scale_err': 0.8058, 'pts_bbox_NuScenes/bicycle_orient_err': 0.8489, 'pts_bbox_NuScenes/bicycle_vel_err': 0.878, 'pts_bbox_NuScenes/bicycle_attr_err': 0.0, 'pts_bbox_NuScenes/pedestrian_AP_dist_0.5': 0.0457, 'pts_bbox_NuScenes/pedestrian_AP_dist_1.0': 0.2629, 'pts_bbox_NuScenes/pedestrian_AP_dist_2.0': 0.5549, 'pts_bbox_NuScenes/pedestrian_AP_dist_4.0': 0.7048, 'pts_bbox_NuScenes/pedestrian_trans_err': 0.7945, 'pts_bbox_NuScenes/pedestrian_scale_err': 0.3163, 'pts_bbox_NuScenes/pedestrian_orient_err': 0.4997, 'pts_bbox_NuScenes/pedestrian_vel_err': 0.4338, 'pts_bbox_NuScenes/pedestrian_attr_err': 0.1747, 'pts_bbox_NuScenes/traffic_cone_AP_dist_0.5': 0.3065, 'pts_bbox_NuScenes/traffic_cone_AP_dist_1.0': 0.5634, 'pts_bbox_NuScenes/traffic_cone_AP_dist_2.0': 0.6548, 'pts_bbox_NuScenes/traffic_cone_AP_dist_4.0': 0.7286, 'pts_bbox_NuScenes/traffic_cone_trans_err': 0.4161, 'pts_bbox_NuScenes/traffic_cone_scale_err': 0.4825, 'pts_bbox_NuScenes/traffic_cone_orient_err': nan, 'pts_bbox_NuScenes/traffic_cone_vel_err': nan, 'pts_bbox_NuScenes/traffic_cone_attr_err': nan, 'pts_bbox_NuScenes/NDS': 0.3375277871300145, 'pts_bbox_NuScenes/mAP': 0.3049294256103835, 'pts_bbox_NuScenes/amota': 0.386704009232675, 'pts_bbox_NuScenes/amotp': 1.2626380634349432, 'pts_bbox_NuScenes/recall': 0.5245335537730246, 'pts_bbox_NuScenes/motar': 0.7495593833453258, 'pts_bbox_NuScenes/gt': 611.5, 'pts_bbox_NuScenes/mota': 0.40983917629486616, 'pts_bbox_NuScenes/motp': 0.7247774288057132, 'pts_bbox_NuScenes/mt': 65.0, 'pts_bbox_NuScenes/ml': 80.0, 'pts_bbox_NuScenes/faf': 118.14533960732791, 'pts_bbox_NuScenes/tp': 1948.0, 'pts_bbox_NuScenes/fp': 513.0, 'pts_bbox_NuScenes/fn': 1669.0, 'pts_bbox_NuScenes/ids': 52.0, 'pts_bbox_NuScenes/frag': 36.0, 'pts_bbox_NuScenes/tid': 1.7905922752617982, 'pts_bbox_NuScenes/lgd': 2.583802529579763, 'drivable_iou': 0.5753545761108398, 'lanes_iou': 0.18708758056163788, 'divider_iou': 0.18955223262310028, 'crossing_iou': 0.038032349199056625, 'contour_iou': 0.15934450924396515}
 {'pts_bbox_NuScenes/car_AP_dist_0.5': 0.2199, 'pts_bbox_NuScenes/car_AP_dist_1.0': 0.4466, 'pts_bbox_NuScenes/car_AP_dist_2.0': 0.6302, 'pts_bbox_NuScenes/car_AP_dist_4.0': 0.7175, 'pts_bbox_NuScenes/car_trans_err': 0.474, 'pts_bbox_NuScenes/car_scale_err': 0.7585, 'pts_bbox_NuScenes/car_orient_err': 0.1424, 'pts_bbox_NuScenes/car_vel_err': 0.2422, 'pts_bbox_NuScenes/car_attr_err': 0.0986, 'pts_bbox_NuScenes/mATE': 0.7759, 'pts_bbox_NuScenes/mASE': 0.7852, 'pts_bbox_NuScenes/mAOE': 0.6526, 'pts_bbox_NuScenes/mAVE': 0.6048, 'pts_bbox_NuScenes/mAAE': 0.3309, 'pts_bbox_NuScenes/truck_AP_dist_0.5': 0.2017, 'pts_bbox_NuScenes/truck_AP_dist_1.0': 0.4003, 'pts_bbox_NuScenes/truck_AP_dist_2.0': 0.6429, 'pts_bbox_NuScenes/truck_AP_dist_4.0': 0.7504, 'pts_bbox_NuScenes/truck_trans_err': 0.5868, 'pts_bbox_NuScenes/truck_scale_err': 0.7956, 'pts_bbox_NuScenes/truck_orient_err': 0.1012, 'pts_bbox_NuScenes/truck_vel_err': 0.1217, 'pts_bbox_NuScenes/truck_attr_err': 0.007, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/construction_vehicle_trans_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_scale_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_orient_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_vel_err': 1.0, 'pts_bbox_NuScenes/construction_vehicle_attr_err': 1.0, 'pts_bbox_NuScenes/bus_AP_dist_0.5': 0.0437, 'pts_bbox_NuScenes/bus_AP_dist_1.0': 0.6972, 'pts_bbox_NuScenes/bus_AP_dist_2.0': 0.9199, 'pts_bbox_NuScenes/bus_AP_dist_4.0': 0.9199, 'pts_bbox_NuScenes/bus_trans_err': 0.6725, 'pts_bbox_NuScenes/bus_scale_err': 0.8684, 'pts_bbox_NuScenes/bus_orient_err': 0.0602, 'pts_bbox_NuScenes/bus_vel_err': 1.0844, 'pts_bbox_NuScenes/bus_attr_err': 0.3495, 'pts_bbox_NuScenes/trailer_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/trailer_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/trailer_trans_err': 1.0, 'pts_bbox_NuScenes/trailer_scale_err': 1.0, 'pts_bbox_NuScenes/trailer_orient_err': 1.0, 'pts_bbox_NuScenes/trailer_vel_err': 1.0, 'pts_bbox_NuScenes/trailer_attr_err': 1.0, 'pts_bbox_NuScenes/barrier_AP_dist_0.5': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_1.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_2.0': 0.0, 'pts_bbox_NuScenes/barrier_AP_dist_4.0': 0.0, 'pts_bbox_NuScenes/barrier_trans_err': 1.0, 'pts_bbox_NuScenes/barrier_scale_err': 1.0, 'pts_bbox_NuScenes/barrier_orient_err': 1.0, 'pts_bbox_NuScenes/barrier_vel_err': nan, 'pts_bbox_NuScenes/barrier_attr_err': nan, 'pts_bbox_NuScenes/motorcycle_AP_dist_0.5': 0.0419, 'pts_bbox_NuScenes/motorcycle_AP_dist_1.0': 0.1873, 'pts_bbox_NuScenes/motorcycle_AP_dist_2.0': 0.3761, 'pts_bbox_NuScenes/motorcycle_AP_dist_4.0': 0.4924, 'pts_bbox_NuScenes/motorcycle_trans_err': 0.8179, 'pts_bbox_NuScenes/motorcycle_scale_err': 0.8249, 'pts_bbox_NuScenes/motorcycle_orient_err': 1.2211, 'pts_bbox_NuScenes/motorcycle_vel_err': 0.0784, 'pts_bbox_NuScenes/motorcycle_attr_err': 0.0172, 'pts_bbox_NuScenes/bicycle_AP_dist_0.5': 0.0002, 'pts_bbox_NuScenes/bicycle_AP_dist_1.0': 0.0524, 'pts_bbox_NuScenes/bicycle_AP_dist_2.0': 0.283, 'pts_bbox_NuScenes/bicycle_AP_dist_4.0': 0.3523, 'pts_bbox_NuScenes/bicycle_trans_err': 0.997, 'pts_bbox_NuScenes/bicycle_scale_err': 0.8058, 'pts_bbox_NuScenes/bicycle_orient_err': 0.8489, 'pts_bbox_NuScenes/bicycle_vel_err': 0.878, 'pts_bbox_NuScenes/bicycle_attr_err': 0.0, 'pts_bbox_NuScenes/pedestrian_AP_dist_0.5': 0.0457, 'pts_bbox_NuScenes/pedestrian_AP_dist_1.0': 0.2629, 'pts_bbox_NuScenes/pedestrian_AP_dist_2.0': 0.5549, 'pts_bbox_NuScenes/pedestrian_AP_dist_4.0': 0.7048, 'pts_bbox_NuScenes/pedestrian_trans_err': 0.7945, 'pts_bbox_NuScenes/pedestrian_scale_err': 0.3163, 'pts_bbox_NuScenes/pedestrian_orient_err': 0.4997, 'pts_bbox_NuScenes/pedestrian_vel_err': 0.4338, 'pts_bbox_NuScenes/pedestrian_attr_err': 0.1747, 'pts_bbox_NuScenes/traffic_cone_AP_dist_0.5': 0.3065, 'pts_bbox_NuScenes/traffic_cone_AP_dist_1.0': 0.5634, 'pts_bbox_NuScenes/traffic_cone_AP_dist_2.0': 0.6548, 'pts_bbox_NuScenes/traffic_cone_AP_dist_4.0': 0.7286, 'pts_bbox_NuScenes/traffic_cone_trans_err': 0.4161, 'pts_bbox_NuScenes/traffic_cone_scale_err': 0.4825, 'pts_bbox_NuScenes/traffic_cone_orient_err': nan, 'pts_bbox_NuScenes/traffic_cone_vel_err': nan, 'pts_bbox_NuScenes/traffic_cone_attr_err': nan, 'pts_bbox_NuScenes/NDS': 0.3375277871300145, 'pts_bbox_NuScenes/mAP': 0.3049294256103835, 'pts_bbox_NuScenes/amota': 0.386704009232675, 'pts_bbox_NuScenes/amotp': 1.2626380634349432, 'pts_bbox_NuScenes/recall': 0.5245335537730246, 'pts_bbox_NuScenes/motar': 0.7495593833453258, 'pts_bbox_NuScenes/gt': 611.5, 'pts_bbox_NuScenes/mota': 0.40983917629486616, 'pts_bbox_NuScenes/motp': 0.7247774288057132, 'pts_bbox_NuScenes/mt': 65.0, 'pts_bbox_NuScenes/ml': 80.0, 'pts_bbox_NuScenes/faf': 118.14533960732791, 'pts_bbox_NuScenes/tp': 1948.0, 'pts_bbox_NuScenes/fp': 513.0, 'pts_bbox_NuScenes/fn': 1669.0, 'pts_bbox_NuScenes/ids': 52.0, 'pts_bbox_NuScenes/frag': 36.0, 'pts_bbox_NuScenes/tid': 1.7905922752617982, 'pts_bbox_NuScenes/lgd': 2.583802529579763, 'drivable_iou': 0.5753545761108398, 'lanes_iou': 0.18708758056163788, 'divider_iou': 0.18955223262310028, 'crossing_iou': 0.038032349199056625, 'contour_iou': 0.15934450924396515}
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ echo "=== 诊断 ===" && cat /tmp/uniad_eval_diag.txt && echo "=== Planning相关日志===" && grep -E "eval_init|PlanMetric|planning_results|planning" logs/eval_$(ls -t logs/ | head -1) | head -30
+=== 诊断 ===
+[eval_init] model=UniAD  eval_planning=True  eval_occ=False  planning_head=DiffusionPlanningHead
+=== Planning相关日志===
+grep: logs/eval_eval_0705_2134.log: 没有那个文件或目录
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 

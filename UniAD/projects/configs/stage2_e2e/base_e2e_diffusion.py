@@ -104,12 +104,14 @@ model = dict(
     ),
 
     # ==== 各任务头 loss 权重 ====
-    # motion.l_reg 量级约 226，远超其他子头（track~5, map~5, planning~1），
-    # 导致整体梯度被 motion head 主导。降至 0.5 后约 113，各子头更均衡。
+    # motion.l_reg 量级约 117（mini 数据集），远超其他子头（track~5, map~5, planning~1），
+    # 导致整体 grad_norm≈537，远超 clip 阈值，是 DiT 参数 NaN 的根本原因。
+    # 将 motion 降至 0.1 后，motion 梯度贡献约 96，加上其他头 ~20，总计约 116，
+    # 再经 max_norm=5 clip 到 5，训练可稳定运行。
     task_loss_weight=dict(
         track=1.0,
         map=1.0,
-        motion=0.5,
+        motion=0.1,   # 从0.5→0.1：motion.l_reg≈117 × 0.5 = 58 贡献梯度≈537，是主因
         occ=1.0,
         planning=1.0,
     ),
@@ -137,7 +139,7 @@ optimizer = dict(
 # 梯度裁剪（覆盖 base_e2e.py 的 max_norm=35）
 # max_norm=35 与原始 UniAD 保持一致，final_layer 零初始化后 FM loss 已正常，
 # 不需要过于激进的裁剪；但保留裁剪作为安全网，防止极端 batch 导致的偶发爆炸。
-optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+optimizer_config = dict(grad_clip=dict(max_norm=5, norm_type=2))  # 从35→5：motion梯度≈537，clip=35仍会爆炸
 
 # =====================================================================================
 # 加载权重

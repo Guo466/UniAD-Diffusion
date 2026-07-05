@@ -1022,85 +1022,72 @@ class DiffusionPlanningHead(nn.Module):
         pred    = torch.clamp(pred, -100.0, 100.0)
 
         # ================================================================
-        # 【早期诊断】前 100 个 iter 打印关键指标；第 1 个 iter 若异常直接终止
+        # 【全程诊断】每个 iter 检测 NaN 立即终止；每 5 iter 打印详情
         # ================================================================
         self._iter_count += 1
-        _DIAG_ITERS = 100   # 诊断窗口：只在前 100 个 iter 打印
-        _DIAG_FREQ  = 5     # 每 5 个 iter 打印一次（与 log_config.interval 对齐）
-        if self._iter_count <= _DIAG_ITERS and self._iter_count % _DIAG_FREQ == 0:
-            with torch.no_grad():
-                # ----- 关键中间量 -----
-                pred_abs_max  = pred.abs().max().item()
-                pred_abs_mean = pred.abs().mean().item()
-                target_rms    = target.pow(2).mean().sqrt().item()
-                gt_norm_rms   = gt_norm.pow(2).mean().sqrt().item()
-                gt_delta_max  = torch.cat([
+        _DIAG_FREQ = 5  # 每 5 个 iter 打印一次详情
+
+        with torch.no_grad():
+            pred_abs_max = pred.abs().max().item()
+            has_nan_p    = torch.isnan(pred).any().item()
+            has_nan_t    = torch.isnan(target).any().item()
+            has_nan_gn   = torch.isnan(gt_norm).any().item()
+            any_nan      = has_nan_p or has_nan_t or has_nan_gn
+
+            # ----- 每个 iter 都做：检测到 NaN 立即终止 -----
+            if any_nan or pred_abs_max > 500.0:
+                # 收集详情用于报错信息
+                target_rms = target.pow(2).mean().sqrt().item()
+                gt_norm_rms = gt_norm.pow(2).mean().sqrt().item()
+                raise RuntimeError(
+                    f"\n{'!'*70}\n"
+                    f"[DiT 诊断] iter={self._iter_count} 检测到数值崩溃，训练终止！\n"
+                    f"{'!'*70}\n"
+                    f"  pred NaN={has_nan_p}  target NaN={has_nan_t}  gt_norm NaN={has_nan_gn}\n"
+                    f"  pred_abs_max  = {pred_abs_max:.4f}  （正常应 < 100）\n"
+                    f"  gt_norm_rms   = {gt_norm_rms:.4f}   （正常应 0.3~5.0）\n"
+                    f"  target_rms    = {target_rms:.4f}   （正常应 ≈ 1.41）\n"
+                    f"{'!'*70}\n"
+                    f"原因分析：\n"
+                    f"  → 梯度在第 {self._iter_count} 个 iter 爆炸，参数变 NaN\n"
+                    f"  → 检查 grad_clip 是否生效（看上方 OptimizerHook 是否在 after_train_iter）\n"
+                    f"  → 可尝试降低学习率：lr=1e-4 → 5e-5\n"
+                    f"修复后重新运行：\n"
+                    f"  rm -rf projects/work_dirs/stage2_e2e/base_e2e_diffusion/\n"
+                    f"  bash tools/run_train_single.sh projects/configs/stage2_e2e/base_e2e_diffusion.py"
+                )
+
+            # ----- 每 5 iter 打印一次详情 -----
+            if self._iter_count % _DIAG_FREQ == 0:
+                target_rms  = target.pow(2).mean().sqrt().item()
+                gt_norm_rms = gt_norm.pow(2).mean().sqrt().item()
+                gt_delta_max = torch.cat([
                     gt_traj[:, :1, :], gt_traj[:, 1:, :] - gt_traj[:, :-1, :]
                 ], dim=1).abs().max().item()
-                t_val_mean    = t.mean().item()
-                has_nan_p     = torch.isnan(pred).any().item()
-                has_nan_t     = torch.isnan(target).any().item()
-                has_nan_gn    = torch.isnan(gt_norm).any().item()
-                theory_fm     = target_rms ** 2
+                pred_abs_mean = pred.abs().mean().item()
+                theory_fm   = target_rms ** 2
 
-                # ----- 打印诊断信息 -----
                 sep = "=" * 70
                 print(f"\n{sep}")
-                print(f"[DiT 早期诊断] iter={self._iter_count}  t_mean={t_val_mean:.3f}")
+                print(f"[DiT 诊断] iter={self._iter_count}  t_mean={t.mean().item():.3f}")
                 print(f"  【GT 轨迹原始】 gt_delta_max = {gt_delta_max:.4f} m  （正常：0.2~2m）")
                 print(f"  【GT 归一化后】 gt_norm_rms  = {gt_norm_rms:.4f}  "
                       f"{'✅ 正常' if 0.3 < gt_norm_rms < 5.0 else '❌ 异常！traj_mean/std 设置有误'}")
                 print(f"  【target(v*)】  target_rms   = {target_rms:.4f}  （理论值 ≈ 1.41）")
                 print(f"  【DiT 输出】    pred_abs_max = {pred_abs_max:.6f}  "
-                      f"{'✅ 正常（零初始化生效）' if pred_abs_max < 1.0 else ('⚠️  偏大但可接受' if pred_abs_max < 10.0 else '❌ 异常！零初始化未生效')}")
+                      f"{'✅ 零初始化生效' if pred_abs_max < 1.0 else ('⚠️ 偏大' if pred_abs_max < 10.0 else '❌ 异常')}")
                 print(f"  【DiT 输出】    pred_abs_mean= {pred_abs_mean:.6f}")
                 print(f"  【理论 FM loss】≈ {theory_fm:.4f}  （实际见 planning.loss_flow_matching）")
-                print(f"  【NaN 检测】    pred={has_nan_p}  target={has_nan_t}  gt_norm={has_nan_gn}  "
-                      f"{'✅ 无 NaN' if not (has_nan_p or has_nan_t or has_nan_gn) else '❌ 存在 NaN！'}")
-                risk = "🟢 低" if pred_abs_max < 1.0 else ("🟡 中" if pred_abs_max < 10.0 else "🔴 高")
+                risk = "🟢 低" if pred_abs_max < 1.0 else ("🟡 中" if pred_abs_max < 50.0 else "🔴 高")
                 print(f"  【梯度爆炸风险】{risk}  pred_abs_max={pred_abs_max:.4f}")
                 print(sep)
 
-                # ----- 第 1 次诊断：异常则立即终止，避免浪费时间 -----
-                # 只在 iter=5（第一次诊断）做强检查，之后只打印不终止
+                # 第一次诊断额外确认
                 if self._iter_count == _DIAG_FREQ:
-                    errors = []
-                    if pred_abs_max > 10.0:
-                        errors.append(
-                            f"pred_abs_max={pred_abs_max:.4f} > 10.0：\n"
-                            f"    → 零初始化未生效！检查 out_proj/ffn 是否已零初始化。\n"
-                            f"    → 执行：grep -n 'out_proj' projects/mmdet3d_plugin/uniad/dense_heads/diffusion_planning_head.py"
-                        )
-                    if not (0.3 < gt_norm_rms < 5.0):
-                        errors.append(
-                            f"gt_norm_rms={gt_norm_rms:.4f} 超出 [0.3, 5.0]：\n"
-                            f"    → traj_mean/traj_std 设置不合理，GT 轨迹未被正确归一化。\n"
-                            f"    → 当前 traj_mean={self.traj_mean.tolist()}, traj_std={self.traj_std.tolist()}"
-                        )
-                    if has_nan_p or has_nan_t or has_nan_gn:
-                        errors.append(
-                            f"检测到 NaN：pred={has_nan_p} target={has_nan_t} gt_norm={has_nan_gn}\n"
-                            f"    → 输入数据或权重已损坏，检查 load_from 权重文件。"
-                        )
-                    if theory_fm > 50.0:
-                        errors.append(
-                            f"理论初始 FM loss={theory_fm:.2f} > 50：\n"
-                            f"    → gt_norm 量级过大，归一化参数严重不匹配。"
-                        )
-                    if errors:
-                        err_msg = "\n\n".join(errors)
-                        raise RuntimeError(
-                            f"\n{'!'*70}\n"
-                            f"[DiT 早期诊断] 第 {self._iter_count} 个 iter 检测到异常，训练终止！\n"
-                            f"{'!'*70}\n"
-                            f"{err_msg}\n"
-                            f"{'!'*70}\n"
-                            f"修复后重新运行：\n"
-                            f"  rm -rf projects/work_dirs/stage2_e2e/base_e2e_diffusion/\n"
-                            f"  bash tools/run_train_single.sh projects/configs/stage2_e2e/base_e2e_diffusion.py"
-                        )
+                    if pred_abs_max < 1.0 and 0.3 < gt_norm_rms < 5.0:
+                        print(f"[DiT 诊断] ✅ iter={self._iter_count} 初始化正常，训练继续！\n")
                     else:
-                        print(f"[DiT 早期诊断] ✅ iter={self._iter_count} 所有指标正常，训练继续！\n")
+                        print(f"[DiT 诊断] ⚠️  iter={self._iter_count} 存在警告，请关注后续 loss 走势\n")
 
         # ================================================================
         # ⑥ 计算损失

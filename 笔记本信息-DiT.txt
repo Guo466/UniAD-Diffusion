@@ -1,174 +1,35 @@
-rs.interaction_transformer.norm1.bias, motion_head.motionformer.intention_interaction_layers.interaction_transformer.norm2.weight, motion_head.motionformer.intention_interaction_layers.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear1.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear1.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear2.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.linear2.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm1.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm1.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm2.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm3.weight, motion_head.motionformer.track_agent_interaction_layers.0.interaction_transformer.norm3.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear1.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear1.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear2.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.linear2.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm1.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm1.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm2.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm3.weight, motion_head.motionformer.track_agent_interaction_layers.1.interaction_transformer.norm3.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear1.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear1.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear2.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.linear2.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm1.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm1.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm2.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm2.bias, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm3.weight, motion_head.motionformer.track_agent_interaction_layers.2.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.0.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.1.interaction_transformer.norm3.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.self_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.in_proj_bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.multihead_attn.out_proj.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear1.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear1.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear2.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.linear2.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm1.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm1.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm2.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm2.bias, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm3.weight, motion_head.motionformer.map_interaction_layers.2.interaction_transformer.norm3.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.0.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.0.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.0.norms.0.weight, motion_head.motionformer.bev_interaction_layers.0.norms.0.bias, motion_head.motionformer.bev_interaction_layers.0.norms.1.weight, motion_head.motionformer.bev_interaction_layers.0.norms.1.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.1.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.1.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.1.norms.0.weight, motion_head.motionformer.bev_interaction_layers.1.norms.0.bias, motion_head.motionformer.bev_interaction_layers.1.norms.1.weight, motion_head.motionformer.bev_interaction_layers.1.norms.1.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.sampling_offsets.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.sampling_offsets.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.attention_weights.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.attention_weights.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.value_proj.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.value_proj.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.0.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.0.bias, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.1.weight, motion_head.motionformer.bev_interaction_layers.2.attentions.0.output_proj.1.bias, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.0.0.weight, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.0.0.bias, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.1.weight, motion_head.motionformer.bev_interaction_layers.2.ffns.0.layers.1.bias, motion_head.motionformer.bev_interaction_layers.2.norms.0.weight, motion_head.motionformer.bev_interaction_layers.2.norms.0.bias, motion_head.motionformer.bev_interaction_layers.2.norms.1.weight, motion_head.motionformer.bev_interaction_layers.2.norms.1.bias, motion_head.motionformer.static_dynamic_fuser.0.weight, motion_head.motionformer.static_dynamic_fuser.0.bias, motion_head.motionformer.static_dynamic_fuser.2.weight, motion_head.motionformer.static_dynamic_fuser.2.bias, motion_head.motionformer.dynamic_embed_fuser.0.weight, motion_head.motionformer.dynamic_embed_fuser.0.bias, motion_head.motionformer.dynamic_embed_fuser.2.weight, motion_head.motionformer.dynamic_embed_fuser.2.bias, motion_head.motionformer.in_query_fuser.0.weight, motion_head.motionformer.in_query_fuser.0.bias, motion_head.motionformer.in_query_fuser.2.weight, motion_head.motionformer.in_query_fuser.2.bias, motion_head.motionformer.out_query_fuser.0.weight, motion_head.motionformer.out_query_fuser.0.bias, motion_head.motionformer.out_query_fuser.2.weight, motion_head.motionformer.out_query_fuser.2.bias, motion_head.layer_track_query_fuser.0.weight, motion_head.layer_track_query_fuser.0.bias, motion_head.layer_track_query_fuser.1.weight, motion_head.layer_track_query_fuser.1.bias, motion_head.agent_level_embedding_layer.0.weight, motion_head.agent_level_embedding_layer.0.bias, motion_head.agent_level_embedding_layer.2.weight, motion_head.agent_level_embedding_layer.2.bias, motion_head.scene_level_ego_embedding_layer.0.weight, motion_head.scene_level_ego_embedding_layer.0.bias, motion_head.scene_level_ego_embedding_layer.2.weight, motion_head.scene_level_ego_embedding_layer.2.bias, motion_head.scene_level_offset_embedding_layer.0.weight, motion_head.scene_level_offset_embedding_layer.0.bias, motion_head.scene_level_offset_embedding_layer.2.weight, motion_head.scene_level_offset_embedding_layer.2.bias, motion_head.boxes_query_embedding_layer.0.weight, motion_head.boxes_query_embedding_layer.0.bias, motion_head.boxes_query_embedding_layer.2.weight, motion_head.boxes_query_embedding_layer.2.bias, motion_head.traj_cls_branches.0.0.weight, motion_head.traj_cls_branches.0.0.bias, motion_head.traj_cls_branches.0.1.weight, motion_head.traj_cls_branches.0.1.bias, motion_head.traj_cls_branches.0.3.weight, motion_head.traj_cls_branches.0.3.bias, motion_head.traj_cls_branches.0.4.weight, motion_head.traj_cls_branches.0.4.bias, motion_head.traj_cls_branches.0.6.weight, motion_head.traj_cls_branches.0.6.bias, motion_head.traj_cls_branches.1.0.weight, motion_head.traj_cls_branches.1.0.bias, motion_head.traj_cls_branches.1.1.weight, motion_head.traj_cls_branches.1.1.bias, motion_head.traj_cls_branches.1.3.weight, motion_head.traj_cls_branches.1.3.bias, motion_head.traj_cls_branches.1.4.weight, motion_head.traj_cls_branches.1.4.bias, motion_head.traj_cls_branches.1.6.weight, motion_head.traj_cls_branches.1.6.bias, motion_head.traj_cls_branches.2.0.weight, motion_head.traj_cls_branches.2.0.bias, motion_head.traj_cls_branches.2.1.weight, motion_head.traj_cls_branches.2.1.bias, motion_head.traj_cls_branches.2.3.weight, motion_head.traj_cls_branches.2.3.bias, motion_head.traj_cls_branches.2.4.weight, motion_head.traj_cls_branches.2.4.bias, motion_head.traj_cls_branches.2.6.weight, motion_head.traj_cls_branches.2.6.bias, motion_head.traj_reg_branches.0.0.weight, motion_head.traj_reg_branches.0.0.bias, motion_head.traj_reg_branches.0.2.weight, motion_head.traj_reg_branches.0.2.bias, motion_head.traj_reg_branches.0.4.weight, motion_head.traj_reg_branches.0.4.bias, motion_head.traj_reg_branches.1.0.weight, motion_head.traj_reg_branches.1.0.bias, motion_head.traj_reg_branches.1.2.weight, motion_head.traj_reg_branches.1.2.bias, motion_head.traj_reg_branches.1.4.weight, motion_head.traj_reg_branches.1.4.bias, motion_head.traj_reg_branches.2.0.weight, motion_head.traj_reg_branches.2.0.bias, motion_head.traj_reg_branches.2.2.weight, motion_head.traj_reg_branches.2.2.bias, motion_head.traj_reg_branches.2.4.weight, motion_head.traj_reg_branches.2.4.bias, planning_head.traj_mean, planning_head.traj_std, planning_head.bev_track_bridge.bev_pos_embed, planning_head.bev_track_bridge.bev_compress.0.weight, planning_head.bev_track_bridge.bev_compress.0.bias, planning_head.bev_track_bridge.bev_compress.2.weight, planning_head.bev_track_bridge.bev_compress.2.bias, planning_head.bev_track_bridge.track_proj.0.weight, planning_head.bev_track_bridge.track_proj.0.bias, planning_head.bev_track_bridge.track_proj.1.weight, planning_head.bev_track_bridge.track_proj.1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.in_proj_weight, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.in_proj_bias, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.out_proj.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.self_attn.out_proj.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.linear1.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.linear1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.linear2.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.linear2.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.norm1.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.norm1.bias, planning_head.bev_track_bridge.agent_encoder.layers.0.norm2.weight, planning_head.bev_track_bridge.agent_encoder.layers.0.norm2.bias, planning_head.ego_bridge.ego_fuser.0.weight, planning_head.ego_bridge.ego_fuser.0.bias, planning_head.ego_bridge.ego_fuser.1.weight, planning_head.ego_bridge.ego_fuser.1.bias, planning_head.ego_bridge.command_embed.weight, planning_head.ego_bridge.routing_fuser.0.weight, planning_head.ego_bridge.routing_fuser.0.bias, planning_head.ego_bridge.routing_fuser.1.weight, planning_head.ego_bridge.routing_fuser.1.bias, planning_head.t_embedder.mlp.0.weight, planning_head.t_embedder.mlp.0.bias, planning_head.t_embedder.mlp.2.weight, planning_head.t_embedder.mlp.2.bias, planning_head.ego_time_pe.pe, planning_head.preproj.fc1.weight, planning_head.preproj.fc1.bias, planning_head.preproj.fc2.weight, planning_head.preproj.fc2.bias, planning_head.vector_in.fc1.weight, planning_head.vector_in.fc1.bias, planning_head.vector_in.fc2.weight, planning_head.vector_in.fc2.bias, planning_head.routing_in.fc1.weight, planning_head.routing_in.fc1.bias, planning_head.routing_in.fc2.weight, planning_head.routing_in.fc2.bias, planning_head.context_in.fc1.weight, planning_head.context_in.fc1.bias, planning_head.context_in.fc2.weight, planning_head.context_in.fc2.bias, planning_head.dit_blocks.0.self_attn.in_proj_weight, planning_head.dit_blocks.0.self_attn.in_proj_bias, planning_head.dit_blocks.0.self_attn.out_proj.weight, planning_head.dit_blocks.0.self_attn.out_proj.bias, planning_head.dit_blocks.0.cross_attn.in_proj_weight, planning_head.dit_blocks.0.cross_attn.in_proj_bias, planning_head.dit_blocks.0.cross_attn.out_proj.weight, planning_head.dit_blocks.0.cross_attn.out_proj.bias, planning_head.dit_blocks.0.ffn.0.weight, planning_head.dit_blocks.0.ffn.0.bias, planning_head.dit_blocks.0.ffn.2.weight, planning_head.dit_blocks.0.ffn.2.bias, planning_head.dit_blocks.0.adaLN_modulation.1.weight, planning_head.dit_blocks.0.adaLN_modulation.1.bias, planning_head.dit_blocks.1.self_attn.in_proj_weight, planning_head.dit_blocks.1.self_attn.in_proj_bias, planning_head.dit_blocks.1.self_attn.out_proj.weight, planning_head.dit_blocks.1.self_attn.out_proj.bias, planning_head.dit_blocks.1.cross_attn.in_proj_weight, planning_head.dit_blocks.1.cross_attn.in_proj_bias, planning_head.dit_blocks.1.cross_attn.out_proj.weight, planning_head.dit_blocks.1.cross_attn.out_proj.bias, planning_head.dit_blocks.1.ffn.0.weight, planning_head.dit_blocks.1.ffn.0.bias, planning_head.dit_blocks.1.ffn.2.weight, planning_head.dit_blocks.1.ffn.2.bias, planning_head.dit_blocks.1.adaLN_modulation.1.weight, planning_head.dit_blocks.1.adaLN_modulation.1.bias, planning_head.final_layer.linear.weight, planning_head.final_layer.linear.bias, planning_head.final_layer.adaLN_modulation.1.weight, planning_head.final_layer.adaLN_modulation.1.bias
-
-2026-07-05 13:09:36,681 - mmdet - INFO - Start running, host: guo@guo-Legion-Y7000-IRX9, work_dir: /home/guo/UniAD-Diffusion/UniAD/projects/work_dirs/stage2_e2e/base_e2e_diffusion
-2026-07-05 13:09:36,681 - mmdet - INFO - Start running, host: guo@guo-Legion-Y7000-IRX9, work_dir: /home/guo/UniAD-Diffusion/UniAD/projects/work_dirs/stage2_e2e/base_e2e_diffusion
-2026-07-05 13:09:36,681 - mmdet - INFO - Hooks will be executed in the following order:
-before_run:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_epoch:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_iter:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_train_iter:
-(ABOVE_NORMAL) OptimizerHook                      
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_train_epoch:
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_epoch:
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_epoch:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_run:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-2026-07-05 13:09:36,681 - mmdet - INFO - Hooks will be executed in the following order:
-before_run:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_epoch:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_iter:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_train_iter:
-(ABOVE_NORMAL) OptimizerHook                      
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_train_epoch:
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) EvalHook                           
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_epoch:
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_epoch:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_run:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-2026-07-05 13:09:36,681 - mmdet - INFO - workflow: [('train', 1)], max: 20 epochs
-2026-07-05 13:09:36,681 - mmdet - INFO - workflow: [('train', 1)], max: 20 epochs
-2026-07-05 13:09:36,681 - mmdet - INFO - Checkpoints will be saved to /home/guo/UniAD-Diffusion/UniAD/projects/work_dirs/stage2_e2e/base_e2e_diffusion by HardDiskBackend.
-2026-07-05 13:09:36,681 - mmdet - INFO - Checkpoints will be saved to /home/guo/UniAD-Diffusion/UniAD/projects/work_dirs/stage2_e2e/base_e2e_diffusion by HardDiskBackend.
-projects.mmdet3d_plugin
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.250 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-WARNING!!!!, Only can be used for obtain inference speed!!!!
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.146 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-WARNING!!!!, Only can be used for obtain inference speed!!!!
-2026-07-05 13:09:38,786 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-05 13:09:38,792 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-05 13:09:38,806 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-05 13:09:38,815 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-05 13:09:39,987 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
-2026-07-05 13:09:39,995 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
-2026-07-05 13:09:40,010 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
-2026-07-05 13:09:40,020 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
-2026-07-05 13:09:45,862 - shapely.geos - INFO - Self-intersection at or near point 134.36374450633136 1091.2903070826083
-2026-07-05 13:09:45,873 - shapely.geos - INFO - Self-intersection at or near point 165.02390945024581 1095.7013529720464
-2026-07-05 13:09:48,810 - shapely.geos - INFO - Self-intersection at or near point 134.36374450633136 1091.2903070826083
-2026-07-05 13:09:48,821 - shapely.geos - INFO - Self-intersection at or near point 165.02390945024581 1095.7013529720464
-2026-07-05 13:09:54,610 - mmdet - INFO - Epoch [1][5/323]	lr: 7.733e-06, eta: 6:25:31, time: 3.583, data_time: 0.557, memory: 5792, track.frame_0_loss_cls_0: 1.0441, track.frame_0_loss_bbox_0: 1.5495, track.frame_0_loss_past_trajs_0: 9.8562, track.frame_0_loss_cls_1: 0.9290, track.frame_0_loss_bbox_1: 1.3669, track.frame_0_loss_past_trajs_1: 9.8592, track.frame_0_loss_cls_2: 0.8073, track.frame_0_loss_bbox_2: 1.3245, track.frame_0_loss_past_trajs_2: 9.8591, track.frame_0_loss_cls_3: 0.6795, track.frame_0_loss_bbox_3: 1.3053, track.frame_0_loss_past_trajs_3: 9.8570, track.frame_0_loss_cls_4: 0.6635, track.frame_0_loss_bbox_4: 1.3071, track.frame_0_loss_past_trajs_4: 9.8586, track.frame_0_loss_cls_5: 0.6533, track.frame_0_loss_bbox_5: 1.3257, track.frame_0_loss_past_trajs_5: 9.8587, map.loss_cls: 1.5197, map.loss_bbox: 1.5902, map.loss_iou: 2.2376, map.loss_mask_things: 1.8602, map.loss_mask_stuff: 0.0070, map.d0.loss_mask_things_f: 1.9016, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8575, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8566, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8588, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0075, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0070, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0072, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0071, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0069, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0072, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 1.0948, map.d0.loss_bbox: 1.5481, map.d0.loss_iou: 2.2017, map.d1.loss_cls: 1.3008, map.d1.loss_bbox: 1.5945, map.d1.loss_iou: 2.2029, map.d2.loss_cls: 1.3346, map.d2.loss_bbox: 1.6046, map.d2.loss_iou: 2.2081, map.d3.loss_cls: 1.4400, map.d3.loss_bbox: 1.6180, map.d3.loss_iou: 2.1824, map.d4.loss_cls: 1.4136, map.d4.loss_bbox: 1.5765, map.d4.loss_iou: 2.1893, motion.loss_traj: 12.4509, motion.l_class: 0.1813, motion.l_reg: 23.5459, motion.min_ade: 1.3003, motion.min_fde: 2.3493, motion.mr: 0.0585, motion.d0.loss_traj: 12.3768, motion.d0.l_class: 0.1812, motion.d0.l_reg: 23.3991, motion.d0.min_ade: 1.2990, motion.d0.min_fde: 2.3465, motion.d0.mr: 0.0585, motion.d1.loss_traj: 12.4590, motion.d1.l_class: 0.1801, motion.d1.l_reg: 23.5645, motion.d1.min_ade: 1.2996, motion.d1.min_fde: 2.3466, motion.d1.mr: 0.0585, planning.loss_flow_matching: 1.0732, planning.loss_ade_aux: 0.0754, loss: 150.7820, grad_norm: 457.7185
-2026-07-05 13:09:54,610 - mmdet - INFO - Epoch [1][5/323]	lr: 7.733e-06, eta: 6:25:31, time: 3.583, data_time: 0.557, memory: 5792, track.frame_0_loss_cls_0: 1.0441, track.frame_0_loss_bbox_0: 1.5495, track.frame_0_loss_past_trajs_0: 9.8562, track.frame_0_loss_cls_1: 0.9290, track.frame_0_loss_bbox_1: 1.3669, track.frame_0_loss_past_trajs_1: 9.8592, track.frame_0_loss_cls_2: 0.8073, track.frame_0_loss_bbox_2: 1.3245, track.frame_0_loss_past_trajs_2: 9.8591, track.frame_0_loss_cls_3: 0.6795, track.frame_0_loss_bbox_3: 1.3053, track.frame_0_loss_past_trajs_3: 9.8570, track.frame_0_loss_cls_4: 0.6635, track.frame_0_loss_bbox_4: 1.3071, track.frame_0_loss_past_trajs_4: 9.8586, track.frame_0_loss_cls_5: 0.6533, track.frame_0_loss_bbox_5: 1.3257, track.frame_0_loss_past_trajs_5: 9.8587, map.loss_cls: 1.5197, map.loss_bbox: 1.5902, map.loss_iou: 2.2376, map.loss_mask_things: 1.8602, map.loss_mask_stuff: 0.0070, map.d0.loss_mask_things_f: 1.9016, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8575, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8566, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8588, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0075, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0070, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0072, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0071, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0069, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0072, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 1.0948, map.d0.loss_bbox: 1.5481, map.d0.loss_iou: 2.2017, map.d1.loss_cls: 1.3008, map.d1.loss_bbox: 1.5945, map.d1.loss_iou: 2.2029, map.d2.loss_cls: 1.3346, map.d2.loss_bbox: 1.6046, map.d2.loss_iou: 2.2081, map.d3.loss_cls: 1.4400, map.d3.loss_bbox: 1.6180, map.d3.loss_iou: 2.1824, map.d4.loss_cls: 1.4136, map.d4.loss_bbox: 1.5765, map.d4.loss_iou: 2.1893, motion.loss_traj: 12.4509, motion.l_class: 0.1813, motion.l_reg: 23.5459, motion.min_ade: 1.3003, motion.min_fde: 2.3493, motion.mr: 0.0585, motion.d0.loss_traj: 12.3768, motion.d0.l_class: 0.1812, motion.d0.l_reg: 23.3991, motion.d0.min_ade: 1.2990, motion.d0.min_fde: 2.3465, motion.d0.mr: 0.0585, motion.d1.loss_traj: 12.4590, motion.d1.l_class: 0.1801, motion.d1.l_reg: 23.5645, motion.d1.min_ade: 1.2996, motion.d1.min_fde: 2.3466, motion.d1.mr: 0.0585, planning.loss_flow_matching: 1.0732, planning.loss_ade_aux: 0.0754, loss: 150.7820, grad_norm: 457.7185
+ap.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0120, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 1.0379, map.d0.loss_bbox: 1.6019, map.d0.loss_iou: 2.1344, map.d1.loss_cls: 1.0674, map.d1.loss_bbox: 1.5860, map.d1.loss_iou: 2.1764, map.d2.loss_cls: 1.2162, map.d2.loss_bbox: 1.5885, map.d2.loss_iou: 2.1749, map.d3.loss_cls: 1.2482, map.d3.loss_bbox: 1.5894, map.d3.loss_iou: 2.1575, map.d4.loss_cls: 1.2002, map.d4.loss_bbox: 1.5999, map.d4.loss_iou: 2.1498, motion.loss_traj: 9.2715, motion.l_class: 0.1801, motion.l_reg: 17.4301, motion.min_ade: 1.0521, motion.min_fde: 1.8658, motion.mr: 0.0571, motion.d0.loss_traj: 9.2609, motion.d0.l_class: 0.1804, motion.d0.l_reg: 17.4093, motion.d0.min_ade: 1.0512, motion.d0.min_fde: 1.8643, motion.d0.mr: 0.0571, motion.d1.loss_traj: 9.3136, motion.d1.l_class: 0.1789, motion.d1.l_reg: 17.5164, motion.d1.min_ade: 1.0510, motion.d1.min_fde: 1.8635, motion.d1.mr: 0.0571, planning.loss_flow_matching: 0.5228, planning.loss_ade_aux: 0.0625, loss: 124.7997, grad_norm: 270.3310
+2026-07-05 13:15:31,790 - mmdet - INFO - Epoch [1][20/323]	lr: 1.173e-05, eta: 5:32:09, time: 2.920, data_time: 0.013, memory: 5814, track.frame_0_loss_cls_0: 0.9938, track.frame_0_loss_bbox_0: 1.6038, track.frame_0_loss_past_trajs_0: 7.3948, track.frame_0_loss_cls_1: 0.9209, track.frame_0_loss_bbox_1: 1.4344, track.frame_0_loss_past_trajs_1: 7.3908, track.frame_0_loss_cls_2: 0.7442, track.frame_0_loss_bbox_2: 1.3579, track.frame_0_loss_past_trajs_2: 7.3913, track.frame_0_loss_cls_3: 0.6775, track.frame_0_loss_bbox_3: 1.3576, track.frame_0_loss_past_trajs_3: 7.3894, track.frame_0_loss_cls_4: 0.6331, track.frame_0_loss_bbox_4: 1.3383, track.frame_0_loss_past_trajs_4: 7.3908, track.frame_0_loss_cls_5: 0.6281, track.frame_0_loss_bbox_5: 1.3435, track.frame_0_loss_past_trajs_5: 7.3928, map.loss_cls: 1.2498, map.loss_bbox: 1.6263, map.loss_iou: 2.1870, map.loss_mask_things: 1.8576, map.loss_mask_stuff: 0.0116, map.d0.loss_mask_things_f: 1.8875, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8499, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8576, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8582, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0138, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0120, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0117, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0109, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0112, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0120, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 1.0379, map.d0.loss_bbox: 1.6019, map.d0.loss_iou: 2.1344, map.d1.loss_cls: 1.0674, map.d1.loss_bbox: 1.5860, map.d1.loss_iou: 2.1764, map.d2.loss_cls: 1.2162, map.d2.loss_bbox: 1.5885, map.d2.loss_iou: 2.1749, map.d3.loss_cls: 1.2482, map.d3.loss_bbox: 1.5894, map.d3.loss_iou: 2.1575, map.d4.loss_cls: 1.2002, map.d4.loss_bbox: 1.5999, map.d4.loss_iou: 2.1498, motion.loss_traj: 9.2715, motion.l_class: 0.1801, motion.l_reg: 17.4301, motion.min_ade: 1.0521, motion.min_fde: 1.8658, motion.mr: 0.0571, motion.d0.loss_traj: 9.2609, motion.d0.l_class: 0.1804, motion.d0.l_reg: 17.4093, motion.d0.min_ade: 1.0512, motion.d0.min_fde: 1.8643, motion.d0.mr: 0.0571, motion.d1.loss_traj: 9.3136, motion.d1.l_class: 0.1789, motion.d1.l_reg: 17.5164, motion.d1.min_ade: 1.0510, motion.d1.min_fde: 1.8635, motion.d1.mr: 0.0571, planning.loss_flow_matching: 0.5228, planning.loss_ade_aux: 0.0625, loss: 124.7997, grad_norm: 270.3310
+2026-07-05 13:15:37,735 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:15:37,741 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:15:37,754 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:15:37,762 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:15:40,776 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:15:40,782 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:15:40,795 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:15:40,802 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:15:46,596 - mmdet - INFO - Epoch [1][25/323]	lr: 1.307e-05, eta: 5:29:01, time: 2.961, data_time: 0.016, memory: 5814, track.frame_0_loss_cls_0: 0.8527, track.frame_0_loss_bbox_0: 1.6160, track.frame_0_loss_past_trajs_0: 9.2848, track.frame_0_loss_cls_1: 0.6428, track.frame_0_loss_bbox_1: 1.4901, track.frame_0_loss_past_trajs_1: 9.2853, track.frame_0_loss_cls_2: 0.5705, track.frame_0_loss_bbox_2: 1.3655, track.frame_0_loss_past_trajs_2: 9.2812, track.frame_0_loss_cls_3: 0.5059, track.frame_0_loss_bbox_3: 1.3540, track.frame_0_loss_past_trajs_3: 9.2804, track.frame_0_loss_cls_4: 0.4567, track.frame_0_loss_bbox_4: 1.3581, track.frame_0_loss_past_trajs_4: 9.2827, track.frame_0_loss_cls_5: 0.4706, track.frame_0_loss_bbox_5: 1.3501, track.frame_0_loss_past_trajs_5: 9.2840, map.loss_cls: 0.9559, map.loss_bbox: 1.6892, map.loss_iou: 2.1102, map.loss_mask_things: 1.7962, map.loss_mask_stuff: 0.0076, map.d0.loss_mask_things_f: 1.8956, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8131, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8109, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.7994, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0082, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0080, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0078, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0078, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0078, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0079, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.9701, map.d0.loss_bbox: 1.6810, map.d0.loss_iou: 2.1593, map.d1.loss_cls: 0.9717, map.d1.loss_bbox: 1.6945, map.d1.loss_iou: 2.1424, map.d2.loss_cls: 0.9677, map.d2.loss_bbox: 1.6774, map.d2.loss_iou: 2.0992, map.d3.loss_cls: 1.0093, map.d3.loss_bbox: 1.6720, map.d3.loss_iou: 2.0824, map.d4.loss_cls: 0.9084, map.d4.loss_bbox: 1.6783, map.d4.loss_iou: 2.0998, motion.loss_traj: 12.0545, motion.l_class: 0.1802, motion.l_reg: 22.7785, motion.min_ade: 1.2707, motion.min_fde: 2.3008, motion.mr: 0.0545, motion.d0.loss_traj: 12.0446, motion.d0.l_class: 0.1810, motion.d0.l_reg: 22.7586, motion.d0.min_ade: 1.2699, motion.d0.min_fde: 2.2991, motion.d0.mr: 0.0545, motion.d1.loss_traj: 12.1019, motion.d1.l_class: 0.1823, motion.d1.l_reg: 22.8716, motion.d1.min_ade: 1.2705, motion.d1.min_fde: 2.3001, motion.d1.mr: 0.0545, planning.loss_flow_matching: 0.7623, planning.loss_ade_aux: 0.0975, loss: 142.5315, grad_norm: 235.9439
+2026-07-05 13:15:46,596 - mmdet - INFO - Epoch [1][25/323]	lr: 1.307e-05, eta: 5:29:01, time: 2.961, data_time: 0.016, memory: 5814, track.frame_0_loss_cls_0: 0.8527, track.frame_0_loss_bbox_0: 1.6160, track.frame_0_loss_past_trajs_0: 9.2848, track.frame_0_loss_cls_1: 0.6428, track.frame_0_loss_bbox_1: 1.4901, track.frame_0_loss_past_trajs_1: 9.2853, track.frame_0_loss_cls_2: 0.5705, track.frame_0_loss_bbox_2: 1.3655, track.frame_0_loss_past_trajs_2: 9.2812, track.frame_0_loss_cls_3: 0.5059, track.frame_0_loss_bbox_3: 1.3540, track.frame_0_loss_past_trajs_3: 9.2804, track.frame_0_loss_cls_4: 0.4567, track.frame_0_loss_bbox_4: 1.3581, track.frame_0_loss_past_trajs_4: 9.2827, track.frame_0_loss_cls_5: 0.4706, track.frame_0_loss_bbox_5: 1.3501, track.frame_0_loss_past_trajs_5: 9.2840, map.loss_cls: 0.9559, map.loss_bbox: 1.6892, map.loss_iou: 2.1102, map.loss_mask_things: 1.7962, map.loss_mask_stuff: 0.0076, map.d0.loss_mask_things_f: 1.8956, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8131, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8109, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.7994, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0082, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0080, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0078, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0078, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0078, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0079, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.9701, map.d0.loss_bbox: 1.6810, map.d0.loss_iou: 2.1593, map.d1.loss_cls: 0.9717, map.d1.loss_bbox: 1.6945, map.d1.loss_iou: 2.1424, map.d2.loss_cls: 0.9677, map.d2.loss_bbox: 1.6774, map.d2.loss_iou: 2.0992, map.d3.loss_cls: 1.0093, map.d3.loss_bbox: 1.6720, map.d3.loss_iou: 2.0824, map.d4.loss_cls: 0.9084, map.d4.loss_bbox: 1.6783, map.d4.loss_iou: 2.0998, motion.loss_traj: 12.0545, motion.l_class: 0.1802, motion.l_reg: 22.7785, motion.min_ade: 1.2707, motion.min_fde: 2.3008, motion.mr: 0.0545, motion.d0.loss_traj: 12.0446, motion.d0.l_class: 0.1810, motion.d0.l_reg: 22.7586, motion.d0.min_ade: 1.2699, motion.d0.min_fde: 2.2991, motion.d0.mr: 0.0545, motion.d1.loss_traj: 12.1019, motion.d1.l_class: 0.1823, motion.d1.l_reg: 22.8716, motion.d1.min_ade: 1.2705, motion.d1.min_fde: 2.3001, motion.d1.mr: 0.0545, planning.loss_flow_matching: 0.7623, planning.loss_ade_aux: 0.0975, loss: 142.5315, grad_norm: 235.9439
+2026-07-05 13:15:49,503 - shapely.geos - INFO - Self-intersection at or near point 134.36374450633136 1091.2903070826083
+2026-07-05 13:15:49,514 - shapely.geos - INFO - Self-intersection at or near point 165.02390945024581 1095.7013529720464
+2026-07-05 13:15:52,370 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:15:52,376 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:15:52,388 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:15:52,397 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:15:55,238 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:15:55,244 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:15:55,257 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:15:55,265 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:16:01,042 - mmdet - INFO - Epoch [1][30/323]	lr: 1.440e-05, eta: 5:25:35, time: 2.889, data_time: 0.014, memory: 5814, track.frame_0_loss_cls_0: 0.7430, track.frame_0_loss_bbox_0: 1.2622, track.frame_0_loss_past_trajs_0: 7.5809, track.frame_0_loss_cls_1: 0.5668, track.frame_0_loss_bbox_1: 1.1389, track.frame_0_loss_past_trajs_1: 7.5834, track.frame_0_loss_cls_2: 0.4830, track.frame_0_loss_bbox_2: 1.0821, track.frame_0_loss_past_trajs_2: 7.5805, track.frame_0_loss_cls_3: 0.4465, track.frame_0_loss_bbox_3: 1.0579, track.frame_0_loss_past_trajs_3: 7.5792, track.frame_0_loss_cls_4: 0.4479, track.frame_0_loss_bbox_4: 1.0383, track.frame_0_loss_past_trajs_4: 7.5799, track.frame_0_loss_cls_5: 0.4358, track.frame_0_loss_bbox_5: 1.0302, track.frame_0_loss_past_trajs_5: 7.5799, map.loss_cls: 0.6700, map.loss_bbox: 1.5960, map.loss_iou: 2.0490, map.loss_mask_things: 1.8249, map.loss_mask_stuff: 0.0114, map.d0.loss_mask_things_f: 1.8982, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8356, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8275, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8243, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0119, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0111, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0112, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0114, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0111, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0113, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.8347, map.d0.loss_bbox: 1.5511, map.d0.loss_iou: 2.0743, map.d1.loss_cls: 0.7335, map.d1.loss_bbox: 1.5879, map.d1.loss_iou: 2.0593, map.d2.loss_cls: 0.7035, map.d2.loss_bbox: 1.5849, map.d2.loss_iou: 2.0607, map.d3.loss_cls: 0.6864, map.d3.loss_bbox: 1.5920, map.d3.loss_iou: 2.0513, map.d4.loss_cls: 0.6590, map.d4.loss_bbox: 1.5885, map.d4.loss_iou: 2.0512, motion.loss_traj: 3.4503, motion.l_class: 0.1787, motion.l_reg: 6.2834, motion.min_ade: 0.4777, motion.min_fde: 0.8768, motion.mr: 0.0314, motion.d0.loss_traj: 3.4483, motion.d0.l_class: 0.1803, motion.d0.l_reg: 6.2780, motion.d0.min_ade: 0.4773, motion.d0.min_fde: 0.8769, motion.d0.mr: 0.0314, motion.d1.loss_traj: 3.4590, motion.d1.l_class: 0.1810, motion.d1.l_reg: 6.2987, motion.d1.min_ade: 0.4775, motion.d1.min_fde: 0.8765, motion.d1.mr: 0.0314, planning.loss_flow_matching: 0.8479, planning.loss_ade_aux: 0.0812, loss: 101.9261, grad_norm: 207.8871
+2026-07-05 13:16:01,042 - mmdet - INFO - Epoch [1][30/323]	lr: 1.440e-05, eta: 5:25:35, time: 2.889, data_time: 0.014, memory: 5814, track.frame_0_loss_cls_0: 0.7430, track.frame_0_loss_bbox_0: 1.2622, track.frame_0_loss_past_trajs_0: 7.5809, track.frame_0_loss_cls_1: 0.5668, track.frame_0_loss_bbox_1: 1.1389, track.frame_0_loss_past_trajs_1: 7.5834, track.frame_0_loss_cls_2: 0.4830, track.frame_0_loss_bbox_2: 1.0821, track.frame_0_loss_past_trajs_2: 7.5805, track.frame_0_loss_cls_3: 0.4465, track.frame_0_loss_bbox_3: 1.0579, track.frame_0_loss_past_trajs_3: 7.5792, track.frame_0_loss_cls_4: 0.4479, track.frame_0_loss_bbox_4: 1.0383, track.frame_0_loss_past_trajs_4: 7.5799, track.frame_0_loss_cls_5: 0.4358, track.frame_0_loss_bbox_5: 1.0302, track.frame_0_loss_past_trajs_5: 7.5799, map.loss_cls: 0.6700, map.loss_bbox: 1.5960, map.loss_iou: 2.0490, map.loss_mask_things: 1.8249, map.loss_mask_stuff: 0.0114, map.d0.loss_mask_things_f: 1.8982, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8356, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8275, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8243, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0119, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0111, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0112, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0114, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0111, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0113, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.8347, map.d0.loss_bbox: 1.5511, map.d0.loss_iou: 2.0743, map.d1.loss_cls: 0.7335, map.d1.loss_bbox: 1.5879, map.d1.loss_iou: 2.0593, map.d2.loss_cls: 0.7035, map.d2.loss_bbox: 1.5849, map.d2.loss_iou: 2.0607, map.d3.loss_cls: 0.6864, map.d3.loss_bbox: 1.5920, map.d3.loss_iou: 2.0513, map.d4.loss_cls: 0.6590, map.d4.loss_bbox: 1.5885, map.d4.loss_iou: 2.0512, motion.loss_traj: 3.4503, motion.l_class: 0.1787, motion.l_reg: 6.2834, motion.min_ade: 0.4777, motion.min_fde: 0.8768, motion.mr: 0.0314, motion.d0.loss_traj: 3.4483, motion.d0.l_class: 0.1803, motion.d0.l_reg: 6.2780, motion.d0.min_ade: 0.4773, motion.d0.min_fde: 0.8769, motion.d0.mr: 0.0314, motion.d1.loss_traj: 3.4590, motion.d1.l_class: 0.1810, motion.d1.l_reg: 6.2987, motion.d1.min_ade: 0.4775, motion.d1.min_fde: 0.8765, motion.d1.mr: 0.0314, planning.loss_flow_matching: 0.8479, planning.loss_ade_aux: 0.0812, loss: 101.9261, grad_norm: 207.8871
+2026-07-05 13:16:01,095 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:16:01,101 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:16:01,114 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:16:01,122 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:16:04,199 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:16:04,205 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:16:04,218 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:16:04,226 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
 [DiT iter=0001] ❌ pred_max=0.0000  gt_norm_rms=5.321  gt_delta_max=8.1053m  fm_loss=27.292  nan(p/t/g)=False/False/False
 [DiT iter=0002] ✅ pred_max=0.0010  gt_norm_rms=0.000  gt_delta_max=0.0003m  fm_loss=0.530  nan(p/t/g)=False/False/False
 [DiT iter=0003] ✅ pred_max=0.0020  gt_norm_rms=4.748  gt_delta_max=7.1220m  fm_loss=23.060  nan(p/t/g)=False/False/False
@@ -187,6 +48,150 @@ WARNING!!!!, Only can be used for obtain inference speed!!!!
 ======================================================================
 
 [DiT WARNING] iter=0006 gt_delta_max=29.3m > 20m，跳过该 batch 的 FM loss 防止梯度爆炸
+[DiT iter=0007] ✅ pred_max=0.0038  gt_norm_rms=2.613  gt_delta_max=4.0683m  fm_loss=5.926  nan(p/t/g)=False/False/False
+[DiT iter=0008] ✅ pred_max=0.0048  gt_norm_rms=1.596  gt_delta_max=2.4642m  fm_loss=3.753  nan(p/t/g)=False/False/False
+[DiT iter=0009] ✅ pred_max=0.0064  gt_norm_rms=3.343  gt_delta_max=5.1779m  fm_loss=9.292  nan(p/t/g)=False/False/False
+[DiT iter=0010] ✅ pred_max=0.0074  gt_norm_rms=4.226  gt_delta_max=6.0191m  fm_loss=17.384  nan(p/t/g)=False/False/False
+
+======================================================================
+[DiT 诊断详情] iter=10  t_mean=0.803
+  【GT 原始轨迹】 gt_delta_max=6.019115m  gt_delta_mean=3.000700m  （正常：mean 0.2~1m, max < 5m）
+  【GT 归一化后】 gt_norm_rms=4.2264  ✅ 正常
+  【归一化参数】  traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【target rms】  4.1746  （理论≈1.41，超过5说明gt_norm过大）
+  【DiT输出】     pred_abs_max=0.007370  pred_abs_mean=0.004893
+  【实时FM loss】 17.3843  （理论初始值≈2.0，若>>2说明gt_norm不合理）
+  【梯度爆炸风险】🟢 低
+======================================================================
+
+[DiT iter=0011] ✅ pred_max=0.0082  gt_norm_rms=2.405  gt_delta_max=3.8020m  fm_loss=8.237  nan(p/t/g)=False/False/False
+[DiT WARNING] iter=0012 gt_delta_max=25.0m > 20m，跳过该 batch 的 FM loss 防止梯度爆炸
+[DiT iter=0013] ✅ pred_max=0.0085  gt_norm_rms=0.018  gt_delta_max=0.0575m  fm_loss=1.177  nan(p/t/g)=False/False/False
+[DiT iter=0014] ✅ pred_max=0.0083  gt_norm_rms=0.954  gt_delta_max=1.3961m  fm_loss=1.472  nan(p/t/g)=False/False/False
+[DiT iter=0015] ✅ pred_max=0.0119  gt_norm_rms=2.708  gt_delta_max=4.1789m  fm_loss=8.282  nan(p/t/g)=False/False/False
+
+======================================================================
+[DiT 诊断详情] iter=15  t_mean=0.625
+  【GT 原始轨迹】 gt_delta_max=4.178888m  gt_delta_mean=1.943976m  （正常：mean 0.2~1m, max < 5m）
+  【GT 归一化后】 gt_norm_rms=2.7078  ✅ 正常
+  【归一化参数】  traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【target rms】  2.8861  （理论≈1.41，超过5说明gt_norm过大）
+  【DiT输出】     pred_abs_max=0.011939  pred_abs_mean=0.007612
+  【实时FM loss】 8.2820  （理论初始值≈2.0，若>>2说明gt_norm不合理）
+  【梯度爆炸风险】🟢 低
+======================================================================
+
+[DiT iter=0016] ✅ pred_max=0.0126  gt_norm_rms=0.000  gt_delta_max=0.0002m  fm_loss=0.514  nan(p/t/g)=False/False/False
+[DiT iter=0017] ✅ pred_max=0.0150  gt_norm_rms=4.227  gt_delta_max=6.0374m  fm_loss=24.415  nan(p/t/g)=False/False/False
+[DiT WARNING] iter=0018 gt_delta_max=22.6m > 20m，跳过该 batch 的 FM loss 防止梯度爆炸
+[DiT iter=0019] ✅ pred_max=0.0143  gt_norm_rms=0.000  gt_delta_max=0.0006m  fm_loss=0.463  nan(p/t/g)=False/False/False
+[DiT iter=0020] ✅ pred_max=0.0157  gt_norm_rms=0.001  gt_delta_max=0.0012m  fm_loss=0.748  nan(p/t/g)=False/False/False
+
+======================================================================
+[DiT 诊断详情] iter=20  t_mean=0.242
+  【GT 原始轨迹】 gt_delta_max=0.001240m  gt_delta_mean=0.000414m  （正常：mean 0.2~1m, max < 5m）
+  【GT 归一化后】 gt_norm_rms=0.0005  ❌ 异常！
+  【归一化参数】  traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【target rms】  0.8651  （理论≈1.41，超过5说明gt_norm过大）
+  【DiT输出】     pred_abs_max=0.015654  pred_abs_mean=0.009434
+  【实时FM loss】 0.7478  （理论初始值≈2.0，若>>2说明gt_norm不合理）
+  【梯度爆炸风险】🟢 低
+======================================================================
+
+[DiT iter=0021] ✅ pred_max=0.0194  gt_norm_rms=4.339  gt_delta_max=6.3032m  fm_loss=16.464  nan(p/t/g)=False/False/False
+[DiT iter=0022] ✅ pred_max=0.0189  gt_norm_rms=2.021  gt_delta_max=3.1506m  fm_loss=3.929  nan(p/t/g)=False/False/False
+[DiT iter=0023] ✅ pred_max=0.0194  gt_norm_rms=0.000  gt_delta_max=0.0002m  fm_loss=1.590  nan(p/t/g)=False/False/False
+[DiT iter=0024] ✅ pred_max=0.0248  gt_norm_rms=4.187  gt_delta_max=6.1289m  fm_loss=15.223  nan(p/t/g)=False/False/False
+[DiT iter=0025] ✅ pred_max=0.0248  gt_norm_rms=0.000  gt_delta_max=0.0002m  fm_loss=0.911  nan(p/t/g)=False/False/False
+
+======================================================================
+[DiT 诊断详情] iter=25  t_mean=0.664
+  【GT 原始轨迹】 gt_delta_max=0.000173m  gt_delta_mean=0.000069m  （正常：mean 0.2~1m, max < 5m）
+  【GT 归一化后】 gt_norm_rms=0.0001  ❌ 异常！
+  【归一化参数】  traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【target rms】  0.9563  （理论≈1.41，超过5说明gt_norm过大）
+  【DiT输出】     pred_abs_max=0.024837  pred_abs_mean=0.015502
+  【实时FM loss】 0.9109  （理论初始值≈2.0，若>>2说明gt_norm不合理）
+  【梯度爆炸风险】🟢 低
+======================================================================
+
+[DiT iter=0026] ✅ pred_max=0.0285  gt_norm_rms=4.333  gt_delta_max=6.3472m  fm_loss=16.158  nan(p/t/g)=False/False/False
+[DiT iter=0027] ✅ pred_max=0.0290  gt_norm_rms=3.076  gt_delta_max=4.7758m  fm_loss=9.150  nan(p/t/g)=False/False/False
+[DiT iter=0028] ✅ pred_max=0.0320  gt_norm_rms=2.766  gt_delta_max=4.3290m  fm_loss=9.851  nan(p/t/g)=False/False/False
+[DiT iter=0029] ✅ pred_max=0.0350  gt_norm_rms=2.603  gt_delta_max=4.4322m  fm_loss=6.369  nan(p/t/g)=False/False/False
+[DiT iter=0030] ✅ pred_max=0.0348  gt_norm_rms=0.004  gt_delta_max=0.0107m  fm_loss=0.869  nan(p/t/g)=False/False/False
+
+======================================================================
+[DiT 诊断详情] iter=30  t_mean=0.344
+  【GT 原始轨迹】 gt_delta_max=0.010706m  gt_delta_mean=0.001995m  （正常：mean 0.2~1m, max < 5m）
+  【GT 归一化后】 gt_norm_rms=0.0036  ❌ 异常！
+  【归一化参数】  traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【target rms】  0.9264  （理论≈1.41，超过5说明gt_norm过大）
+  【DiT输出】     pred_abs_max=0.034773  pred_abs_mean=0.019536
+  【实时FM loss】 0.8687  （理论初始值≈2.0，若>>2说明gt_norm不合理）
+  【梯度爆炸风险】🟢 低
+======================================================================
+
+[DiT iter=0031] ✅ pred_max=0.0389  gt_norm_rms=1.638  gt_delta_max=2.5688m  fm_loss=2.816  nan(p/t/g)=False/False/False
+[DiT iter=0032] ✅ pred_max=0.0379  gt_norm_rms=0.000  gt_delta_max=0.0003m  fm_loss=0.557  nan(p/t/g)=False/False/False
+[DiT iter=0033] ✅ pred_max=0.0374  gt_norm_rms=0.000  gt_delta_max=0.0003m  fm_loss=0.830  nan(p/t/g)=False/False/False
+2026-07-05 13:16:13,288 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:16:13,294 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:16:13,306 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:16:13,314 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:16:16,098 - mmdet - INFO - Epoch [1][35/323]	lr: 1.573e-05, eta: 5:24:55, time: 3.011, data_time: 0.013, memory: 5828, track.frame_0_loss_cls_0: 0.6616, track.frame_0_loss_bbox_0: 1.3636, track.frame_0_loss_past_trajs_0: 7.7639, track.frame_0_loss_cls_1: 0.5328, track.frame_0_loss_bbox_1: 1.2399, track.frame_0_loss_past_trajs_1: 7.7624, track.frame_0_loss_cls_2: 0.4770, track.frame_0_loss_bbox_2: 1.2119, track.frame_0_loss_past_trajs_2: 7.7615, track.frame_0_loss_cls_3: 0.4832, track.frame_0_loss_bbox_3: 1.1898, track.frame_0_loss_past_trajs_3: 7.7607, track.frame_0_loss_cls_4: 0.4494, track.frame_0_loss_bbox_4: 1.1663, track.frame_0_loss_past_trajs_4: 7.7586, track.frame_0_loss_cls_5: 0.4368, track.frame_0_loss_bbox_5: 1.1734, track.frame_0_loss_past_trajs_5: 7.7607, map.loss_cls: 0.9173, map.loss_bbox: 1.4020, map.loss_iou: 2.1188, map.loss_mask_things: 1.8729, map.loss_mask_stuff: 0.0061, map.d0.loss_mask_things_f: 1.9325, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8779, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8751, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8762, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0081, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0064, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0064, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0062, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0066, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0064, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.9950, map.d0.loss_bbox: 1.4085, map.d0.loss_iou: 2.0693, map.d1.loss_cls: 0.9763, map.d1.loss_bbox: 1.4158, map.d1.loss_iou: 2.1032, map.d2.loss_cls: 0.9971, map.d2.loss_bbox: 1.4034, map.d2.loss_iou: 2.0865, map.d3.loss_cls: 0.9890, map.d3.loss_bbox: 1.3950, map.d3.loss_iou: 2.1111, map.d4.loss_cls: 0.8900, map.d4.loss_bbox: 1.3899, map.d4.loss_iou: 2.1050, motion.loss_traj: 1.9784, motion.l_class: 0.1798, motion.l_reg: 3.4322, motion.min_ade: 0.3753, motion.min_fde: 0.6898, motion.mr: 0.0442, motion.d0.loss_traj: 1.9542, motion.d0.l_class: 0.1777, motion.d0.l_reg: 3.3859, motion.d0.min_ade: 0.3745, motion.d0.min_fde: 0.6896, motion.d0.mr: 0.0442, motion.d1.loss_traj: 1.9577, motion.d1.l_class: 0.1792, motion.d1.l_reg: 3.3908, motion.d1.min_ade: 0.3752, motion.d1.min_fde: 0.6910, motion.d1.mr: 0.0442, planning.loss_flow_matching: 0.1705, planning.loss_ade_aux: 0.0312, loss: 99.2995, grad_norm: 166.4909
+2026-07-05 13:16:16,098 - mmdet - INFO - Epoch [1][35/323]	lr: 1.573e-05, eta: 5:24:55, time: 3.011, data_time: 0.013, memory: 5828, track.frame_0_loss_cls_0: 0.6616, track.frame_0_loss_bbox_0: 1.3636, track.frame_0_loss_past_trajs_0: 7.7639, track.frame_0_loss_cls_1: 0.5328, track.frame_0_loss_bbox_1: 1.2399, track.frame_0_loss_past_trajs_1: 7.7624, track.frame_0_loss_cls_2: 0.4770, track.frame_0_loss_bbox_2: 1.2119, track.frame_0_loss_past_trajs_2: 7.7615, track.frame_0_loss_cls_3: 0.4832, track.frame_0_loss_bbox_3: 1.1898, track.frame_0_loss_past_trajs_3: 7.7607, track.frame_0_loss_cls_4: 0.4494, track.frame_0_loss_bbox_4: 1.1663, track.frame_0_loss_past_trajs_4: 7.7586, track.frame_0_loss_cls_5: 0.4368, track.frame_0_loss_bbox_5: 1.1734, track.frame_0_loss_past_trajs_5: 7.7607, map.loss_cls: 0.9173, map.loss_bbox: 1.4020, map.loss_iou: 2.1188, map.loss_mask_things: 1.8729, map.loss_mask_stuff: 0.0061, map.d0.loss_mask_things_f: 1.9325, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 1.8779, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 1.8751, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 1.8762, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0081, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0064, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0064, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0062, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0066, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0064, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.9950, map.d0.loss_bbox: 1.4085, map.d0.loss_iou: 2.0693, map.d1.loss_cls: 0.9763, map.d1.loss_bbox: 1.4158, map.d1.loss_iou: 2.1032, map.d2.loss_cls: 0.9971, map.d2.loss_bbox: 1.4034, map.d2.loss_iou: 2.0865, map.d3.loss_cls: 0.9890, map.d3.loss_bbox: 1.3950, map.d3.loss_iou: 2.1111, map.d4.loss_cls: 0.8900, map.d4.loss_bbox: 1.3899, map.d4.loss_iou: 2.1050, motion.loss_traj: 1.9784, motion.l_class: 0.1798, motion.l_reg: 3.4322, motion.min_ade: 0.3753, motion.min_fde: 0.6898, motion.mr: 0.0442, motion.d0.loss_traj: 1.9542, motion.d0.l_class: 0.1777, motion.d0.l_reg: 3.3859, motion.d0.min_ade: 0.3745, motion.d0.min_fde: 0.6896, motion.d0.mr: 0.0442, motion.d1.loss_traj: 1.9577, motion.d1.l_class: 0.1792, motion.d1.l_reg: 3.3908, motion.d1.min_ade: 0.3752, motion.d1.min_fde: 0.6910, motion.d1.mr: 0.0442, planning.loss_flow_matching: 0.1705, planning.loss_ade_aux: 0.0312, loss: 99.2995, grad_norm: 166.4909
+2026-07-05 13:16:16,155 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:16:16,161 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:16:16,174 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:16:16,182 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:16:19,133 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:16:19,139 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:16:19,152 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:16:19,160 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+2026-07-05 13:16:24,862 - shapely.geos - INFO - Self-intersection at or near point 471.98647224679792 1711.8705119768197
+2026-07-05 13:16:24,869 - shapely.geos - INFO - Self-intersection at or near point 1070.4578478045039 1612.8333503895974
+2026-07-05 13:16:24,881 - shapely.geos - INFO - Self-intersection at or near point 1147.8004993016441 1404.4814343572746
+2026-07-05 13:16:24,889 - shapely.geos - INFO - Self-intersection at or near point 1942.7006727221749 863.01771240972209
+[DiT iter=0034] ✅ pred_max=0.0450  gt_norm_rms=1.748  gt_delta_max=2.3277m  fm_loss=3.295  nan(p/t/g)=False/False/False
+[DiT iter=0035] ✅ pred_max=0.0456  gt_norm_rms=0.000  gt_delta_max=0.0003m  fm_loss=1.028  nan(p/t/g)=False/False/False
+
+======================================================================
+[DiT 诊断详情] iter=35  t_mean=0.183
+  【GT 原始轨迹】 gt_delta_max=0.000283m  gt_delta_mean=0.000119m  （正常：mean 0.2~1m, max < 5m）
+  【GT 归一化后】 gt_norm_rms=0.0001  ❌ 异常！
+  【归一化参数】  traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【target rms】  1.0079  （理论≈1.41，超过5说明gt_norm过大）
+  【DiT输出】     pred_abs_max=0.045561  pred_abs_mean=0.023732
+  【实时FM loss】 1.0284  （理论初始值≈2.0，若>>2说明gt_norm不合理）
+  【梯度爆炸风险】🟢 低
+======================================================================
+
+[DiT iter=0036] ✅ pred_max=0.0471  gt_norm_rms=0.180  gt_delta_max=0.5249m  fm_loss=0.494  nan(p/t/g)=False/False/False
+[DiT iter=0037] ✅ pred_max=0.0525  gt_norm_rms=3.771  gt_delta_max=5.7779m  fm_loss=13.671  nan(p/t/g)=False/False/False
+[DiT iter=0038] ✅ pred_max=0.0532  gt_norm_rms=2.992  gt_delta_max=17.9484m  fm_loss=15.085  nan(p/t/g)=False/False/False
+[DiT iter=0039] ❌ pred_max=nan  gt_norm_rms=2.963  gt_delta_max=4.3376m  fm_loss=nan  nan(p/t/g)=True/False/False
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[DiT 诊断] iter=39 检测到数值崩溃，训练终止！
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  pred  NaN=True  max=nan
+  target NaN=False  rms=3.4223  （正常≈1.41）
+  gt_norm NaN=False  rms=2.9625  （正常0.3~5.0）
+
+  【GT原始轨迹分布（前5步）】
+    gt_traj[0]    = [[0.04860487952828407, 4.329740524291992], [0.06894677132368088, 8.538281440734863], [0.07211948186159134, 12.278680801391602], [0.04474439471960068, 16.529205322265625], [0.00013634446077048779, 20.8668155670166], [-0.006311263423413038, 25.107267379760742]]
+    gt_delta[0]   = [[0.04860487952828407, 4.329740524291992], [0.020341891795396805, 4.208540916442871], [0.0031727105379104614, 3.7403993606567383], [-0.02737508714199066, 4.250524520874023], [-0.04460804909467697, 4.337610244750977], [-0.006447607651352882, 4.240451812744141]]
+    gt_norm[0]    = [[0.04860483482480049, 4.329736232757568], [0.020341873168945312, 4.2085371017456055], [0.003172707511112094, 3.7403957843780518], [-0.027375061064958572, 4.2505202293396], [-0.04460800811648369, 4.337605953216553], [-0.006447601597756147, 4.240447998046875]]
+
+  【归一化参数】 traj_mean=[0.0, 0.0]  traj_std=[1.0, 1.0]
+  【实时FM loss】nan  （正常初始值≈2.0）
+
+  【原因分析】
+  → ❌ pred=NaN，梯度爆炸导致参数变 NaN（iter=39）
+     上一个 iter 的 grad_norm 很可能 >> 35（grad_clip 阈值）
+     建议：将 lr 从 1e-4 降至 2e-5，或 grad_clip max_norm 从 35 降至 5
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Traceback (most recent call last):
   File "/home/guo/UniAD-Diffusion/UniAD/tools/train.py", line 260, in <module>
     main()
@@ -212,7 +217,10 @@ Traceback (most recent call last):
     return self.forward_train(**kwargs)
   File "/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/mmcv/runner/fp16_utils.py", line 116, in new_func
     return old_func(*args, **kwargs)
-  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 323, in forward_train
-    losses_planning = outs_planning['losses']
-KeyError: 'losses'
+  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/detectors/uniad_e2e.py", line 315, in forward_train
+    outs_planning = self.planning_head.forward_train(
+  File "/home/guo/UniAD-Diffusion/UniAD/projects/mmdet3d_plugin/uniad/dense_heads/diffusion_planning_head.py", line 1133, in forward_train
+    raise RuntimeError(
+RuntimeError: [DiT 诊断] iter=39 数值崩溃，详情见上方输出。
+修复后：rm -rf projects/work_dirs/stage2_e2e/base_e2e_diffusion/ && bash tools/run_train_single.sh projects/configs/stage2_e2e/base_e2e_diffusion.py
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 

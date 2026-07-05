@@ -671,16 +671,18 @@ class DiffusionPlanningHead(nn.Module):
         self.final_layer  = FinalLayer(hidden_size=embed_dims, output_size=output_dim)
 
         # ---- 轨迹归一化统计量（register_buffer）----
-        # register_buffer：将 tensor 注册为模型的 buffer，不参与梯度计算，
-        #                   但会随模型保存/加载，并跟随 .to(device) 移动
-        # 这些统计量来自 nuScenes 数据集的轨迹分布估计：
-        #   delta_x（前向位移）：均值≈0.4m/step，标准差≈0.3m/step（城区匀速行驶）
-        #   delta_y（侧向位移）：均值≈0（对称），标准差≈0.15m/step
+        # 【修改说明】关闭归一化（mean=0, std=1）
+        # 原因：nuScenes 数据中转弯帧的 y 方向单步位移可达 3~4m，
+        #       而原来的 traj_std_y=0.15 极度低估了真实标准差，
+        #       导致归一化后 gt_norm_y ≈ 4/0.15 ≈ 27，FM loss 爆炸到 1000+。
+        # 解决方案：令 mean=0, std=1（恒等变换），在差分坐标空间直接做 FM，
+        #   差分值量级：x 方向 0~3m/step，y 方向 0~4m/step（含转弯）
+        #   FM noise 也在同量级（std ≈ 1~4），训练可正常收敛。
         self.register_buffer(
-            'traj_mean', torch.tensor([0.4, 0.0] if output_dim == 2 else [0.4, 0.0, 0.0])
+            'traj_mean', torch.tensor([0.0, 0.0] if output_dim == 2 else [0.0, 0.0, 0.0])
         )
         self.register_buffer(
-            'traj_std',  torch.tensor([0.3, 0.15] if output_dim == 2 else [0.3, 0.15, 0.1])
+            'traj_std',  torch.tensor([1.0, 1.0] if output_dim == 2 else [1.0, 1.0, 1.0])
         )
 
         # ---- 碰撞损失（兼容 PlanningHeadSingleMode 接口）----
@@ -981,8 +983,11 @@ class DiffusionPlanningHead(nn.Module):
         gt_delta[:, 0, :]  = gt_traj[:, 0, :]                 # 第0步：直接等于绝对坐标
         gt_delta[:, 1:, :] = gt_traj[:, 1:, :] - gt_traj[:, :-1, :]  # 后续步：差分
 
-        # 归一化到接近标准正态分布，并用 mask 清零无效步
+        # 归一化（当前 mean=0, std=1，即恒等变换），并用 mask 清零无效步
         gt_norm    = self.normalize_traj(gt_delta) * traj_mask.unsqueeze(-1).float()
+        # 安全截断：差分坐标正常范围约 ±10m，截断到 ±15 防止极端异常帧导致 loss 爆炸
+        # （转弯帧 y 方向 ~4m，静止帧 ~0m，均在 ±15 范围内；超出的是数据异常）
+        gt_norm    = torch.clamp(gt_norm, -15.0, 15.0)
         # gt_norm: (B, T, output_dim)，这是 Flow Matching 的"目标分布" x_data
 
         # ================================================================

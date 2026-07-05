@@ -32,15 +32,26 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
 
     # 兼容 MMDataParallel（model.module）和裸模型两种情况
     _model = model.module if hasattr(model, 'module') else model
-    _has_ph = hasattr(_model, 'planning_head')
+
+    # 用最可靠的方式判断：直接检查 planning_head 属性是否存在且非 None
     _ph_val = getattr(_model, 'planning_head', None)
-    eval_planning = hasattr(_model, 'with_planning_head') \
-                    and _model.with_planning_head
-    eval_occ = hasattr(_model, 'with_occ_head') \
-               and _model.with_occ_head
-    print(f'\n[eval_init] eval_planning={eval_planning}  eval_occ={eval_occ}')
-    print(f'[eval_init] has planning_head attr={_has_ph}  value={type(_ph_val).__name__}')
-    print(f'[eval_init] model type={type(_model).__name__}')
+    eval_planning = (_ph_val is not None)
+    eval_occ = (getattr(_model, 'occ_head', None) is not None)
+
+    # 诊断信息同时写到文件，避免终端滚屏覆盖
+    _diag_msg = (
+        f'[eval_init] model={type(_model).__name__}  '
+        f'eval_planning={eval_planning}  eval_occ={eval_occ}  '
+        f'planning_head={type(_ph_val).__name__ if _ph_val else None}\n'
+    )
+    print(_diag_msg)
+    import sys
+    sys.stdout.flush()
+    try:
+        with open('/tmp/uniad_eval_diag.txt', 'w') as _f:
+            _f.write(_diag_msg)
+    except Exception:
+        pass
 
     if eval_planning:
         planning_metrics = PlanningMetric().cuda()

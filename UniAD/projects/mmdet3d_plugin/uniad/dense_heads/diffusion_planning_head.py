@@ -1125,8 +1125,12 @@ class DiffusionPlanningHead(nn.Module):
         # 分母：有效步数 × output_dim，避免不同序列长度导致损失不均衡
         fm_loss = ((pred - target) ** 2 * mask_e).sum() / (mask_e.sum() * self.output_dim + 1e-6)
         fm_loss = fm_loss * self.flow_matching_loss_weight
+        # 【关键】对 fm_loss 做上界截断，防止急转弯帧（y差分~4m）导致 fm_loss 过大
+        # 正常帧 fm_loss ≈ 0.1~3.0（weight=0.1 × gt_norm_rms²~10）
+        # 异常帧（gt_delta_max~30m）fm_loss ≈ 29×0.1 = 2.9，上界设 5.0 足够
+        fm_loss = torch.clamp(fm_loss, max=5.0)
         # 最终保险：防止极端情况下 loss 仍为 NaN/Inf（如 mask 全零）
-        fm_loss = torch.nan_to_num(fm_loss, nan=0.0, posinf=100.0)
+        fm_loss = torch.nan_to_num(fm_loss, nan=0.0, posinf=5.0)
         losses  = {'loss_flow_matching': fm_loss}
 
         # ================================================================

@@ -1193,10 +1193,14 @@ class DiffusionPlanningHead(nn.Module):
             # 归一化空间中对 x_data（GT 归一化轨迹增量）的估计
             x_data_est = z_t.detach() + pred * (1.0 - t_view)      # (B, T, output_dim)
 
-            # 在归一化空间直接计算逐步 L2（量纲与 FM loss 一致）
-            # gt_norm: (B, T, output_dim)，GT 归一化增量序列（即 x_data）
-            ade_norm_loss = ((x_data_est - gt_norm) ** 2 * mask_e).sum(-1)  # (B, T)
-            ade_norm_loss = ade_norm_loss.sqrt().mean()  # 对 B×T 求均值
+            # 在归一化空间直接计算逐步 MSE（避免 sqrt 在小值时梯度爆炸）
+            # 【关键修复 v2】改用 MSE 代替 L2（sqrt），彻底解决 sqrt(0) 梯度爆炸问题：
+            # 原代码 sqrt(ade_norm_loss) 在静止帧时（gt_delta≈0，loss≈1e-9），
+            # 梯度 = 1/(2*sqrt(1e-9)) ≈ 15800，远超 grad_clip 阈值，导致 NaN！
+            # MSE 的梯度为 2*(pred-gt)/N，量级与 fm_loss 梯度一致，不会爆炸。
+            # 量纲说明：MSE ≈ L2^2，正常值约 0.5~3（与 fm_loss 同量级），weight 不需调整。
+            n_valid = mask_e.sum().clamp(min=1.0)  # 有效步数（防止除零）
+            ade_norm_loss = ((x_data_est - gt_norm) ** 2 * mask_e).sum() / n_valid
             losses['loss_ade_aux'] = ade_norm_loss * self.ade_loss_weight
 
         # ================================================================

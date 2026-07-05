@@ -1022,10 +1022,10 @@ class DiffusionPlanningHead(nn.Module):
         pred    = torch.clamp(pred, -100.0, 100.0)
 
         # ================================================================
-        # 【全程诊断】每个 iter 检测 NaN 立即终止；每 5 iter 打印详情
+        # 【全程诊断】每个 iter 都检测，发现异常立即终止并打印详情
         # ================================================================
         self._iter_count += 1
-        _DIAG_FREQ = 5  # 每 5 个 iter 打印一次详情
+        _DIAG_FREQ = 5  # 每 5 个 iter 打印一次简洁摘要
 
         with torch.no_grad():
             pred_abs_max = pred.abs().max().item()
@@ -1034,60 +1034,82 @@ class DiffusionPlanningHead(nn.Module):
             has_nan_gn   = torch.isnan(gt_norm).any().item()
             any_nan      = has_nan_p or has_nan_t or has_nan_gn
 
-            # ----- 每个 iter 都做：检测到 NaN 立即终止 -----
-            if any_nan or pred_abs_max > 500.0:
-                # 收集详情用于报错信息
-                target_rms = target.pow(2).mean().sqrt().item()
-                gt_norm_rms = gt_norm.pow(2).mean().sqrt().item()
-                raise RuntimeError(
-                    f"\n{'!'*70}\n"
-                    f"[DiT 诊断] iter={self._iter_count} 检测到数值崩溃，训练终止！\n"
-                    f"{'!'*70}\n"
-                    f"  pred NaN={has_nan_p}  target NaN={has_nan_t}  gt_norm NaN={has_nan_gn}\n"
-                    f"  pred_abs_max  = {pred_abs_max:.4f}  （正常应 < 100）\n"
-                    f"  gt_norm_rms   = {gt_norm_rms:.4f}   （正常应 0.3~5.0）\n"
-                    f"  target_rms    = {target_rms:.4f}   （正常应 ≈ 1.41）\n"
-                    f"{'!'*70}\n"
-                    f"原因分析：\n"
-                    f"  → 梯度在第 {self._iter_count} 个 iter 爆炸，参数变 NaN\n"
-                    f"  → 检查 grad_clip 是否生效（看上方 OptimizerHook 是否在 after_train_iter）\n"
-                    f"  → 可尝试降低学习率：lr=1e-4 → 5e-5\n"
-                    f"修复后重新运行：\n"
-                    f"  rm -rf projects/work_dirs/stage2_e2e/base_e2e_diffusion/\n"
-                    f"  bash tools/run_train_single.sh projects/configs/stage2_e2e/base_e2e_diffusion.py"
-                )
+            # 每个 iter 都计算这些关键量（开销极小）
+            gt_norm_rms  = gt_norm.pow(2).mean().sqrt().item()
+            target_rms   = target.pow(2).mean().sqrt().item()
+            # gt_delta：原始轨迹逐步差分
+            gt_delta_cur = torch.cat([
+                gt_traj[:, :1, :], gt_traj[:, 1:, :] - gt_traj[:, :-1, :]
+            ], dim=1)
+            gt_delta_max = gt_delta_cur.abs().max().item()
+            gt_delta_mean = gt_delta_cur.abs().mean().item()
+            # 实时 FM loss（用于和 mmdet log 对比，确认数值是否一致）
+            mask_e_diag  = traj_mask.unsqueeze(-1).float()
+            fm_loss_now  = ((pred - target) ** 2 * mask_e_diag).sum() / \
+                           (mask_e_diag.sum() * self.output_dim + 1e-6)
+            fm_loss_now  = fm_loss_now.item()
 
-            # ----- 每 5 iter 打印一次详情 -----
+            # ----- 每个 iter 简洁单行摘要（方便快速看趋势）-----
+            status = "✅" if (not any_nan and pred_abs_max < 50 and gt_norm_rms < 5) else "❌"
+            print(f"[DiT iter={self._iter_count:04d}] {status} "
+                  f"pred_max={pred_abs_max:.4f}  gt_norm_rms={gt_norm_rms:.3f}  "
+                  f"gt_delta_max={gt_delta_max:.4f}m  fm_loss={fm_loss_now:.3f}  "
+                  f"nan(p/t/g)={has_nan_p}/{has_nan_t}/{has_nan_gn}")
+
+            # ----- 每 5 iter 打印详细诊断 -----
             if self._iter_count % _DIAG_FREQ == 0:
-                target_rms  = target.pow(2).mean().sqrt().item()
-                gt_norm_rms = gt_norm.pow(2).mean().sqrt().item()
-                gt_delta_max = torch.cat([
-                    gt_traj[:, :1, :], gt_traj[:, 1:, :] - gt_traj[:, :-1, :]
-                ], dim=1).abs().max().item()
-                pred_abs_mean = pred.abs().mean().item()
-                theory_fm   = target_rms ** 2
-
                 sep = "=" * 70
                 print(f"\n{sep}")
-                print(f"[DiT 诊断] iter={self._iter_count}  t_mean={t.mean().item():.3f}")
-                print(f"  【GT 轨迹原始】 gt_delta_max = {gt_delta_max:.4f} m  （正常：0.2~2m）")
-                print(f"  【GT 归一化后】 gt_norm_rms  = {gt_norm_rms:.4f}  "
-                      f"{'✅ 正常' if 0.3 < gt_norm_rms < 5.0 else '❌ 异常！traj_mean/std 设置有误'}")
-                print(f"  【target(v*)】  target_rms   = {target_rms:.4f}  （理论值 ≈ 1.41）")
-                print(f"  【DiT 输出】    pred_abs_max = {pred_abs_max:.6f}  "
-                      f"{'✅ 零初始化生效' if pred_abs_max < 1.0 else ('⚠️ 偏大' if pred_abs_max < 10.0 else '❌ 异常')}")
-                print(f"  【DiT 输出】    pred_abs_mean= {pred_abs_mean:.6f}")
-                print(f"  【理论 FM loss】≈ {theory_fm:.4f}  （实际见 planning.loss_flow_matching）")
+                print(f"[DiT 诊断详情] iter={self._iter_count}  t_mean={t.mean().item():.3f}")
+                print(f"  【GT 原始轨迹】 gt_delta_max={gt_delta_max:.6f}m  "
+                      f"gt_delta_mean={gt_delta_mean:.6f}m  （正常：mean 0.2~1m, max < 5m）")
+                print(f"  【GT 归一化后】 gt_norm_rms={gt_norm_rms:.4f}  "
+                      f"{'✅ 正常' if 0.3 < gt_norm_rms < 5.0 else '❌ 异常！'}")
+                print(f"  【归一化参数】  traj_mean={self.traj_mean.tolist()}  "
+                      f"traj_std={self.traj_std.tolist()}")
+                print(f"  【target rms】  {target_rms:.4f}  （理论≈1.41，超过5说明gt_norm过大）")
+                print(f"  【DiT输出】     pred_abs_max={pred_abs_max:.6f}  "
+                      f"pred_abs_mean={pred.abs().mean().item():.6f}")
+                print(f"  【实时FM loss】 {fm_loss_now:.4f}  "
+                      f"（理论初始值≈2.0，若>>2说明gt_norm不合理）")
                 risk = "🟢 低" if pred_abs_max < 1.0 else ("🟡 中" if pred_abs_max < 50.0 else "🔴 高")
-                print(f"  【梯度爆炸风险】{risk}  pred_abs_max={pred_abs_max:.4f}")
-                print(sep)
+                print(f"  【梯度爆炸风险】{risk}")
+                print(sep + "\n")
 
-                # 第一次诊断额外确认
-                if self._iter_count == _DIAG_FREQ:
-                    if pred_abs_max < 1.0 and 0.3 < gt_norm_rms < 5.0:
-                        print(f"[DiT 诊断] ✅ iter={self._iter_count} 初始化正常，训练继续！\n")
-                    else:
-                        print(f"[DiT 诊断] ⚠️  iter={self._iter_count} 存在警告，请关注后续 loss 走势\n")
+            # ----- 检测到崩溃：打印完整现场信息后终止 -----
+            if any_nan or pred_abs_max > 500.0:
+                sep2 = "!" * 70
+                print(f"\n{sep2}")
+                print(f"[DiT 诊断] iter={self._iter_count} 检测到数值崩溃，训练终止！")
+                print(f"{sep2}")
+                print(f"  pred  NaN={has_nan_p}  max={pred_abs_max}")
+                print(f"  target NaN={has_nan_t}  rms={target_rms:.4f}  （正常≈1.41）")
+                print(f"  gt_norm NaN={has_nan_gn}  rms={gt_norm_rms:.4f}  （正常0.3~5.0）")
+                print(f"")
+                print(f"  【GT原始轨迹分布（前5步）】")
+                print(f"    gt_traj[0]    = {gt_traj[0].tolist()}")
+                print(f"    gt_delta[0]   = {gt_delta_cur[0].tolist()}")
+                print(f"    gt_norm[0]    = {gt_norm[0].tolist()}")
+                print(f"")
+                print(f"  【归一化参数】 traj_mean={self.traj_mean.tolist()}  "
+                      f"traj_std={self.traj_std.tolist()}")
+                print(f"  【实时FM loss】{fm_loss_now:.4f}  （正常初始值≈2.0）")
+                print(f"")
+                print(f"  【原因分析】")
+                if gt_norm_rms > 5.0:
+                    print(f"  → ❌ gt_norm_rms={gt_norm_rms:.2f} >> 5，GT轨迹归一化失败")
+                    print(f"     可能原因：sdc_planning 数值单位不是米，或 traj_mean/std 设置错误")
+                    print(f"     建议：将 traj_mean=[0,0], traj_std=[1,1] 先关掉归一化做对比")
+                if has_nan_p:
+                    print(f"  → ❌ pred=NaN，梯度爆炸导致参数变 NaN（iter={self._iter_count}）")
+                    print(f"     上一个 iter 的 grad_norm 很可能 >> 35（grad_clip 阈值）")
+                    print(f"     建议：将 lr 从 1e-4 降至 2e-5，或 grad_clip max_norm 从 35 降至 5")
+                print(f"{sep2}")
+                raise RuntimeError(
+                    f"[DiT 诊断] iter={self._iter_count} 数值崩溃，详情见上方输出。\n"
+                    f"修复后：rm -rf projects/work_dirs/stage2_e2e/base_e2e_diffusion/ && "
+                    f"bash tools/run_train_single.sh projects/configs/stage2_e2e/base_e2e_diffusion.py"
+                )
 
         # ================================================================
         # ⑥ 计算损失

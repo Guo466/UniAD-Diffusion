@@ -1002,10 +1002,13 @@ class DiffusionPlanningHead(nn.Module):
             print(f"[DiT WARNING] iter={self._iter_count:04d} gt_delta_max={_gt_delta_max_val:.1f}m > 20m，"
                   f"跳过该 batch 的 FM loss 防止梯度爆炸")
             _zero = gt_norm.sum() * 0.0  # 保持计算图连通，梯度为0
-            losses = {'loss_flow_matching': _zero}
+            _skip_losses = {'loss_flow_matching': _zero}
             if self.ade_loss_weight > 0:
-                losses['loss_ade_aux'] = _zero
-            return losses
+                _skip_losses['loss_ade_aux'] = _zero
+            # 构造虚拟轨迹（全零），保持返回格式与正常流程一致
+            _dummy_traj = torch.zeros(B, gt_traj.shape[1], 2, device=gt_traj.device)
+            _skip_outs = {'sdc_traj': _dummy_traj, 'sdc_traj_all': _dummy_traj}
+            return dict(losses=_skip_losses, outs_motion=_skip_outs)
 
         # ================================================================
         # ⑤ Flow Matching 核心训练逻辑

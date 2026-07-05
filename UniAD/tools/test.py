@@ -30,10 +30,17 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
     """单卡版本的 UniAD 推理，支持 planning / occ 指标累积（与 custom_multi_gpu_test 对齐）。"""
     model.eval()
 
-    eval_planning = hasattr(model.module, 'with_planning_head') \
-                    and model.module.with_planning_head
-    eval_occ = hasattr(model.module, 'with_occ_head') \
-               and model.module.with_occ_head
+    # 兼容 MMDataParallel（model.module）和裸模型两种情况
+    _model = model.module if hasattr(model, 'module') else model
+    _has_ph = hasattr(_model, 'planning_head')
+    _ph_val = getattr(_model, 'planning_head', None)
+    eval_planning = hasattr(_model, 'with_planning_head') \
+                    and _model.with_planning_head
+    eval_occ = hasattr(_model, 'with_occ_head') \
+               and _model.with_occ_head
+    print(f'\n[eval_init] eval_planning={eval_planning}  eval_occ={eval_occ}')
+    print(f'[eval_init] has planning_head attr={_has_ph}  value={type(_ph_val).__name__}')
+    print(f'[eval_init] model type={type(_model).__name__}')
 
     if eval_planning:
         planning_metrics = PlanningMetric().cuda()

@@ -1,16 +1,66 @@
-(base) guo@guo-Legion-Y7000-IRX9:~$ conda activate uniad
-(uniad) guo@guo-Legion-Y7000-IRX9:~$ cd ~/UniAD/UniAD/
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls logs/
-eval_uniad_orig_0705_2237.log
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls work_dir/
-uniad_mini
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 
-
-
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls logs/
-eval_0705_2050.log  eval_0705_2126.log  eval_uniad_original_0705_2213.log
-eval_0705_2105.log  eval_0705_2134.log
-eval_0705_2117.log  eval_.log
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls work_dirs/stage2_e2e
-ls: 无法访问 'work_dirs/stage2_e2e': 没有那个文件或目录
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ find . -name "*.pkl" 2>/dev/null
+./data/others/motion_anchor_infos_mode6.pkl
+./data/infos/nuscenes_infos_temporal_mini_infos_temporal_train.pkl
+./data/infos/nuscenes_infos_temporal_mini_infos_temporal_val.pkl
+./data/infos/nuscenes_infos_temporal_val.pkl
+./data/infos/nuscenes_infos_temporal_train.pkl
+./output/dit_results.pkl
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ find . -name "*.pth" 2>/dev/null
+./ckpts/uniad_base_track_map.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_8.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_15.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_6.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_13.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_9.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_3.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_19.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_14.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_4.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_16.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_20.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_17.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_12.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_10.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_7.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_5.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_1.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/latest.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_18.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_2.pth
+./projects/work_dirs/stage2_e2e/base_e2e_diffusion/epoch_11.pth
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 
+
+
+
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ find . -name "*.pkl" 2>/dev/null
+./data/others/motion_anchor_infos_mode6.pkl
+./data/infos/nuscenes_infos_temporal_val.pkl
+./data/infos/nuscenes_infos_temporal_train.pkl
+./output/uniad_mini_results.pkl
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ find . -name "*.pth" 2>/dev/null
+./ckpts/bevformer_r101_dcn_24ep.pth
+./ckpts/r101_dcn_fcos3d_pretrain.pth
+./ckpts/uniad_base_track_map.pth
+./ckpts/uniad_base_e2e.pth
+./work_dir/uniad_mini/epoch_8.pth
+./work_dir/uniad_mini/epoch_15.pth
+./work_dir/uniad_mini/epoch_6.pth
+./work_dir/uniad_mini/epoch_13.pth
+./work_dir/uniad_mini/epoch_9.pth
+./work_dir/uniad_mini/epoch_3.pth
+./work_dir/uniad_mini/epoch_19.pth
+./work_dir/uniad_mini/epoch_14.pth
+./work_dir/uniad_mini/epoch_4.pth
+./work_dir/uniad_mini/epoch_16.pth
+./work_dir/uniad_mini/epoch_20.pth
+./work_dir/uniad_mini/epoch_17.pth
+./work_dir/uniad_mini/epoch_12.pth
+./work_dir/uniad_mini/epoch_10.pth
+./work_dir/uniad_mini/epoch_7.pth
+./work_dir/uniad_mini/epoch_5.pth
+./work_dir/uniad_mini/epoch_1.pth
+./work_dir/uniad_mini/latest.pth
+./work_dir/uniad_mini/epoch_18.pth
+./work_dir/uniad_mini/epoch_2.pth
+./work_dir/uniad_mini/epoch_11.pth
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 

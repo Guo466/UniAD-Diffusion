@@ -1,30 +1,16 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~$ ls
- 公共的   图片   音乐      miniforge3     snap              vpn
- 模板     文档   桌面      ROS_learning   UniAD
- 视频     下载   dlp.zip  'Sense Time'    UniAD-Diffusion
-(uniad) guo@guo-Legion-Y7000-IRX9:~$ cd UniAD
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD$ ls
-Miniforge3-Linux-x86_64.sh  UniAD
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD$ cd UniAD/
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls
-笔记本信息-UniAD.txt        data     output                 results
-CITATION.cff                docker   projects               sources
-ckpts                       docs     README.md              test
-CODE_OF_CONDUCT.md          LICENSE  requirements_full.txt  tools
-cuda-keyring_1.0-1_all.deb  logs     requirements.txt       work_dir
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ cd ..
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD$ cd ..
-(uniad) guo@guo-Legion-Y7000-IRX9:~$ ls
- 公共的   图片   音乐      miniforge3     snap              vpn
- 模板     文档   桌面      ROS_learning   UniAD
- 视频     下载   dlp.zip  'Sense Time'    UniAD-Diffusion
-(uniad) guo@guo-Legion-Y7000-IRX9:~$ cd UniAD-Diffusion/
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion$ ls
-笔记本信息-DiT.txt  笔记本信息.txt  pl_diffusion_models  UniAD
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion$ cd UniAD/
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls
-CITATION.cff        docker   output            sources           val
-ckpts               docs     projects          terminal_out.log  work_dirs
-CODE_OF_CONDUCT.md  LICENSE  README.md         test
-data                logs     requirements.txt  tools
+(base) guo@guo-Legion-Y7000-IRX9:~$ conda activate uniad
+(uniad) guo@guo-Legion-Y7000-IRX9:~$ cd ~/UniAD/UniAD/
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls logs/
+eval_uniad_orig_0705_2237.log
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ ls work_dir/
+uniad_mini
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 
+
+
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls logs/
+eval_0705_2050.log  eval_0705_2126.log  eval_uniad_original_0705_2213.log
+eval_0705_2105.log  eval_0705_2134.log
+eval_0705_2117.log  eval_.log
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ ls work_dirs/stage2_e2e
+ls: 无法访问 'work_dirs/stage2_e2e': 没有那个文件或目录
 (uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD-Diffusion/UniAD$ 

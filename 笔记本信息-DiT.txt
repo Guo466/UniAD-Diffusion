@@ -1,277 +1,65 @@
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ PYTHONPATH=. python tools/analysis_tools/visualize/run.py --predroot output/uniad_mini_results.pkl --out_folder output/uniad_viz --demo_video output/uniad_demo.avi --project_to_cam True --fps 2
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/torch/utils/cpp_extension.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import packaging  # type: ignore[attr-defined]
-======
-Loading NuScenes tables for version v1.0-mini...
-23 category,
-8 attribute,
-4 visibility,
-911 instance,
-12 sensor,
-120 calibrated_sensor,
-31206 ego_pose,
-8 log,
-10 scene,
-404 sample,
-31206 sample_data,
-18538 sample_annotation,
-4 map,
-Done loading in 0.245 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 0.0 seconds.
-======
-79 8687ba92abd3406aa797115b874ebeba not in prediction pkl!
-80 5bbeb4e68d51413f81a370cb33ef27fb not in prediction pkl!
-81 e9a1c915c0d641d0b0a3019112a1ee90 not in prediction pkl!
-82 f5b8088835f247b8a5434a9f0daadc20 not in prediction pkl!
-83 2021b6b367984ad7b18464a550d0ae8d not in prediction pkl!
-84 7315022fc89147a6afc7f978601f8f38 not in prediction pkl!
-85 dc03fe4e0a374592af7701c66d5276c4 not in prediction pkl!
-86 b7f64f73e8a548488e6d85d9b0e13242 not in prediction pkl!
-87 6dabc0fb1df045558f802246dd186b3f not in prediction pkl!
-88 82597244941b4e79aa3e1e9cc6386f8b not in prediction pkl!
-89 8bf071b1b92c4ff1bd5016bfb30de3f7 not in prediction pkl!
-90 b8766f4291d5449d95bab459ca724ad8 not in prediction pkl!
-91 dde297c8e12f44c4bc2f2c80e49d2b5a not in prediction pkl!
-92 a0462df7186d4ca99ef58f455d53a42c not in prediction pkl!
-93 d7bea9a3552b40e29d42324108dff575 not in prediction pkl!
-94 3ffc4360d1084e6eae5067e87d79503f not in prediction pkl!
-95 05bc09f952ab4cf8b754405f20d503c5 not in prediction pkl!
-96 a860c02c06e54d9dbe83ce7b694f6c17 not in prediction pkl!
-97 6873840fc1df4796a7b959e13e9fb78a not in prediction pkl!
-98 4ae9c033164e4e01a0392672686d095c not in prediction pkl!
-99 ecd49e3c38624c77b8aac8df445d49ba not in prediction pkl!
-100 ac452a60e8b34a7080c938c904b23057 not in prediction pkl!
-101 27900b9c3cfb48ed8b49087098d4a15a not in prediction pkl!
-102 c4f9b75136384ec4a76c4adfc28b4259 not in prediction pkl!
-103 a572dd2e95e94e4db66bb5dbfaf870b5 not in prediction pkl!
-104 313a60afcab5481a94a4815e0d1a6496 not in prediction pkl!
-105 d2ae3c5bbb5343a393882b44d56f8da3 not in prediction pkl!
-106 59bd7a9fae8a45bcb76f1847cf09e000 not in prediction pkl!
-107 37535cd306954669a2b21578573b93e3 not in prediction pkl!
-108 3a064c48e47b489a8b442b8081f877b6 not in prediction pkl!
-109 d3c0bbf933594f7184e20d761b6416f4 not in prediction pkl!
-110 31812a5e8d514b5f8d2fbc50fc007475 not in prediction pkl!
-111 32e2619879854a83953c08ec8557f3bb not in prediction pkl!
-112 4d7cf1ad5f9c4842bb6f135e058deed4 not in prediction pkl!
-113 c143943fd6e246448eab88ce1a0aeda9 not in prediction pkl!
-114 47188ae2bc8c4faf83c909b135701176 not in prediction pkl!
-115 a5f101af325144bd8b8f67694766e255 not in prediction pkl!
-116 6f114ec641f8426399b69e844c0dfd62 not in prediction pkl!
-117 ed5b84e7ea6f434e99d7816b37d15f2f not in prediction pkl!
-118 739b12938d0e410d9b8fc832dfad5510 not in prediction pkl!
-119 dcbe451d383e450786aaad04ab9d3790 not in prediction pkl!
-202 c1676a2feac74eee8aa38ca3901787d6 not in prediction pkl!
-203 d6b0de49811b4d1b86a0933719c0c44a not in prediction pkl!
-204 6d5d0e60cbf4429d8b6cfa055924e5ca not in prediction pkl!
-205 a51146d2b181450292623ec03ade9f03 not in prediction pkl!
-206 092051710b7b4d9294e98dcb3f0f7be1 not in prediction pkl!
-207 feaef544d11646ed806b53d9e1f39cd9 not in prediction pkl!
-208 dca2cc206bb34bc197ae8ebdaed22f35 not in prediction pkl!
-209 fe42b85d7f7a4107b650ffa993a4fbff not in prediction pkl!
-210 fe2a163b8948451b95fa48e21e1988ce not in prediction pkl!
-211 3a7aa284dd9d485d8effc20db8cda140 not in prediction pkl!
-212 f218a2b4fa6941f7ac3798adc72126e8 not in prediction pkl!
-213 17723c0411434e48875a93de4db0ecba not in prediction pkl!
-214 7fd597745c26471ab336b3dd41a5f6dc not in prediction pkl!
-215 19f02e3faab4412988f28d419e1727fa not in prediction pkl!
-216 312cd4d3bef1476a9211d3dab50dd0b7 not in prediction pkl!
-217 4aaaf68b9f9f45968a4e862eb03e17ea not in prediction pkl!
-218 639a4120779f44bb9cf41be3e8612e36 not in prediction pkl!
-219 b2f333255d574bebb6f170beaab6a824 not in prediction pkl!
-220 0106a9b8e65f4ad1867b44591aeed8b0 not in prediction pkl!
-221 4786b3c0d0a24c8b86b0676d32dd5919 not in prediction pkl!
-222 4ee219c4638949de9d994bc792fd0a69 not in prediction pkl!
-223 ac9af15d1aba4f5786877dde9f0b1c93 not in prediction pkl!
-224 61d47d1198184bfdaa6777e9448d825d not in prediction pkl!
-225 f1fd429830e3437db4ba03ba851f0015 not in prediction pkl!
-226 7df1288fed8a403b8e7a35112b392d7c not in prediction pkl!
-227 264c5f3a04744d53a72fd07c1bb6a724 not in prediction pkl!
-228 bc0040070bcc4233a057bb293f5f6444 not in prediction pkl!
-229 269ccf1fe399403c914e1f649d2a8ca2 not in prediction pkl!
-230 59b32981037042eda1fed3c1026fbaba not in prediction pkl!
-231 1dba6570f0774b5cb87de6694bb338c0 not in prediction pkl!
-232 3e7ed5cf0b4541e4a0e1b109dfea89cf not in prediction pkl!
-233 be1494c7762c43ca88010f366997a586 not in prediction pkl!
-234 b422bd971acf483592e367c2c5057a60 not in prediction pkl!
-235 fa51f1910942494cbe396640010fea64 not in prediction pkl!
-236 26e594c412e84bdda76e344933fe305a not in prediction pkl!
-237 78e778e7e6c84dc59c0436a4d6ff5032 not in prediction pkl!
-238 9966278ad296494598a9e5fba07926e0 not in prediction pkl!
-239 225aa2795d63442ebc496cd0c49d3bdb not in prediction pkl!
-240 de9432d4fc7a4e5a985e2bc628eb614c not in prediction pkl!
-241 63c24b51feb94f14bec29022dae4975d not in prediction pkl!
-
-=== Rendering scene 1/2: scene-0103 (40 frames) ===
-saving to output/uniad_viz/scene_00_scene-0103/039.jpg
-/home/guo/miniforge3/envs/uniad/lib/python3.9/site-packages/nuscenes/utils/geometry_utils.py:52: RuntimeWarning: invalid value encountered in divide
-  points = points / points[2:3, :].repeat(3, 0).reshape(3, nbr_points)
-saving to output/uniad_viz/scene_00_scene-0103/039_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/040.jpg
-saving to output/uniad_viz/scene_00_scene-0103/040_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/041.jpg
-saving to output/uniad_viz/scene_00_scene-0103/041_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/042.jpg
-saving to output/uniad_viz/scene_00_scene-0103/042_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/043.jpg
-saving to output/uniad_viz/scene_00_scene-0103/043_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/044.jpg
-saving to output/uniad_viz/scene_00_scene-0103/044_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/045.jpg
-saving to output/uniad_viz/scene_00_scene-0103/045_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/046.jpg
-saving to output/uniad_viz/scene_00_scene-0103/046_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/047.jpg
-saving to output/uniad_viz/scene_00_scene-0103/047_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/048.jpg
-saving to output/uniad_viz/scene_00_scene-0103/048_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/049.jpg
-saving to output/uniad_viz/scene_00_scene-0103/049_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/050.jpg
-saving to output/uniad_viz/scene_00_scene-0103/050_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/051.jpg
-saving to output/uniad_viz/scene_00_scene-0103/051_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/052.jpg
-saving to output/uniad_viz/scene_00_scene-0103/052_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/053.jpg
-saving to output/uniad_viz/scene_00_scene-0103/053_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/054.jpg
-saving to output/uniad_viz/scene_00_scene-0103/054_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/055.jpg
-saving to output/uniad_viz/scene_00_scene-0103/055_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/056.jpg
-saving to output/uniad_viz/scene_00_scene-0103/056_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/057.jpg
-saving to output/uniad_viz/scene_00_scene-0103/057_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/058.jpg
-saving to output/uniad_viz/scene_00_scene-0103/058_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/059.jpg
-saving to output/uniad_viz/scene_00_scene-0103/059_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/060.jpg
-saving to output/uniad_viz/scene_00_scene-0103/060_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/061.jpg
-saving to output/uniad_viz/scene_00_scene-0103/061_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/062.jpg
-saving to output/uniad_viz/scene_00_scene-0103/062_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/063.jpg
-saving to output/uniad_viz/scene_00_scene-0103/063_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/064.jpg
-saving to output/uniad_viz/scene_00_scene-0103/064_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/065.jpg
-saving to output/uniad_viz/scene_00_scene-0103/065_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/066.jpg
-saving to output/uniad_viz/scene_00_scene-0103/066_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/067.jpg
-saving to output/uniad_viz/scene_00_scene-0103/067_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/068.jpg
-saving to output/uniad_viz/scene_00_scene-0103/068_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/069.jpg
-saving to output/uniad_viz/scene_00_scene-0103/069_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/070.jpg
-saving to output/uniad_viz/scene_00_scene-0103/070_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/071.jpg
-saving to output/uniad_viz/scene_00_scene-0103/071_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/072.jpg
-saving to output/uniad_viz/scene_00_scene-0103/072_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/073.jpg
-saving to output/uniad_viz/scene_00_scene-0103/073_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/074.jpg
-saving to output/uniad_viz/scene_00_scene-0103/074_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/075.jpg
-saving to output/uniad_viz/scene_00_scene-0103/075_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/076.jpg
-saving to output/uniad_viz/scene_00_scene-0103/076_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/077.jpg
-saving to output/uniad_viz/scene_00_scene-0103/077_cam.jpg
-saving to output/uniad_viz/scene_00_scene-0103/078.jpg
-saving to output/uniad_viz/scene_00_scene-0103/078_cam.jpg
-Saving scene video: output/uniad_demo_scene00_scene-0103.avi  (fps=2.0)
-
-=== Rendering scene 2/2: scene-0916 (41 frames) ===
-saving to output/uniad_viz/scene_01_scene-0916/242.jpg
-saving to output/uniad_viz/scene_01_scene-0916/242_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/243.jpg
-saving to output/uniad_viz/scene_01_scene-0916/243_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/244.jpg
-saving to output/uniad_viz/scene_01_scene-0916/244_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/245.jpg
-saving to output/uniad_viz/scene_01_scene-0916/245_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/246.jpg
-saving to output/uniad_viz/scene_01_scene-0916/246_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/247.jpg
-saving to output/uniad_viz/scene_01_scene-0916/247_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/248.jpg
-saving to output/uniad_viz/scene_01_scene-0916/248_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/249.jpg
-saving to output/uniad_viz/scene_01_scene-0916/249_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/250.jpg
-saving to output/uniad_viz/scene_01_scene-0916/250_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/251.jpg
-saving to output/uniad_viz/scene_01_scene-0916/251_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/252.jpg
-saving to output/uniad_viz/scene_01_scene-0916/252_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/253.jpg
-saving to output/uniad_viz/scene_01_scene-0916/253_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/254.jpg
-saving to output/uniad_viz/scene_01_scene-0916/254_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/255.jpg
-saving to output/uniad_viz/scene_01_scene-0916/255_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/256.jpg
-saving to output/uniad_viz/scene_01_scene-0916/256_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/257.jpg
-saving to output/uniad_viz/scene_01_scene-0916/257_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/258.jpg
-saving to output/uniad_viz/scene_01_scene-0916/258_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/259.jpg
-saving to output/uniad_viz/scene_01_scene-0916/259_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/260.jpg
-saving to output/uniad_viz/scene_01_scene-0916/260_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/261.jpg
-saving to output/uniad_viz/scene_01_scene-0916/261_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/262.jpg
-saving to output/uniad_viz/scene_01_scene-0916/262_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/263.jpg
-saving to output/uniad_viz/scene_01_scene-0916/263_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/264.jpg
-saving to output/uniad_viz/scene_01_scene-0916/264_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/265.jpg
-saving to output/uniad_viz/scene_01_scene-0916/265_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/266.jpg
-saving to output/uniad_viz/scene_01_scene-0916/266_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/267.jpg
-saving to output/uniad_viz/scene_01_scene-0916/267_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/268.jpg
-saving to output/uniad_viz/scene_01_scene-0916/268_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/269.jpg
-saving to output/uniad_viz/scene_01_scene-0916/269_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/270.jpg
-saving to output/uniad_viz/scene_01_scene-0916/270_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/271.jpg
-saving to output/uniad_viz/scene_01_scene-0916/271_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/272.jpg
-saving to output/uniad_viz/scene_01_scene-0916/272_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/273.jpg
-saving to output/uniad_viz/scene_01_scene-0916/273_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/274.jpg
-saving to output/uniad_viz/scene_01_scene-0916/274_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/275.jpg
-saving to output/uniad_viz/scene_01_scene-0916/275_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/276.jpg
-saving to output/uniad_viz/scene_01_scene-0916/276_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/277.jpg
-saving to output/uniad_viz/scene_01_scene-0916/277_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/278.jpg
-saving to output/uniad_viz/scene_01_scene-0916/278_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/279.jpg
-saving to output/uniad_viz/scene_01_scene-0916/279_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/280.jpg
-saving to output/uniad_viz/scene_01_scene-0916/280_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/281.jpg
-saving to output/uniad_viz/scene_01_scene-0916/281_cam.jpg
-saving to output/uniad_viz/scene_01_scene-0916/282.jpg
-saving to output/uniad_viz/scene_01_scene-0916/282_cam.jpg
-Saving scene video: output/uniad_demo_scene01_scene-0916.avi  (fps=2.0)
-
-=== Generating merged video: output/uniad_demo.avi ===
-(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD$ 
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD/output/compare$ ffmpeg -y -i uniad_demo_scene00_scene-0103.avi -i dit_demo_scene00_scene-0103.avi -filter_complex "[0:v]scale=960:-1,drawtext=text='UniAD (baseline)':x=20:y=20:fontsize=28:fontcolor=yellow:box=1:boxcolor=black@0.5[left]; [1:v]scale=960:-1, drawtext=text='DiT (Flow Matching)':x=20:y=20:fontsize=28:fontcolor=yellow:box=1:boxcolor=black@0.5[right]; [left][right]hstack=inputs=2[v]" -map "[v]" -c:v libx264 -crf 20 -pix_fmt yuv420p compare_scene00_scene-0103.mp4
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Input #0, avi, from 'uniad_demo_scene00_scene-0103.avi':
+  Metadata:
+    software        : Lavf59.27.100
+  Duration: 00:00:20.00, start: 0.000000, bitrate: 5488 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (mp4v / 0x7634706D), yuv420p, 3666x1000 [SAR 1:1 DAR 1833:500], 5626 kb/s, 2 fps, 2 tbr, 2 tbn, 2 tbc
+Input #1, avi, from 'dit_demo_scene00_scene-0103.avi':
+  Metadata:
+    software        : Lavf59.27.100
+  Duration: 00:00:20.00, start: 0.000000, bitrate: 5391 kb/s
+  Stream #1:0: Video: mpeg4 (Simple Profile) (mp4v / 0x7634706D), yuv420p, 3666x1000 [SAR 1:1 DAR 1833:500], 5526 kb/s, 2 fps, 2 tbr, 2 tbn, 2 tbc
+[Parsed_drawtext_1 @ 0x569f04eb15c0] Using "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+[Parsed_drawtext_3 @ 0x569f04f47080] Using "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+Stream mapping:
+  Stream #0:0 (mpeg4) -> scale
+  Stream #1:0 (mpeg4) -> scale
+  hstack -> Stream #0:0 (libx264)
+Press [q] to stop, [?] for help
+[Parsed_drawtext_1 @ 0x569f0fdefc40] Using "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+[Parsed_drawtext_3 @ 0x569f0fdf87c0] Using "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+[libx264 @ 0x569f0535ee80] using SAR=1952/1951
+[libx264 @ 0x569f0535ee80] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 0x569f0535ee80] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 0x569f0535ee80] 264 - core 163 r3060 5db6aa6 - H.264/MPEG-4 AVC codec - Copyleft 2003-2021 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=8 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=2 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=20.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'compare_scene00_scene-0103.mp4':
+  Metadata:
+    software        : Lavf59.27.100
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(progressive), 1920x262 [SAR 80041:80000 DAR 1833:250], q=2-31, 2 fps, 16384 tbn (default)
+    Metadata:
+      encoder         : Lavc58.134.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=    1 fps=0.0 q=0.0 size=       0kB time=00:00:00.00 bitrate=N/A speed=   frame=   40 fps=0.0 q=-1.0 Lsize=    3346kB time=00:00:18.50 bitrate=1481.4kbits/s speed=27.4x    
+video:3344kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.040941%
+[libx264 @ 0x569f0535ee80] frame I:1     Avg QP:14.41  size: 99408
+[libx264 @ 0x569f0535ee80] frame P:10    Avg QP:16.59  size:101096
+[libx264 @ 0x569f0535ee80] frame B:29    Avg QP:18.01  size: 79772
+[libx264 @ 0x569f0535ee80] consecutive B-frames:  2.5%  0.0%  7.5% 90.0%
+[libx264 @ 0x569f0535ee80] mb I  I16..4: 15.3% 30.5% 54.2%
+[libx264 @ 0x569f0535ee80] mb P  I16..4:  3.6% 22.1% 44.3%  P16..4:  6.2%  5.6%  4.3%  0.0%  0.0%    skip:13.9%
+[libx264 @ 0x569f0535ee80] mb B  I16..4:  0.6%  9.0% 26.5%  B16..8: 12.7% 16.7% 12.0%  direct: 5.1%  skip:17.3%  L0:35.4% L1:29.7% BI:34.8%
+[libx264 @ 0x569f0535ee80] 8x8 transform intra:27.7% inter:42.3%
+[libx264 @ 0x569f0535ee80] coded y,uvDC,uvAC intra: 92.6% 88.4% 73.9% inter: 54.6% 44.8% 21.4%
+[libx264 @ 0x569f0535ee80] i16 v,h,dc,p: 63% 17%  1% 19%
+[libx264 @ 0x569f0535ee80] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 19% 35% 10%  4%  4%  4%  7%  4% 12%
+[libx264 @ 0x569f0535ee80] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 26% 30%  8%  4%  5%  5%  7%  5%  9%
+[libx264 @ 0x569f0535ee80] i8c dc,h,v,p: 42% 33% 21%  5%
+[libx264 @ 0x569f0535ee80] Weighted P-Frames: Y:10.0% UV:0.0%
+[libx264 @ 0x569f0535ee80] ref P L0: 44.2% 17.4% 21.1% 16.0%  1.3%
+[libx264 @ 0x569f0535ee80] ref B L0: 88.5%  8.5%  3.0%
+[libx264 @ 0x569f0535ee80] ref B L1: 95.2%  4.8%
+[libx264 @ 0x569f0535ee80] kb/s:1369.50
+(uniad) guo@guo-Legion-Y7000-IRX9:~/UniAD/UniAD/output/compare$ 

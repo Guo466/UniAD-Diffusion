@@ -70,9 +70,22 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
     dataset = data_loader.dataset
     prog_bar = mmcv.ProgressBar(len(dataset))
 
+    # ---- 纯模型前向耗时统计（用于 sample_steps 等消融实验对比推理速度）----
+    # 只统计 model(...) 这一行，不含数据加载、指标计算等额外开销。
+    # 第 0 帧涉及 CUDA / cudnn 初始化，耗时明显偏高，故跳过不计入统计。
+    _fwd_times = []
+
     for i, data in enumerate(data_loader):
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        _t0 = time.time()
         with torch.no_grad():
             result = model(return_loss=False, rescale=True, **data)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        _t1 = time.time()
+        if i > 0:
+            _fwd_times.append(_t1 - _t0)
 
         # ---- 规划指标累积 ----
         if eval_planning and 'planning' in result[0]:
@@ -148,6 +161,22 @@ def custom_single_gpu_test(model, data_loader, show=False, out_dir=None):
         prog_bar.update()
 
     ret = dict(bbox_results=bbox_results)
+
+    # ---- 打印/保存纯前向耗时统计 ----
+    if len(_fwd_times) > 0:
+        import numpy as _np
+        _mean_t = float(_np.mean(_fwd_times))
+        _std_t  = float(_np.std(_fwd_times))
+        _msg = (f'\n[Inference Timing] frames={len(_fwd_times)} (excl. warmup frame0)  '
+                f'mean={_mean_t*1000:.1f}ms  std={_std_t*1000:.1f}ms  '
+                f'FPS={1.0/_mean_t:.2f}\n')
+        print(_msg)
+        try:
+            with open('/tmp/uniad_eval_timing.txt', 'w') as _f:
+                _f.write(_msg)
+        except Exception:
+            pass
+        ret['inference_timing'] = dict(mean_s=_mean_t, std_s=_std_t, num_frames=len(_fwd_times))
 
     if eval_planning:
         ret['planning_results_computed'] = planning_metrics.compute()

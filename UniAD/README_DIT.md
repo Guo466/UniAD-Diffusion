@@ -69,7 +69,7 @@ PYTHONPATH=. python tools/train.py \
     projects/configs/stage2_e2e/base_e2e_diffusion.py \
     --launcher none
 
-# full 数据集（服务器 / 多卡）
+# full 数据集（服务器 / 多卡，按需调整 GPU 数量与 batch size）
 # 注意：base_e2e_diffusion.py 当前包含大量“笔记本 8GB 显存优化”配置
 # （queue_length=1、num_query=300、occ_head=None、dit_depth=2 等），
 # 在服务器满显存环境下训练 full 数据集前，建议按需放开这些限制以获得更强性能，

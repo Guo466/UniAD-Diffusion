@@ -102,3 +102,19 @@ model = dict(
 # 此处无需覆盖，保留 _base_ 默认值即可。
 
 find_unused_parameters = True
+
+# =====================================================================================
+# 2卡训练 / 6 epoch 快速验证版覆盖
+# 用途：在 2×4090 上以 6 epoch 与原版 UniAD（base_e2e_full_6ep.py）做公平对比。
+# 注意：若之后改为 8 卡 20 epoch 完整训练，把下面这段注释掉即可。
+# =====================================================================================
+total_epochs = 6
+runner = dict(type="EpochBasedRunner", max_epochs=6)
+evaluation = dict(interval=6, planning_evaluation_strategy="uniad")
+lr_config = dict(
+    policy="CosineAnnealing",
+    warmup="linear",
+    warmup_iters=500,   # 全量数据集每 epoch 约 3500 iter，500 iter 预热合理
+    warmup_ratio=1.0 / 3,
+    min_lr_ratio=1e-3,
+)

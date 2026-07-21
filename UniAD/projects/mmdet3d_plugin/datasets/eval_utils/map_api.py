@@ -2094,6 +2094,16 @@ class NuScenesMapExplorer:
         def int_coords(x):
             # function to round and convert to int
             return np.array(x).round().astype(np.int32)
+
+        # 展开 MultiPolygon 为单个 Polygon 列表，避免 TypeError: 'MultiPolygon' object is not iterable
+        flat_polygons = []
+        for poly in polygons:
+            if poly.geom_type == 'MultiPolygon':
+                flat_polygons.extend(list(poly.geoms))
+            else:
+                flat_polygons.append(poly)
+        polygons = flat_polygons
+
         exteriors = [int_coords(poly.exterior.coords) for poly in polygons]
         interiors = [int_coords(pi.coords) for poly in polygons for pi in poly.interiors]
         cv2.fillPoly(mask, exteriors, 1)
@@ -2161,6 +2171,17 @@ class NuScenesMapExplorer:
 
                 if new_polygon.geom_type == 'Polygon':
                     new_polygon = MultiPolygon([new_polygon])
+                elif new_polygon.geom_type == 'GeometryCollection':
+                    # GeometryCollection 可能混有 LineString 等，只保留 Polygon/MultiPolygon
+                    polys = []
+                    for geom in new_polygon.geoms:
+                        if geom.geom_type == 'Polygon':
+                            polys.append(geom)
+                        elif geom.geom_type == 'MultiPolygon':
+                            polys.extend(list(geom.geoms))
+                    if not polys:
+                        continue
+                    new_polygon = MultiPolygon(polys)
 
                 # if new_polygon.area < 1000:
                 #     continue

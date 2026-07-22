@@ -2130,10 +2130,23 @@ class NuScenesMapExplorer:
         :return: Numpy ndarray line mask.
         """
         if lines.geom_type == 'MultiLineString':
-            for line in lines:
+            # MultiLineString 不可直接迭代，需通过 .geoms 获取子 LineString 列表
+            for line in lines.geoms:
                 coords = np.asarray(list(line.coords), np.int32)
                 coords = coords.reshape((-1, 2))
                 cv2.polylines(mask, [coords], False, 1, 2)
+        elif lines.geom_type == 'GeometryCollection':
+            # intersection 也可能返回混合集合，只取其中的 LineString/MultiLineString
+            for geom in lines.geoms:
+                if geom.geom_type == 'LineString':
+                    coords = np.asarray(list(geom.coords), np.int32)
+                    coords = coords.reshape((-1, 2))
+                    cv2.polylines(mask, [coords], False, 1, 2)
+                elif geom.geom_type == 'MultiLineString':
+                    for line in geom.geoms:
+                        coords = np.asarray(list(line.coords), np.int32)
+                        coords = coords.reshape((-1, 2))
+                        cv2.polylines(mask, [coords], False, 1, 2)
         else:
             coords = np.asarray(list(lines.coords), np.int32)
             coords = coords.reshape((-1, 2))

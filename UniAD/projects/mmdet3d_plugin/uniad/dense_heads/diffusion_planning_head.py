@@ -1209,6 +1209,10 @@ class DiffusionPlanningHead(nn.Module):
         # 如果启用碰撞损失，需要先采样一条预测轨迹（3步快速ODE），
         # 再计算预测轨迹与 GT 未来障碍物框的碰撞代价。
         # 额外 ODE 采样消耗显存，8GB 环境下默认禁用。
+        # 先把所有碰撞损失初始化为 0，保证多卡 loss 字典键始终一致（避免 DDP 断言失败）
+        for i in range(len(self.loss_collision)):
+            losses[f'loss_collision_{i}'] = fm_loss.new_zeros(1)[0]
+
         if len(self.loss_collision) > 0 and gt_future_boxes is not None:
             with torch.no_grad():
                 # 快速采样（3步 ODE，比推理时的 5 步更快）

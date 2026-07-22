@@ -1018,6 +1018,9 @@ class DiffusionPlanningHead(nn.Module):
             _skip_losses = {'loss_flow_matching': _zero}
             if self.ade_loss_weight > 0:
                 _skip_losses['loss_ade_aux'] = _zero
+            # 【DDP 关键】collision loss 键必须与正常流程保持一致，否则多卡断言失败
+            for _ci in range(len(self.loss_collision)):
+                _skip_losses[f'loss_collision_{_ci}'] = _zero
             # 构造虚拟轨迹（全零），保持返回格式与正常流程一致
             _dummy_traj = torch.zeros(B, gt_traj.shape[1], 2, device=gt_traj.device)
             _skip_outs = {'sdc_traj': _dummy_traj, 'sdc_traj_all': _dummy_traj}

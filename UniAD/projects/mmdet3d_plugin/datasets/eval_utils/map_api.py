@@ -2095,14 +2095,25 @@ class NuScenesMapExplorer:
             # function to round and convert to int
             return np.array(x).round().astype(np.int32)
 
-        # 展开 MultiPolygon 为单个 Polygon 列表，避免 TypeError: 'MultiPolygon' object is not iterable
-        flat_polygons = []
-        for poly in polygons:
-            if poly.geom_type == 'MultiPolygon':
-                flat_polygons.extend(list(poly.geoms))
+        # 统一将各种输入（MultiPolygon对象、Polygon对象、列表）转为单个 Polygon 的列表
+        if hasattr(polygons, 'geom_type'):
+            # 输入是单个 Shapely 几何对象
+            if polygons.geom_type == 'MultiPolygon':
+                polygons = list(polygons.geoms)
             else:
-                flat_polygons.append(poly)
-        polygons = flat_polygons
+                polygons = [polygons]
+        else:
+            # 输入是列表，展开其中可能的 MultiPolygon
+            flat_polygons = []
+            for poly in polygons:
+                if hasattr(poly, 'geom_type') and poly.geom_type == 'MultiPolygon':
+                    flat_polygons.extend(list(poly.geoms))
+                else:
+                    flat_polygons.append(poly)
+            polygons = flat_polygons
+
+        if not polygons:
+            return mask
 
         exteriors = [int_coords(poly.exterior.coords) for poly in polygons]
         interiors = [int_coords(pi.coords) for poly in polygons for pi in poly.interiors]

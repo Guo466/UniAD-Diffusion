@@ -1,8 +1,61 @@
 (base) daji@admin123-AS4110G-D04R-G3:~$ JOB_ID="20260727-141110-guojinliang-001"
-(base) daji@admin123-AS4110G-D04R-G3:~$ REG_LINE='{"job_id":"'"$JOB_ID"'","event":"REGISTERED","registered_at":"2026-07-27T14:11:10+08:00","real_name":"guojinliang","name_id":"guojinliang","linux_user":"daji","host":"admin123-AS4110G-D04R-G3","ai":"catpaw","task_name":"UniAD 原版 baseline 全量数据集 6epoch 训练","purpose":"作为 DiT(Flow Matching)规划头改造版本的公平对比基线，用相同数据集/超参/权重起点训练原版 PlanningHeadSingleMode，6 epoch 后与已完成的 DiT 版本(base_e2e_diffusion_full)做规划指标对比","workdir":"/workspace/UniAD-6epo/UniAD","training_files":["tools/train.py","tools/uniad_dist_train.sh"],"config_files":["projects/configs/stage2_e2e/base_e2e_full_6ep.py"],"dataset":"nuScenes full (700 train + 150 val)","model":"UniAD Stage2 (ResNet101+BEVFormer, load_from=ckpts/uniad_base_track_map.pth)","command_redacted":"bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 (CUDA_VISIBLE_DEVICES=5,6)","gpu_request":{"ids":[5,6],"count":2,"vram_estimate_gb":"18-24 per GPU"},"cpu_cores_estimate":"16-32","ram_estimate_gb":"40-80","disk_growth_estimate_gb":"6-8 (6个epoch checkpoint，每个约1GB，参考同项目已完成的DiT版本epoch文件大小)","duration_estimate":"38-46 hours","estimate_basis":"参考同项目已完成的base_e2e_diffusion_full训练日志：单iter约4.0s(2卡DDP)，每epoch 14065 iter，6 epoch共约84390 iter；原版planning_head计算量低于DiffusionPlanningHead(DiT)，实际耗时预计相近或略快","uncertainty":"实际时长受GPU5/6是否被其他任务抢占、数据IO速度影响；显存估计基于DiT版本实测(11.7GB/卡)并留出余量","log_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/logs/","checkpoint_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/","result_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/","resource_snapshot":"registered_at时nvidia-smi: GPU0 30201MiB/3%(占用,其他用户), GPU1 1412MiB/90%(占用,其他用户), GPU2 1813MiB/89%(占用,其他用户), GPU3 41465MiB/0%(占用,其他用户VLLM), GPU4 1412MiB/93%(占用,其他用户), GPU5 213MiB/0%(空闲,拟用), GPU6 1378MiB/0%(空闲,拟用,原liule任务已SUCCEEDED释放), GPU7 4605MiB/90%(占用,其他用户); 宿主机nproc=152, mem总503Gi","status":"REGISTERED"}'
+REG_LINE='{"job_id":"'"$JOB_ID"'","event":"REGISTERED","registered_at":"2026-07-27T14:11:10+08:00","real_name":"guojinliang","name_id":"guojinliang","linux_user":"daji","host":"admin123-AS4110G-D04R-G3","ai":"catpaw","task_name":"UniAD 原版 baseline 全量数据集 6epoch 训练","purpose":"作为 DiT(Flow Matching)规划头改造版本的公平对比基线，用相同数据集/超参/权重起点训练原版 PlanningHeadSingleMode，6 epoch 后与已完成的 DiT 版本(base_e2e_diffusion_full)做规划指标对比","workdir":"/workspace/UniAD-6epo/UniAD","training_files":["tools/train.py","tools/uniad_dist_train.sh"],"config_files":["projects/configs/stage2_e2e/base_e2e_full_6ep.py"],"dataset":"nuScenes full (700 train + 150 val)","model":"UniAD Stage2 (ResNet101+BEVFormer, load_from=ckpts/uniad_base_track_map.pth)","command_redacted":"bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 (CUDA_VISIBLE_DEVICES=5,6)","gpu_request":{"ids":[5,6],"count":2,"vram_estimate_gb":"18-24 per GPU"},"cpu_cores_estimate":"16-32","ram_estimate_gb":"40-80","disk_growth_estimate_gb":"6-8 (6个epoch checkpoint，每个约1GB，参考同项目已完成的DiT版本epoch文件大小)","duration_estimate":"38-46 hours","estimate_basis":"参考同项目已完成的base_e2e_diffusion_full训练日志：单iter约4.0s(2卡DDP)，每epoch 14065 iter，6 epoch共约84390 iter；原版planning_head计算量低于DiffusionPlanningHead(DiT)，实际耗时预计相近或略快","uncertainty":"实际时长受GPU5/6是否被其他任务抢占、数据IO速度影响；显存估计基于DiT版本实测(11.7GB/卡)并留出余量","log_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/logs/","checkpoint_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/","result_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/","resource_snapshot":"registered_at时nvidia-smi: GPU0 30201MiB/3%(占用,其他用户), GPU1 1412MiB/90%(占用,其他用户), GPU2 1813MiB/89%(占用,其他用户), GPU3 41465MiB/0%(占用,其他用户VLLM), GPU4 1412MiB/93%(占用,其他用户), GPU5 213MiB/0%(空闲,拟用), GPU6 1378MiB/0%(空闲,拟用,原liule任务已SUCCEEDED释放), GPU7 4605MiB/90%(占用,其他用户); 宿主机nproc=152, mem总503Gi","status":"REGISTERED"}'
 (base) daji@admin123-AS4110G-D04R-G3:~$ (
-> flock -x 200
-> echo "$REG_LINE" >> /media/abc_disk/admin123/lbh/dengji.txt 
-> )200>/media/abc_disk/admin123/lbh/dengji.txt.lock
--bash: /media/abc_disk/admin123/lbh/dengji.txt.lock: 权限不够
+  flock -x 200
+  echo "$REG_LINE" >> /media/abc_disk/admin123/lbh/dengji.txt
+) 200>>/media/abc_disk/admin123/lbh/dengji.txt
+(base) daji@admin123-AS4110G-D04R-G3:~$ tail -1 /media/abc_disk/admin123/lbh/dengji.txt | python3 -c "
+import json, sys
+line = sys.stdin.read().strip()
+data = json.loads(line)
+assert data['job_id'] == '$JOB_ID', 'job_id mismatch'
+assert data['real_name'] == 'guojinliang'
+assert data['name_id'] == 'guojinliang'
+assert data['status'] == 'REGISTERED'
+print('JSON 校验通过')
+print(json.dumps(data, ensure_ascii=False, indent=2))
+"
+JSON 校验通过
+{
+  "job_id": "20260727-141110-guojinliang-001",
+  "event": "REGISTERED",
+  "registered_at": "2026-07-27T14:11:10+08:00",
+  "real_name": "guojinliang",
+  "name_id": "guojinliang",
+  "linux_user": "daji",
+  "host": "admin123-AS4110G-D04R-G3",
+  "ai": "catpaw",
+  "task_name": "UniAD 原版 baseline 全量数据集 6epoch 训练",
+  "purpose": "作为 DiT(Flow Matching)规划头改造版本的公平对比基线，用相同数据集/超参/权重起点训练原版 PlanningHeadSingleMode，6 epoch 后与已完成的 DiT 版本(base_e2e_diffusion_full)做规划指标对比",
+  "workdir": "/workspace/UniAD-6epo/UniAD",
+  "training_files": [
+    "tools/train.py",
+    "tools/uniad_dist_train.sh"
+  ],
+  "config_files": [
+    "projects/configs/stage2_e2e/base_e2e_full_6ep.py"
+  ],
+  "dataset": "nuScenes full (700 train + 150 val)",
+  "model": "UniAD Stage2 (ResNet101+BEVFormer, load_from=ckpts/uniad_base_track_map.pth)",
+  "command_redacted": "bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 (CUDA_VISIBLE_DEVICES=5,6)",
+  "gpu_request": {
+    "ids": [
+      5,
+      6
+    ],
+    "count": 2,
+    "vram_estimate_gb": "18-24 per GPU"
+  },
+  "cpu_cores_estimate": "16-32",
+  "ram_estimate_gb": "40-80",
+  "disk_growth_estimate_gb": "6-8 (6个epoch checkpoint，每个约1GB，参考同项目已完成的DiT版本epoch文件大小)",
+  "duration_estimate": "38-46 hours",
+  "estimate_basis": "参考同项目已完成的base_e2e_diffusion_full训练日志：单iter约4.0s(2卡DDP)，每epoch 14065 iter，6 epoch共约84390 iter；原版planning_head计算量低于DiffusionPlanningHead(DiT)，实际耗时预计相近或略快",
+  "uncertainty": "实际时长受GPU5/6是否被其他任务抢占、数据IO速度影响；显存估计基于DiT版本实测(11.7GB/卡)并留出余量",
+  "log_path": "/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/logs/",
+  "checkpoint_path": "/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/",
+  "result_path": "/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/",
+  "resource_snapshot": "registered_at时nvidia-smi: GPU0 30201MiB/3%(占用,其他用户), GPU1 1412MiB/90%(占用,其他用户), GPU2 1813MiB/89%(占用,其他用户), GPU3 41465MiB/0%(占用,其他用户VLLM), GPU4 1412MiB/93%(占用,其他用户), GPU5 213MiB/0%(空闲,拟用), GPU6 1378MiB/0%(空闲,拟用,原liule任务已SUCCEEDED释放), GPU7 4605MiB/90%(占用,其他用户); 宿主机nproc=152, mem总503Gi",
+  "status": "REGISTERED"
+}
 (base) daji@admin123-AS4110G-D04R-G3:~$ 

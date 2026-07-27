@@ -1,61 +1,117 @@
-(base) daji@admin123-AS4110G-D04R-G3:~$ JOB_ID="20260727-141110-guojinliang-001"
-REG_LINE='{"job_id":"'"$JOB_ID"'","event":"REGISTERED","registered_at":"2026-07-27T14:11:10+08:00","real_name":"guojinliang","name_id":"guojinliang","linux_user":"daji","host":"admin123-AS4110G-D04R-G3","ai":"catpaw","task_name":"UniAD 原版 baseline 全量数据集 6epoch 训练","purpose":"作为 DiT(Flow Matching)规划头改造版本的公平对比基线，用相同数据集/超参/权重起点训练原版 PlanningHeadSingleMode，6 epoch 后与已完成的 DiT 版本(base_e2e_diffusion_full)做规划指标对比","workdir":"/workspace/UniAD-6epo/UniAD","training_files":["tools/train.py","tools/uniad_dist_train.sh"],"config_files":["projects/configs/stage2_e2e/base_e2e_full_6ep.py"],"dataset":"nuScenes full (700 train + 150 val)","model":"UniAD Stage2 (ResNet101+BEVFormer, load_from=ckpts/uniad_base_track_map.pth)","command_redacted":"bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 (CUDA_VISIBLE_DEVICES=5,6)","gpu_request":{"ids":[5,6],"count":2,"vram_estimate_gb":"18-24 per GPU"},"cpu_cores_estimate":"16-32","ram_estimate_gb":"40-80","disk_growth_estimate_gb":"6-8 (6个epoch checkpoint，每个约1GB，参考同项目已完成的DiT版本epoch文件大小)","duration_estimate":"38-46 hours","estimate_basis":"参考同项目已完成的base_e2e_diffusion_full训练日志：单iter约4.0s(2卡DDP)，每epoch 14065 iter，6 epoch共约84390 iter；原版planning_head计算量低于DiffusionPlanningHead(DiT)，实际耗时预计相近或略快","uncertainty":"实际时长受GPU5/6是否被其他任务抢占、数据IO速度影响；显存估计基于DiT版本实测(11.7GB/卡)并留出余量","log_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/logs/","checkpoint_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/","result_path":"/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/","resource_snapshot":"registered_at时nvidia-smi: GPU0 30201MiB/3%(占用,其他用户), GPU1 1412MiB/90%(占用,其他用户), GPU2 1813MiB/89%(占用,其他用户), GPU3 41465MiB/0%(占用,其他用户VLLM), GPU4 1412MiB/93%(占用,其他用户), GPU5 213MiB/0%(空闲,拟用), GPU6 1378MiB/0%(空闲,拟用,原liule任务已SUCCEEDED释放), GPU7 4605MiB/90%(占用,其他用户); 宿主机nproc=152, mem总503Gi","status":"REGISTERED"}'
-(base) daji@admin123-AS4110G-D04R-G3:~$ (
-  flock -x 200
-  echo "$REG_LINE" >> /media/abc_disk/admin123/lbh/dengji.txt
-) 200>>/media/abc_disk/admin123/lbh/dengji.txt
-(base) daji@admin123-AS4110G-D04R-G3:~$ tail -1 /media/abc_disk/admin123/lbh/dengji.txt | python3 -c "
-import json, sys
-line = sys.stdin.read().strip()
-data = json.loads(line)
-assert data['job_id'] == '$JOB_ID', 'job_id mismatch'
-assert data['real_name'] == 'guojinliang'
-assert data['name_id'] == 'guojinliang'
-assert data['status'] == 'REGISTERED'
-print('JSON 校验通过')
-print(json.dumps(data, ensure_ascii=False, indent=2))
-"
-JSON 校验通过
-{
-  "job_id": "20260727-141110-guojinliang-001",
-  "event": "REGISTERED",
-  "registered_at": "2026-07-27T14:11:10+08:00",
-  "real_name": "guojinliang",
-  "name_id": "guojinliang",
-  "linux_user": "daji",
-  "host": "admin123-AS4110G-D04R-G3",
-  "ai": "catpaw",
-  "task_name": "UniAD 原版 baseline 全量数据集 6epoch 训练",
-  "purpose": "作为 DiT(Flow Matching)规划头改造版本的公平对比基线，用相同数据集/超参/权重起点训练原版 PlanningHeadSingleMode，6 epoch 后与已完成的 DiT 版本(base_e2e_diffusion_full)做规划指标对比",
-  "workdir": "/workspace/UniAD-6epo/UniAD",
-  "training_files": [
-    "tools/train.py",
-    "tools/uniad_dist_train.sh"
-  ],
-  "config_files": [
-    "projects/configs/stage2_e2e/base_e2e_full_6ep.py"
-  ],
-  "dataset": "nuScenes full (700 train + 150 val)",
-  "model": "UniAD Stage2 (ResNet101+BEVFormer, load_from=ckpts/uniad_base_track_map.pth)",
-  "command_redacted": "bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 (CUDA_VISIBLE_DEVICES=5,6)",
-  "gpu_request": {
-    "ids": [
-      5,
-      6
-    ],
-    "count": 2,
-    "vram_estimate_gb": "18-24 per GPU"
-  },
-  "cpu_cores_estimate": "16-32",
-  "ram_estimate_gb": "40-80",
-  "disk_growth_estimate_gb": "6-8 (6个epoch checkpoint，每个约1GB，参考同项目已完成的DiT版本epoch文件大小)",
-  "duration_estimate": "38-46 hours",
-  "estimate_basis": "参考同项目已完成的base_e2e_diffusion_full训练日志：单iter约4.0s(2卡DDP)，每epoch 14065 iter，6 epoch共约84390 iter；原版planning_head计算量低于DiffusionPlanningHead(DiT)，实际耗时预计相近或略快",
-  "uncertainty": "实际时长受GPU5/6是否被其他任务抢占、数据IO速度影响；显存估计基于DiT版本实测(11.7GB/卡)并留出余量",
-  "log_path": "/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/logs/",
-  "checkpoint_path": "/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/",
-  "result_path": "/workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/",
-  "resource_snapshot": "registered_at时nvidia-smi: GPU0 30201MiB/3%(占用,其他用户), GPU1 1412MiB/90%(占用,其他用户), GPU2 1813MiB/89%(占用,其他用户), GPU3 41465MiB/0%(占用,其他用户VLLM), GPU4 1412MiB/93%(占用,其他用户), GPU5 213MiB/0%(空闲,拟用), GPU6 1378MiB/0%(空闲,拟用,原liule任务已SUCCEEDED释放), GPU7 4605MiB/90%(占用,其他用户); 宿主机nproc=152, mem总503Gi",
-  "status": "REGISTERED"
-}
-(base) daji@admin123-AS4110G-D04R-G3:~$ 
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# sleep 45
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# ps aux | grep train.py
+root       50381  3.6  0.0 5060876 364756 pts/5  Sl   14:58   0:08 /usr/bin/python3.9 /usr/local/bin/torchrun --nproc_per_node=2 --master_addr=127.0.0.1 --master_port=28596 --nnodes=1 --node_rank=0 tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50450 91.3  4.3 62313804 22830992 pts/5 Rl 14:58   3:23 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50451 93.0  4.3 61239852 22877456 pts/5 Rl 14:58   3:27 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50504 43.7  4.1 47015400 21902188 pts/5 Sl 15:01   0:29 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50567 39.9  4.0 46689164 21576076 pts/5 Sl 15:01   0:27 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50568 45.6  4.1 47015216 21901124 pts/5 Sl 15:01   0:31 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50693 40.0  4.0 46689176 21576016 pts/5 Sl 15:01   0:26 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50756 38.1  4.0 46689180 21575144 pts/5 Sl 15:01   0:25 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50819 43.4  4.0 46689188 21576932 pts/5 Sl 15:01   0:29 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50883 43.9  4.1 47014808 21900632 pts/5 Sl 15:01   0:29 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       50946 41.6  4.0 46689200 21576016 pts/5 Sl 15:01   0:27 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51009 44.3  4.0 46689204 21575096 pts/5 Sl 15:01   0:29 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51072 44.2  4.1 47015492 21903272 pts/5 Sl 15:01   0:29 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51135 37.8  4.1 47315624 21957248 pts/5 Rl 15:01   0:25 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51157 39.8  4.1 47002436 21825692 pts/5 Rl 15:01   0:26 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51261 35.1  4.0 46689284 21577048 pts/5 Sl 15:01   0:23 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51324 32.7  4.0 46689228 21575076 pts/5 Sl 15:01   0:21 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51387 33.3  4.0 46689248 21576056 pts/5 Sl 15:01   0:21 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       51450 31.3  4.0 46689240 21575084 pts/5 Sl 15:01   0:20 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root       53982  0.0  0.0   3444  2076 pts/5    S+   15:02   0:00 grep --color=auto train.py
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# tail -80 /workspace/UniAD-6epo/UniAD/nohup_baseline.log 
+(NORMAL      ) DistSamplerSeedHook                
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+2026-07-27 15:01:17,230 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) DistSamplerSeedHook                
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+2026-07-27 15:01:17,230 - mmdet - INFO - workflow: [('train', 1)], max: 6 epochs
+2026-07-27 15:01:17,230 - mmdet - INFO - workflow: [('train', 1)], max: 6 epochs
+2026-07-27 15:01:17,232 - mmdet - INFO - Checkpoints will be saved to /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep by HardDiskBackend.
+2026-07-27 15:01:17,232 - mmdet - INFO - Checkpoints will be saved to /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep by HardDiskBackend.
+2026-07-27 15:02:13,122 - mmdet - INFO - Epoch [1][10/14065]	lr: 6.907e-05, eta: 5 days, 10:57:50, time: 5.587, data_time: 1.403, memory: 11275, track.frame_0_loss_cls_0: 0.2237, track.frame_0_loss_bbox_0: 0.4571, track.frame_0_loss_past_trajs_0: 7.7872, track.frame_0_loss_cls_1: 0.2035, track.frame_0_loss_bbox_1: 0.4052, track.frame_0_loss_past_trajs_1: 7.7905, track.frame_0_loss_cls_2: 0.1830, track.frame_0_loss_bbox_2: 0.3953, track.frame_0_loss_past_trajs_2: 7.7895, track.frame_0_loss_cls_3: 0.1700, track.frame_0_loss_bbox_3: 0.3859, track.frame_0_loss_past_trajs_3: 7.7876, track.frame_0_loss_cls_4: 0.1670, track.frame_0_loss_bbox_4: 0.3790, track.frame_0_loss_past_trajs_4: 7.7881, track.frame_0_loss_cls_5: 0.1675, track.frame_0_loss_bbox_5: 0.3755, track.frame_0_loss_past_trajs_5: 7.7881, track.frame_1_loss_cls_0: 0.2789, track.frame_1_loss_bbox_0: 0.6556, track.frame_1_loss_past_trajs_0: 8.3643, track.frame_1_loss_cls_1: 0.2413, track.frame_1_loss_bbox_1: 0.6203, track.frame_1_loss_past_trajs_1: 8.3664, track.frame_1_loss_cls_2: 0.2129, track.frame_1_loss_bbox_2: 0.6205, track.frame_1_loss_past_trajs_2: 8.3675, track.frame_1_loss_cls_3: 0.2046, track.frame_1_loss_bbox_3: 0.6168, track.frame_1_loss_past_trajs_3: 8.3661, track.frame_1_loss_cls_4: 0.2040, track.frame_1_loss_bbox_4: 0.6107, track.frame_1_loss_past_trajs_4: 8.3662, track.frame_1_loss_cls_5: 0.2081, track.frame_1_loss_bbox_5: 0.6069, track.frame_1_loss_past_trajs_5: 8.3656, track.frame_2_loss_cls_0: 0.2578, track.frame_2_loss_bbox_0: 0.6577, track.frame_2_loss_past_trajs_0: 8.1529, track.frame_2_loss_cls_1: 0.2364, track.frame_2_loss_bbox_1: 0.6234, track.frame_2_loss_past_trajs_1: 8.1554, track.frame_2_loss_cls_2: 0.2249, track.frame_2_loss_bbox_2: 0.6223, track.frame_2_loss_past_trajs_2: 8.1565, track.frame_2_loss_cls_3: 0.2045, track.frame_2_loss_bbox_3: 0.6224, track.frame_2_loss_past_trajs_3: 8.1546, track.frame_2_loss_cls_4: 0.1986, track.frame_2_loss_bbox_4: 0.6140, track.frame_2_loss_past_trajs_4: 8.1544, track.frame_2_loss_cls_5: 0.1942, track.frame_2_loss_bbox_5: 0.6140, track.frame_2_loss_past_trajs_5: 8.1540, map.loss_cls: 0.3580, map.loss_bbox: 0.4228, map.loss_iou: 1.2872, map.loss_mask_things: 0.8983, map.loss_mask_stuff: 0.0153, map.d0.loss_mask_things_f: 0.9332, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.9019, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8929, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.8895, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0193, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0158, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0160, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0158, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0155, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0154, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.5271, map.d0.loss_bbox: 0.4723, map.d0.loss_iou: 1.3254, map.d1.loss_cls: 0.3893, map.d1.loss_bbox: 0.4438, map.d1.loss_iou: 1.3074, map.d2.loss_cls: 0.3604, map.d2.loss_bbox: 0.4314, map.d2.loss_iou: 1.3009, map.d3.loss_cls: 0.3431, map.d3.loss_bbox: 0.4351, map.d3.loss_iou: 1.3068, map.d4.loss_cls: 0.3450, map.d4.loss_bbox: 0.4335, map.d4.loss_iou: 1.2979, motion.loss_traj: 20.5485, motion.l_class: 1.7941, motion.l_reg: 36.4421, motion.min_ade: 3.2112, motion.min_fde: 5.7217, motion.mr: 0.2524, motion.d0.loss_traj: 20.6063, motion.d0.l_class: 1.7921, motion.d0.l_reg: 36.5649, motion.d0.min_ade: 3.2122, motion.d0.min_fde: 5.7109, motion.d0.mr: 0.2524, motion.d1.loss_traj: 20.4251, motion.d1.l_class: 1.7952, motion.d1.l_reg: 36.1937, motion.d1.min_ade: 3.2099, motion.d1.min_fde: 5.7223, motion.d1.mr: 0.2524, occ.loss_dice: 0.9977, occ.loss_mask: 5.7432, occ.loss_aux_dice: 0.9974, occ.loss_aux_mask: 4.0034, planning.loss_collision_0: 5.6033, planning.loss_collision_1: 3.3196, planning.loss_collision_2: 1.2297, planning.loss_ade: 6.8740, planning.loss_kinematic: 11.3696, loss: 278.6519, grad_norm: 1583.5472
+2026-07-27 15:02:13,122 - mmdet - INFO - Epoch [1][10/14065]	lr: 6.907e-05, eta: 5 days, 10:57:50, time: 5.587, data_time: 1.403, memory: 11275, track.frame_0_loss_cls_0: 0.2237, track.frame_0_loss_bbox_0: 0.4571, track.frame_0_loss_past_trajs_0: 7.7872, track.frame_0_loss_cls_1: 0.2035, track.frame_0_loss_bbox_1: 0.4052, track.frame_0_loss_past_trajs_1: 7.7905, track.frame_0_loss_cls_2: 0.1830, track.frame_0_loss_bbox_2: 0.3953, track.frame_0_loss_past_trajs_2: 7.7895, track.frame_0_loss_cls_3: 0.1700, track.frame_0_loss_bbox_3: 0.3859, track.frame_0_loss_past_trajs_3: 7.7876, track.frame_0_loss_cls_4: 0.1670, track.frame_0_loss_bbox_4: 0.3790, track.frame_0_loss_past_trajs_4: 7.7881, track.frame_0_loss_cls_5: 0.1675, track.frame_0_loss_bbox_5: 0.3755, track.frame_0_loss_past_trajs_5: 7.7881, track.frame_1_loss_cls_0: 0.2789, track.frame_1_loss_bbox_0: 0.6556, track.frame_1_loss_past_trajs_0: 8.3643, track.frame_1_loss_cls_1: 0.2413, track.frame_1_loss_bbox_1: 0.6203, track.frame_1_loss_past_trajs_1: 8.3664, track.frame_1_loss_cls_2: 0.2129, track.frame_1_loss_bbox_2: 0.6205, track.frame_1_loss_past_trajs_2: 8.3675, track.frame_1_loss_cls_3: 0.2046, track.frame_1_loss_bbox_3: 0.6168, track.frame_1_loss_past_trajs_3: 8.3661, track.frame_1_loss_cls_4: 0.2040, track.frame_1_loss_bbox_4: 0.6107, track.frame_1_loss_past_trajs_4: 8.3662, track.frame_1_loss_cls_5: 0.2081, track.frame_1_loss_bbox_5: 0.6069, track.frame_1_loss_past_trajs_5: 8.3656, track.frame_2_loss_cls_0: 0.2578, track.frame_2_loss_bbox_0: 0.6577, track.frame_2_loss_past_trajs_0: 8.1529, track.frame_2_loss_cls_1: 0.2364, track.frame_2_loss_bbox_1: 0.6234, track.frame_2_loss_past_trajs_1: 8.1554, track.frame_2_loss_cls_2: 0.2249, track.frame_2_loss_bbox_2: 0.6223, track.frame_2_loss_past_trajs_2: 8.1565, track.frame_2_loss_cls_3: 0.2045, track.frame_2_loss_bbox_3: 0.6224, track.frame_2_loss_past_trajs_3: 8.1546, track.frame_2_loss_cls_4: 0.1986, track.frame_2_loss_bbox_4: 0.6140, track.frame_2_loss_past_trajs_4: 8.1544, track.frame_2_loss_cls_5: 0.1942, track.frame_2_loss_bbox_5: 0.6140, track.frame_2_loss_past_trajs_5: 8.1540, map.loss_cls: 0.3580, map.loss_bbox: 0.4228, map.loss_iou: 1.2872, map.loss_mask_things: 0.8983, map.loss_mask_stuff: 0.0153, map.d0.loss_mask_things_f: 0.9332, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.9019, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8929, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.8895, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0193, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0158, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0160, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0158, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0155, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0154, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.5271, map.d0.loss_bbox: 0.4723, map.d0.loss_iou: 1.3254, map.d1.loss_cls: 0.3893, map.d1.loss_bbox: 0.4438, map.d1.loss_iou: 1.3074, map.d2.loss_cls: 0.3604, map.d2.loss_bbox: 0.4314, map.d2.loss_iou: 1.3009, map.d3.loss_cls: 0.3431, map.d3.loss_bbox: 0.4351, map.d3.loss_iou: 1.3068, map.d4.loss_cls: 0.3450, map.d4.loss_bbox: 0.4335, map.d4.loss_iou: 1.2979, motion.loss_traj: 20.5485, motion.l_class: 1.7941, motion.l_reg: 36.4421, motion.min_ade: 3.2112, motion.min_fde: 5.7217, motion.mr: 0.2524, motion.d0.loss_traj: 20.6063, motion.d0.l_class: 1.7921, motion.d0.l_reg: 36.5649, motion.d0.min_ade: 3.2122, motion.d0.min_fde: 5.7109, motion.d0.mr: 0.2524, motion.d1.loss_traj: 20.4251, motion.d1.l_class: 1.7952, motion.d1.l_reg: 36.1937, motion.d1.min_ade: 3.2099, motion.d1.min_fde: 5.7223, motion.d1.mr: 0.2524, occ.loss_dice: 0.9977, occ.loss_mask: 5.7432, occ.loss_aux_dice: 0.9974, occ.loss_aux_mask: 4.0034, planning.loss_collision_0: 5.6033, planning.loss_collision_1: 3.3196, planning.loss_collision_2: 1.2297, planning.loss_ade: 6.8740, planning.loss_kinematic: 11.3696, loss: 278.6519, grad_norm: 1583.5472
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# nvidia-smi --query-gpu=index,memory.use,utilization.gpu --format=csv
+Field "memory.use" is not a valid field to query.
+
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv
+index, memory.used [MiB], utilization.gpu [%]
+0, 24928 MiB, 0 %
+1, 1372 MiB, 92 %
+2, 1417 MiB, 88 %
+3, 41465 MiB, 0 %
+4, 211 MiB, 0 %
+5, 23365 MiB, 98 %
+6, 23636 MiB, 97 %
+7, 3404 MiB, 44 %
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# 

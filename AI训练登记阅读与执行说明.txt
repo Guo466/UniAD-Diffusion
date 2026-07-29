@@ -1,0 +1,204 @@
+AI 训练登记阅读与执行说明
+版本：v1.0
+适用对象：通过 Codex、Claude Code、Hermes 或其他 AI 在服务器上启动训练、评测、推理、仿真及高资源任务的 AI。
+
+一、AI 读到本说明后必须理解的目标
+
+使用者只需要说明要启动什么任务，并提供自己的真实姓名。其余登记信息由 AI 自行检查、推断和填写。
+
+AI 必须遵守“先登记，后启动”的顺序。读取说明文件本身不等于完成登记；只有登记记录成功追加到统一登记文件并通过复核后，AI 才能启动真实任务。
+
+主规则文件：
+
+/media/abc_disk/admin123/lbh/训练任务AI极简登记说明.txt
+
+统一登记文件：
+
+/media/abc_disk/admin123/lbh/dengji.txt
+
+二、使用者可能发送的最简提示
+
+通用示例：
+
+我要开始当前项目的训练。训练前请先读取并遵守
+/media/abc_disk/admin123/lbh/训练任务AI极简登记说明.txt
+我是张三。登记成功后再启动训练。
+
+ActiveVLN 示例：
+
+我要开始 ActiveVLN 训练。训练前请先读取并遵守
+/media/abc_disk/admin123/lbh/训练任务AI极简登记说明.txt
+我是李炳昊。登记成功后再启动训练。
+
+AI 不得要求使用者继续手工填写训练脚本、配置、GPU、显存、CPU、内存、磁盘或预计时间。这些内容由 AI 自动检查和估算。
+
+三、AI 收到提示后的固定执行顺序
+
+第 1 步：读取规则
+
+AI 必须完整读取主规则文件，不得只根据路径、文件名或历史记忆猜测内容。文件不存在、不可读或规则不完整时，停止任务并报告原因。
+
+第 2 步：处理姓名
+
+使用者提供中文姓名时：
+
+- 原样保存为 real_name。
+- 自动生成无空格的全小写英文 name_id。
+- 例如：李炳昊 -> real_name 为“李炳昊”，name_id 为“libinghao”。
+- 不要求使用者额外填写拼音。
+
+使用者提供全小写英文姓名时：
+
+- real_name 和 name_id 均使用该姓名。
+
+姓名缺失时，AI 只能向使用者索要真实姓名，不得登记或启动任务。不得使用昵称、共享 Linux 账号或 AI 自己的名称冒充真实姓名。
+
+第 3 步：判断是真实任务还是测试
+
+- 使用者明确要求启动训练、评测、推理或仿真时，创建 REGISTERED 记录。
+- 使用者明确说“演练”“测试写入”或“不实际训练”时，只创建 TEST_ONLY 记录，不得启动任何计算进程。
+- 不得用 TEST_ONLY 代替真实任务登记，也不得把演练记录写成 RUNNING。
+
+第 4 步：只读分析任务
+
+AI 应先通过只读命令检查：
+
+- 当前工作目录和项目目录。
+- 训练入口脚本、启动脚本和配置文件。
+- 模型、数据集、checkpoint 和恢复方式。
+- batch size、序列长度、精度、step、epoch、并行方式及保存频率。
+- 既有日志、历史训练速度和输出大小。
+- 当前运行进程、tmux 会话及是否已有同一任务。
+- GPU 型号、显存占用、空闲 GPU、CPU、内存和磁盘空间。
+
+AI 不得为了完成登记而修改代码、环境、权限或共享配置。不得停止、迁移或挤占他人的已有任务。
+
+第 5 步：自动确定登记内容
+
+AI 至少填写：
+
+- job_id
+- event 和 status
+- registered_at
+- real_name 和 name_id
+- linux_user、host 和 ai
+- task_name 和 purpose
+- workdir
+- training_files 和 config_files
+- dataset、model 和 checkpoint
+- command_redacted
+- GPU 卡号、数量和预计显存
+- 预计 CPU 核数、内存及磁盘增长
+- 预计持续时间
+- estimate_basis 和 uncertainty
+- log_path、checkpoint_path 和 result_path
+- 登记时的资源摘要
+
+所有路径应尽量使用绝对路径。密码、私钥、Token、API Key、代理凭据及其他秘密不得写入登记文件。命令行必须脱敏。
+
+AI 无法精确估算时应填写合理区间，并解释依据和不确定性。没有可靠依据时填写 unknown，不得编造精确数字。
+
+第 6 步：追加并验证登记记录
+
+AI 必须使用文件锁向以下文件追加一行 JSON：
+
+/media/abc_disk/admin123/lbh/dengji.txt
+
+要求：
+
+- 只能追加，不得覆盖、截断、删除或改写历史记录。
+- job_id 必须唯一。
+- 多个 AI 同时登记时必须使用独占文件锁，避免内容交叉。
+- 写入后重新读取对应记录并使用 JSON 解析器验证。
+- 核对 real_name、name_id、job_id、event、status 和任务信息。
+
+登记文件不存在、不可写、加锁失败、JSON 无法解析或记录无法复核时，AI 不得启动任务。
+
+第 7 步：启动前向使用者报告
+
+真实任务登记成功后，AI 必须先回复：
+
+登记完成。
+姓名：李炳昊
+姓名标识：libinghao
+任务编号：20260726-143000-libinghao-001
+任务：ActiveVLN checkpoint 续训
+预计资源：GPU 4，显存 18-22 GB，CPU 8-12 核，内存 24-40 GB
+预计时间：2.5-3.5 小时
+登记文件：/media/abc_disk/admin123/lbh/dengji.txt
+
+只有完成上述报告后，才能执行真实启动命令。
+
+第 8 步：启动并更新状态
+
+任务启动成功后，追加 RUNNING 事件，至少记录：
+
+- 相同 job_id
+- started_at
+- PID 或进程组
+- 实际 GPU 卡号
+- 日志路径
+- status 为 RUNNING
+
+任务结束后追加：
+
+- 成功：SUCCEEDED
+- 失败：FAILED
+- 使用者取消：CANCELLED
+- 超时失效：EXPIRED
+
+结束记录应包含结束时间、退出码、结果路径和脱敏后的失败原因。不得覆盖之前的 REGISTERED 或 RUNNING 记录。
+
+四、启动判断规则
+
+满足以下全部条件才能启动：
+
+1. 已完整读取主规则文件。
+2. 已取得真实姓名。
+3. 已完成任务和资源只读分析。
+4. 已确认不会挤占或停止他人任务。
+5. REGISTERED 记录成功追加。
+6. JSON 复核通过。
+7. 已向使用者报告 job_id、任务、资源和预计时间。
+
+任何一项不满足，均不得启动。
+
+五、必须停止并报告的情况
+
+- 没有真实姓名。
+- 规则文件无法读取。
+- 登记文件无法写入或无法加锁。
+- 登记记录无效或无法复核。
+- 训练入口不明确，存在多个同等可能但行为不同的启动方式。
+- 指定 GPU 已被占用或资源不足。
+- 启动需要修改系统环境、共享配置或其他用户权限，但尚未获得明确同意。
+- 命令可能包含未脱敏的密码、Token 或密钥。
+- 已存在疑似重复任务，继续启动可能造成重复训练。
+
+停止时应说明具体原因和已完成的只读检查，不得偷偷换 GPU、停止他人任务或先训练后补登记。
+
+六、真实登记示例
+
+REGISTERED：
+
+{"job_id":"20260726-143000-libinghao-001","event":"REGISTERED","registered_at":"2026-07-26 14:30:00 +0800","real_name":"李炳昊","name_id":"libinghao","linux_user":"admin123","host":"server-name","ai":"codex","task_name":"ActiveVLN checkpoint 续训","purpose":"从 checkpoint 继续训练并保存下一阶段模型","workdir":"/media/abc_disk/admin123/lbh/_lunwen/ActiveVLN","training_files":["train.py"],"config_files":["config.yaml"],"dataset":"R2R","model":"Qwen2.5-VL-3B","command_redacted":"python train.py --config config.yaml","gpu_request":{"ids":[4],"count":1,"vram_estimate_gb":"18-22"},"cpu_cores_estimate":"8-12","ram_estimate_gb":"24-40","disk_growth_estimate_gb":"55-65","duration_estimate":"2.5-3.5 hours","estimate_basis":"根据配置、checkpoint、历史日志和当前 GPU 状态估计","uncertainty":"实际时间受仿真吞吐和评测频率影响","log_path":"/absolute/log/path","checkpoint_path":"/absolute/checkpoint/path","result_path":"/absolute/result/path","status":"REGISTERED"}
+
+RUNNING：
+
+{"job_id":"20260726-143000-libinghao-001","event":"RUNNING","started_at":"2026-07-26 14:31:00 +0800","pid":12345,"actual_gpu_ids":[4],"log_path":"/absolute/log/path","status":"RUNNING"}
+
+SUCCEEDED：
+
+{"job_id":"20260726-143000-libinghao-001","event":"SUCCEEDED","ended_at":"2026-07-26 17:42:00 +0800","exit_code":0,"result_path":"/absolute/result/path","status":"SUCCEEDED"}
+
+七、演练登记示例
+
+使用者说“测试写入，不实际训练”时：
+
+{"job_id":"20260726-133129-libinghao-test-001","event":"TEST_ONLY","registered_at":"2026-07-26 13:31:29 +0800","real_name":"李炳昊","name_id":"libinghao","ai":"codex","task_name":"ActiveVLN 训练登记流程演练","purpose":"测试登记流程，不启动训练","gpu_request":{"ids":[],"count":0,"vram_estimate_gb":0},"cpu_cores_estimate":0,"ram_estimate_gb":0,"command_redacted":"none - TEST_ONLY","status":"TEST_ONLY"}
+
+演练完成后必须明确告诉使用者：只写入了 TEST_ONLY，没有启动训练，也没有新增资源占用。
+
+八、说明边界
+
+本说明用于规范 AI 的行为。它不能从服务器权限层面阻止人员绕过 AI 手动启动任务。若需要绝对强制，必须另外部署任务门禁、调度器或资源权限控制。

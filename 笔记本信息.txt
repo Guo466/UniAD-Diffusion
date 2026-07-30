@@ -1,24 +1,240 @@
-root@fe3ccbe45eeb:/# ls -la /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
-total 3975168
-drwxr-xr-x 4 root root       4096 Jul 30 04:18 .
-drwxr-xr-x 4 root root       4096 Jul 27 14:58 ..
--rw-r--r-- 1 root root   28362075 Jul 30 13:56 20260727_145852.log
--rw-r--r-- 1 root root   29763152 Jul 30 13:56 20260727_145852.log.json
--rw-r--r-- 1 root root      33134 Jul 27 14:58 base_e2e_full_6ep.py
--rw-r--r-- 1 root root 1003083969 Jul 28 06:28 epoch_1.pth
--rw-r--r-- 1 root root 1003084097 Jul 28 21:36 epoch_2.pth
--rw-r--r-- 1 root root 1003084097 Jul 29 13:27 epoch_3.pth
--rw-r--r-- 1 root root 1003084097 Jul 30 04:18 epoch_4.pth
-lrwxrwxrwx 1 root root         11 Jul 30 04:18 latest.pth -> epoch_4.pth
-drwxr-xr-x 2 root root       4096 Jul 27 14:58 logs
-drwxr-xr-x 2 root root       4096 Jul 27 15:01 tf_logs
-root@fe3ccbe45eeb:/# find /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/ -name "*.log" -o -name "*.json" | xargs ls -lt 
--rw-r--r-- 1 root root 29763152 Jul 30 13:56 /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/20260727_145852.log.json
--rw-r--r-- 1 root root 28362075 Jul 30 13:56 /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/20260727_145852.log
-root@fe3ccbe45eeb:/# tail -5 /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/*.log
-2026-07-30 13:54:19,791 - mmdet - INFO - Epoch [5][9280/14065]	lr: 5.015e-05, eta: 20:22:47, time: 3.816, data_time: 0.075, memory: 11921, track.frame_0_loss_cls_0: 0.2740, track.frame_0_loss_bbox_0: 0.4159, track.frame_0_loss_past_trajs_0: 0.6886, track.frame_0_loss_cls_1: 0.2344, track.frame_0_loss_bbox_1: 0.3724, track.frame_0_loss_past_trajs_1: 0.6055, track.frame_0_loss_cls_2: 0.2045, track.frame_0_loss_bbox_2: 0.3604, track.frame_0_loss_past_trajs_2: 0.5601, track.frame_0_loss_cls_3: 0.1915, track.frame_0_loss_bbox_3: 0.3611, track.frame_0_loss_past_trajs_3: 0.5570, track.frame_0_loss_cls_4: 0.1895, track.frame_0_loss_bbox_4: 0.3612, track.frame_0_loss_past_trajs_4: 0.5658, track.frame_0_loss_cls_5: 0.1919, track.frame_0_loss_bbox_5: 0.3671, track.frame_0_loss_past_trajs_5: 0.5841, track.frame_1_loss_cls_0: 0.2832, track.frame_1_loss_bbox_0: 0.8360, track.frame_1_loss_past_trajs_0: 0.6348, track.frame_1_loss_cls_1: 0.2501, track.frame_1_loss_bbox_1: 0.7855, track.frame_1_loss_past_trajs_1: 0.5917, track.frame_1_loss_cls_2: 0.2335, track.frame_1_loss_bbox_2: 0.7640, track.frame_1_loss_past_trajs_2: 0.5967, track.frame_1_loss_cls_3: 0.2182, track.frame_1_loss_bbox_3: 0.7471, track.frame_1_loss_past_trajs_3: 0.5645, track.frame_1_loss_cls_4: 0.2181, track.frame_1_loss_bbox_4: 0.7443, track.frame_1_loss_past_trajs_4: 0.5505, track.frame_1_loss_cls_5: 0.2176, track.frame_1_loss_bbox_5: 0.7493, track.frame_1_loss_past_trajs_5: 0.5737, track.frame_2_loss_cls_0: 0.2727, track.frame_2_loss_bbox_0: 0.7000, track.frame_2_loss_past_trajs_0: 0.6430, track.frame_2_loss_cls_1: 0.2357, track.frame_2_loss_bbox_1: 0.6489, track.frame_2_loss_past_trajs_1: 0.5789, track.frame_2_loss_cls_2: 0.2047, track.frame_2_loss_bbox_2: 0.6373, track.frame_2_loss_past_trajs_2: 0.5305, track.frame_2_loss_cls_3: 0.1932, track.frame_2_loss_bbox_3: 0.6386, track.frame_2_loss_past_trajs_3: 0.5020, track.frame_2_loss_cls_4: 0.1855, track.frame_2_loss_bbox_4: 0.6429, track.frame_2_loss_past_trajs_4: 0.5167, track.frame_2_loss_cls_5: 0.1914, track.frame_2_loss_bbox_5: 0.6485, track.frame_2_loss_past_trajs_5: 0.5367, map.loss_cls: 0.3830, map.loss_bbox: 0.4302, map.loss_iou: 1.1540, map.loss_mask_things: 0.8520, map.loss_mask_stuff: 0.0100, map.d0.loss_mask_things_f: 0.9244, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.8770, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8659, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.8522, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0121, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0104, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0106, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0104, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0104, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0103, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.4996, map.d0.loss_bbox: 0.4543, map.d0.loss_iou: 1.1652, map.d1.loss_cls: 0.4183, map.d1.loss_bbox: 0.4333, map.d1.loss_iou: 1.1619, map.d2.loss_cls: 0.3819, map.d2.loss_bbox: 0.4330, map.d2.loss_iou: 1.1641, map.d3.loss_cls: 0.3780, map.d3.loss_bbox: 0.4353, map.d3.loss_iou: 1.1624, map.d4.loss_cls: 0.3795, map.d4.loss_bbox: 0.4304, map.d4.loss_iou: 1.1596, motion.loss_traj: 0.6335, motion.l_class: 1.0935, motion.l_reg: -0.4918, motion.min_ade: 0.6630, motion.min_fde: 1.3307, motion.mr: 0.2128, motion.d0.loss_traj: 0.6754, motion.d0.l_class: 1.0430, motion.d0.l_reg: -0.4101, motion.d0.min_ade: 0.7089, motion.d0.min_fde: 1.4357, motion.d0.mr: 0.2138, motion.d1.loss_traj: 0.4912, motion.d1.l_class: 1.0848, motion.d1.l_reg: -0.7928, motion.d1.min_ade: 0.6494, motion.d1.min_fde: 1.3805, motion.d1.mr: 0.2260, occ.loss_dice: 0.2714, occ.loss_mask: 0.0419, occ.loss_aux_dice: 0.3566, occ.loss_aux_mask: 0.0554, planning.loss_collision_0: 0.0000, planning.loss_collision_1: 0.0076, planning.loss_collision_2: 0.0667, planning.loss_ade: 0.6680, planning.loss_kinematic: 1.3633, loss: 46.2509, grad_norm: 3975.7805
-2026-07-30 13:54:57,639 - mmdet - INFO - Epoch [5][9290/14065]	lr: 5.015e-05, eta: 20:22:07, time: 3.786, data_time: 0.069, memory: 11921, track.frame_0_loss_cls_0: 0.2489, track.frame_0_loss_bbox_0: 0.4115, track.frame_0_loss_past_trajs_0: 0.7466, track.frame_0_loss_cls_1: 0.2142, track.frame_0_loss_bbox_1: 0.3585, track.frame_0_loss_past_trajs_1: 0.6362, track.frame_0_loss_cls_2: 0.1957, track.frame_0_loss_bbox_2: 0.3500, track.frame_0_loss_past_trajs_2: 0.5746, track.frame_0_loss_cls_3: 0.1828, track.frame_0_loss_bbox_3: 0.3461, track.frame_0_loss_past_trajs_3: 0.5779, track.frame_0_loss_cls_4: 0.1760, track.frame_0_loss_bbox_4: 0.3518, track.frame_0_loss_past_trajs_4: 0.5697, track.frame_0_loss_cls_5: 0.1802, track.frame_0_loss_bbox_5: 0.3521, track.frame_0_loss_past_trajs_5: 0.5958, track.frame_1_loss_cls_0: 0.2843, track.frame_1_loss_bbox_0: 0.6749, track.frame_1_loss_past_trajs_0: 0.6086, track.frame_1_loss_cls_1: 0.2433, track.frame_1_loss_bbox_1: 0.6541, track.frame_1_loss_past_trajs_1: 0.5675, track.frame_1_loss_cls_2: 0.2167, track.frame_1_loss_bbox_2: 0.6631, track.frame_1_loss_past_trajs_2: 0.5380, track.frame_1_loss_cls_3: 0.2064, track.frame_1_loss_bbox_3: 0.6651, track.frame_1_loss_past_trajs_3: 0.5138, track.frame_1_loss_cls_4: 0.2043, track.frame_1_loss_bbox_4: 0.6743, track.frame_1_loss_past_trajs_4: 0.5166, track.frame_1_loss_cls_5: 0.2061, track.frame_1_loss_bbox_5: 0.6786, track.frame_1_loss_past_trajs_5: 0.5492, track.frame_2_loss_cls_0: 0.2534, track.frame_2_loss_bbox_0: 0.5798, track.frame_2_loss_past_trajs_0: 0.5886, track.frame_2_loss_cls_1: 0.2187, track.frame_2_loss_bbox_1: 0.5133, track.frame_2_loss_past_trajs_1: 0.4905, track.frame_2_loss_cls_2: 0.1962, track.frame_2_loss_bbox_2: 0.5041, track.frame_2_loss_past_trajs_2: 0.4506, track.frame_2_loss_cls_3: 0.1860, track.frame_2_loss_bbox_3: 0.4955, track.frame_2_loss_past_trajs_3: 0.4519, track.frame_2_loss_cls_4: 0.1854, track.frame_2_loss_bbox_4: 0.4915, track.frame_2_loss_past_trajs_4: 0.4491, track.frame_2_loss_cls_5: 0.1896, track.frame_2_loss_bbox_5: 0.4924, track.frame_2_loss_past_trajs_5: 0.4664, map.loss_cls: 0.3564, map.loss_bbox: 0.4184, map.loss_iou: 1.2084, map.loss_mask_things: 0.8261, map.loss_mask_stuff: 0.0122, map.d0.loss_mask_things_f: 0.9002, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.8474, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8383, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.8285, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0161, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0134, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0135, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0130, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0131, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0128, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.4638, map.d0.loss_bbox: 0.4480, map.d0.loss_iou: 1.2266, map.d1.loss_cls: 0.3750, map.d1.loss_bbox: 0.4205, map.d1.loss_iou: 1.2153, map.d2.loss_cls: 0.3626, map.d2.loss_bbox: 0.4193, map.d2.loss_iou: 1.2083, map.d3.loss_cls: 0.3503, map.d3.loss_bbox: 0.4217, map.d3.loss_iou: 1.2108, map.d4.loss_cls: 0.3521, map.d4.loss_bbox: 0.4205, map.d4.loss_iou: 1.2114, motion.loss_traj: 0.3607, motion.l_class: 1.1858, motion.l_reg: -0.9256, motion.min_ade: 0.5200, motion.min_fde: 0.9222, motion.mr: 0.1514, motion.d0.loss_traj: 0.4030, motion.d0.l_class: 1.1342, motion.d0.l_reg: -0.8199, motion.d0.min_ade: 0.5424, motion.d0.min_fde: 0.9834, motion.d0.mr: 0.1711, motion.d1.loss_traj: 0.4862, motion.d1.l_class: 1.1582, motion.d1.l_reg: -0.6639, motion.d1.min_ade: 0.5157, motion.d1.min_fde: 0.9560, motion.d1.mr: 0.1888, occ.loss_dice: 0.2676, occ.loss_mask: 0.0386, occ.loss_aux_dice: 0.3544, occ.loss_aux_mask: 0.0507, planning.loss_collision_0: 1.1925, planning.loss_collision_1: 1.1171, planning.loss_collision_2: 0.5218, planning.loss_ade: 0.4029, planning.loss_kinematic: 0.7284, loss: 45.2842, grad_norm: 1456.2601
-2026-07-30 13:55:35,385 - mmdet - INFO - Epoch [5][9300/14065]	lr: 5.015e-05, eta: 20:21:28, time: 3.774, data_time: 0.067, memory: 11921, track.frame_0_loss_cls_0: 0.2573, track.frame_0_loss_bbox_0: 0.4066, track.frame_0_loss_past_trajs_0: 0.7912, track.frame_0_loss_cls_1: 0.2230, track.frame_0_loss_bbox_1: 0.3674, track.frame_0_loss_past_trajs_1: 0.6985, track.frame_0_loss_cls_2: 0.1839, track.frame_0_loss_bbox_2: 0.3548, track.frame_0_loss_past_trajs_2: 0.6823, track.frame_0_loss_cls_3: 0.1792, track.frame_0_loss_bbox_3: 0.3474, track.frame_0_loss_past_trajs_3: 0.6057, track.frame_0_loss_cls_4: 0.1746, track.frame_0_loss_bbox_4: 0.3509, track.frame_0_loss_past_trajs_4: 0.6157, track.frame_0_loss_cls_5: 0.1798, track.frame_0_loss_bbox_5: 0.3556, track.frame_0_loss_past_trajs_5: 0.6302, track.frame_1_loss_cls_0: 0.2782, track.frame_1_loss_bbox_0: 0.6101, track.frame_1_loss_past_trajs_0: 0.6106, track.frame_1_loss_cls_1: 0.2379, track.frame_1_loss_bbox_1: 0.6033, track.frame_1_loss_past_trajs_1: 0.5844, track.frame_1_loss_cls_2: 0.2114, track.frame_1_loss_bbox_2: 0.5980, track.frame_1_loss_past_trajs_2: 0.5469, track.frame_1_loss_cls_3: 0.2081, track.frame_1_loss_bbox_3: 0.5801, track.frame_1_loss_past_trajs_3: 0.5223, track.frame_1_loss_cls_4: 0.2098, track.frame_1_loss_bbox_4: 0.5761, track.frame_1_loss_past_trajs_4: 0.5311, track.frame_1_loss_cls_5: 0.2045, track.frame_1_loss_bbox_5: 0.5905, track.frame_1_loss_past_trajs_5: 0.5566, track.frame_2_loss_cls_0: 0.2706, track.frame_2_loss_bbox_0: 0.6490, track.frame_2_loss_past_trajs_0: 0.6757, track.frame_2_loss_cls_1: 0.2252, track.frame_2_loss_bbox_1: 0.6183, track.frame_2_loss_past_trajs_1: 0.6008, track.frame_2_loss_cls_2: 0.2065, track.frame_2_loss_bbox_2: 0.6084, track.frame_2_loss_past_trajs_2: 0.5600, track.frame_2_loss_cls_3: 0.1911, track.frame_2_loss_bbox_3: 0.5734, track.frame_2_loss_past_trajs_3: 0.5179, track.frame_2_loss_cls_4: 0.1907, track.frame_2_loss_bbox_4: 0.5713, track.frame_2_loss_past_trajs_4: 0.5139, track.frame_2_loss_cls_5: 0.1923, track.frame_2_loss_bbox_5: 0.5781, track.frame_2_loss_past_trajs_5: 0.5457, map.loss_cls: 0.2932, map.loss_bbox: 0.3306, map.loss_iou: 1.0051, map.loss_mask_things: 0.7414, map.loss_mask_stuff: 0.0096, map.d0.loss_mask_things_f: 0.8170, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.7702, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.7621, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.7459, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0132, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0104, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0103, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0102, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0102, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0100, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.4301, map.d0.loss_bbox: 0.3555, map.d0.loss_iou: 1.0101, map.d1.loss_cls: 0.3075, map.d1.loss_bbox: 0.3365, map.d1.loss_iou: 1.0036, map.d2.loss_cls: 0.2979, map.d2.loss_bbox: 0.3417, map.d2.loss_iou: 1.0006, map.d3.loss_cls: 0.2892, map.d3.loss_bbox: 0.3368, map.d3.loss_iou: 1.0008, map.d4.loss_cls: 0.2904, map.d4.loss_bbox: 0.3373, map.d4.loss_iou: 1.0022, motion.loss_traj: 0.7588, motion.l_class: 1.1443, motion.l_reg: -0.2247, motion.min_ade: 0.6342, motion.min_fde: 1.1959, motion.mr: 0.1661, motion.d0.loss_traj: 0.5794, motion.d0.l_class: 1.1857, motion.d0.l_reg: -0.6105, motion.d0.min_ade: 0.6529, motion.d0.min_fde: 1.1671, motion.d0.mr: 0.1744, motion.d1.loss_traj: 0.5078, motion.d1.l_class: 1.1502, motion.d1.l_reg: -0.7080, motion.d1.min_ade: 0.6204, motion.d1.min_fde: 1.1465, motion.d1.mr: 0.1375, occ.loss_dice: 0.2866, occ.loss_mask: 0.0431, occ.loss_aux_dice: 0.3655, occ.loss_aux_mask: 0.0537, planning.loss_collision_0: 0.6159, planning.loss_collision_1: 0.5442, planning.loss_collision_2: 0.2492, planning.loss_ade: 0.4688, planning.loss_kinematic: 0.8975, loss: 43.2031, grad_norm: 1236.4842
-2026-07-30 13:56:13,951 - mmdet - INFO - Epoch [5][9310/14065]	lr: 5.015e-05, eta: 20:20:49, time: 3.857, data_time: 0.063, memory: 11921, track.frame_0_loss_cls_0: 0.2780, track.frame_0_loss_bbox_0: 0.4276, track.frame_0_loss_past_trajs_0: 0.7439, track.frame_0_loss_cls_1: 0.2342, track.frame_0_loss_bbox_1: 0.3841, track.frame_0_loss_past_trajs_1: 0.6625, track.frame_0_loss_cls_2: 0.2021, track.frame_0_loss_bbox_2: 0.3813, track.frame_0_loss_past_trajs_2: 0.5926, track.frame_0_loss_cls_3: 0.1869, track.frame_0_loss_bbox_3: 0.3743, track.frame_0_loss_past_trajs_3: 0.5610, track.frame_0_loss_cls_4: 0.1920, track.frame_0_loss_bbox_4: 0.3698, track.frame_0_loss_past_trajs_4: 0.5716, track.frame_0_loss_cls_5: 0.1939, track.frame_0_loss_bbox_5: 0.3749, track.frame_0_loss_past_trajs_5: 0.5737, track.frame_1_loss_cls_0: 0.2794, track.frame_1_loss_bbox_0: 0.7588, track.frame_1_loss_past_trajs_0: 0.6839, track.frame_1_loss_cls_1: 0.2364, track.frame_1_loss_bbox_1: 0.7166, track.frame_1_loss_past_trajs_1: 0.6050, track.frame_1_loss_cls_2: 0.2160, track.frame_1_loss_bbox_2: 0.7161, track.frame_1_loss_past_trajs_2: 0.5465, track.frame_1_loss_cls_3: 0.1989, track.frame_1_loss_bbox_3: 0.7068, track.frame_1_loss_past_trajs_3: 0.5344, track.frame_1_loss_cls_4: 0.1979, track.frame_1_loss_bbox_4: 0.7058, track.frame_1_loss_past_trajs_4: 0.5375, track.frame_1_loss_cls_5: 0.2011, track.frame_1_loss_bbox_5: 0.7112, track.frame_1_loss_past_trajs_5: 0.5478, track.frame_2_loss_cls_0: 0.2866, track.frame_2_loss_bbox_0: 0.8097, track.frame_2_loss_past_trajs_0: 0.6523, track.frame_2_loss_cls_1: 0.2487, track.frame_2_loss_bbox_1: 0.7755, track.frame_2_loss_past_trajs_1: 0.5479, track.frame_2_loss_cls_2: 0.2311, track.frame_2_loss_bbox_2: 0.7596, track.frame_2_loss_past_trajs_2: 0.5112, track.frame_2_loss_cls_3: 0.2153, track.frame_2_loss_bbox_3: 0.7458, track.frame_2_loss_past_trajs_3: 0.4888, track.frame_2_loss_cls_4: 0.2210, track.frame_2_loss_bbox_4: 0.7496, track.frame_2_loss_past_trajs_4: 0.4632, track.frame_2_loss_cls_5: 0.2227, track.frame_2_loss_bbox_5: 0.7557, track.frame_2_loss_past_trajs_5: 0.4786, map.loss_cls: 0.3482, map.loss_bbox: 0.3920, map.loss_iou: 1.1223, map.loss_mask_things: 0.7924, map.loss_mask_stuff: 0.0104, map.d0.loss_mask_things_f: 0.8576, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.8073, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8009, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.7956, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0139, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0105, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0110, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0114, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0117, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0113, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.4711, map.d0.loss_bbox: 0.4129, map.d0.loss_iou: 1.1223, map.d1.loss_cls: 0.3753, map.d1.loss_bbox: 0.3939, map.d1.loss_iou: 1.1011, map.d2.loss_cls: 0.3513, map.d2.loss_bbox: 0.3913, map.d2.loss_iou: 1.1260, map.d3.loss_cls: 0.3427, map.d3.loss_bbox: 0.3942, map.d3.loss_iou: 1.1235, map.d4.loss_cls: 0.3416, map.d4.loss_bbox: 0.3924, map.d4.loss_iou: 1.1243, motion.loss_traj: 0.6402, motion.l_class: 1.1232, motion.l_reg: -0.3115, motion.min_ade: 0.4915, motion.min_fde: 0.9375, motion.mr: 0.1980, motion.d0.loss_traj: 0.6272, motion.d0.l_class: 1.1170, motion.d0.l_reg: -0.3367, motion.d0.min_ade: 0.5245, motion.d0.min_fde: 0.9481, motion.d0.mr: 0.1844, motion.d1.loss_traj: 0.7236, motion.d1.l_class: 1.1661, motion.d1.l_reg: -0.1624, motion.d1.min_ade: 0.5017, motion.d1.min_fde: 0.8872, motion.d1.mr: 0.1717, occ.loss_dice: 0.2753, occ.loss_mask: 0.0481, occ.loss_aux_dice: 0.3555, occ.loss_aux_mask: 0.0606, planning.loss_collision_0: 0.4379, planning.loss_collision_1: 0.3548, planning.loss_collision_2: 0.1785, planning.loss_ade: 0.5484, planning.loss_kinematic: 1.0428, loss: 46.3206, grad_norm: 775.2072
-2026-07-30 13:56:51,072 - mmdet - INFO - Epoch [5][9320/14065]	lr: 5.015e-05, eta: 20:20:10, time: 3.711, data_time: 0.078, memory: 11921, track.frame_0_loss_cls_0: 0.2623, track.frame_0_loss_bbox_0: 0.4387, track.frame_0_loss_past_trajs_0: 0.7036, track.frame_0_loss_cls_1: 0.2413, track.frame_0_loss_bbox_1: 0.4048, track.frame_0_loss_past_trajs_1: 0.5808, track.frame_0_loss_cls_2: 0.2217, track.frame_0_loss_bbox_2: 0.3925, track.frame_0_loss_past_trajs_2: 0.5416, track.frame_0_loss_cls_3: 0.2063, track.frame_0_loss_bbox_3: 0.3866, track.frame_0_loss_past_trajs_3: 0.5098, track.frame_0_loss_cls_4: 0.2054, track.frame_0_loss_bbox_4: 0.3907, track.frame_0_loss_past_trajs_4: 0.5132, track.frame_0_loss_cls_5: 0.2020, track.frame_0_loss_bbox_5: 0.3941, track.frame_0_loss_past_trajs_5: 0.5026, track.frame_1_loss_cls_0: 0.2776, track.frame_1_loss_bbox_0: 0.6485, track.frame_1_loss_past_trajs_0: 0.6316, track.frame_1_loss_cls_1: 0.2489, track.frame_1_loss_bbox_1: 0.6121, track.frame_1_loss_past_trajs_1: 0.5625, track.frame_1_loss_cls_2: 0.2322, track.frame_1_loss_bbox_2: 0.6003, track.frame_1_loss_past_trajs_2: 0.5560, track.frame_1_loss_cls_3: 0.2159, track.frame_1_loss_bbox_3: 0.6023, track.frame_1_loss_past_trajs_3: 0.5129, track.frame_1_loss_cls_4: 0.2143, track.frame_1_loss_bbox_4: 0.5920, track.frame_1_loss_past_trajs_4: 0.4878, track.frame_1_loss_cls_5: 0.2226, track.frame_1_loss_bbox_5: 0.5944, track.frame_1_loss_past_trajs_5: 0.5121, track.frame_2_loss_cls_0: 0.2547, track.frame_2_loss_bbox_0: 0.6260, track.frame_2_loss_past_trajs_0: 0.5760, track.frame_2_loss_cls_1: 0.2179, track.frame_2_loss_bbox_1: 0.6127, track.frame_2_loss_past_trajs_1: 0.5344, track.frame_2_loss_cls_2: 0.2016, track.frame_2_loss_bbox_2: 0.6121, track.frame_2_loss_past_trajs_2: 0.5126, track.frame_2_loss_cls_3: 0.1917, track.frame_2_loss_bbox_3: 0.6079, track.frame_2_loss_past_trajs_3: 0.4943, track.frame_2_loss_cls_4: 0.1949, track.frame_2_loss_bbox_4: 0.6102, track.frame_2_loss_past_trajs_4: 0.4889, track.frame_2_loss_cls_5: 0.1954, track.frame_2_loss_bbox_5: 0.6175, track.frame_2_loss_past_trajs_5: 0.5065, map.loss_cls: 0.3751, map.loss_bbox: 0.4337, map.loss_iou: 1.1727, map.loss_mask_things: 0.9011, map.loss_mask_stuff: 0.0124, map.d0.loss_mask_things_f: 0.9781, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.9262, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.9159, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.9002, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0158, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0136, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0135, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0133, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0134, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0131, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.4840, map.d0.loss_bbox: 0.4555, map.d0.loss_iou: 1.1895, map.d1.loss_cls: 0.3957, map.d1.loss_bbox: 0.4343, map.d1.loss_iou: 1.1711, map.d2.loss_cls: 0.3822, map.d2.loss_bbox: 0.4344, map.d2.loss_iou: 1.1738, map.d3.loss_cls: 0.3721, map.d3.loss_bbox: 0.4342, map.d3.loss_iou: 1.1713, map.d4.loss_cls: 0.3744, map.d4.loss_bbox: 0.4280, map.d4.loss_iou: 1.1763, motion.loss_traj: 0.6797, motion.l_class: 1.0896, motion.l_reg: -0.3957, motion.min_ade: 0.6794, motion.min_fde: 1.3308, motion.mr: 0.1921, motion.d0.loss_traj: 0.7490, motion.d0.l_class: 1.0579, motion.d0.l_reg: -0.2760, motion.d0.min_ade: 0.7097, motion.d0.min_fde: 1.4320, motion.d0.mr: 0.2294, motion.d1.loss_traj: 0.6789, motion.d1.l_class: 1.1368, motion.d1.l_reg: -0.4345, motion.d1.min_ade: 0.6633, motion.d1.min_fde: 1.3110, motion.d1.mr: 0.1823, occ.loss_dice: 0.3037, occ.loss_mask: 0.0504, occ.loss_aux_dice: 0.3809, occ.loss_aux_mask: 0.0591, planning.loss_collision_0: 0.1087, planning.loss_collision_1: 0.3257, planning.loss_collision_2: 0.1872, planning.loss_ade: 0.6822, planning.loss_kinematic: 1.3778, loss: 45.8352, grad_norm: 451.7492
-root@fe3ccbe45eeb:/# 
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# nohup bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth > /workspace/UniAD-6epo/UniAD/resume_train_epoch5.log 2>&1 &
+[1] 3838
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# disown
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# ps aux | grep train.py
+root        3844 29.3  0.0 5060876 366648 pts/1  Sl   16:06   0:07 /usr/bin/python3.9 /usr/local/bin/torchrun --nproc_per_node=2 --master_addr=127.0.0.1 --master_port=28596 --nnodes=1 --node_rank=0 tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root        3913 98.7  0.9 42069172 5125028 pts/1 Rl  16:06   0:25 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root        3914 98.1  0.9 42069168 5125192 pts/1 Rl  16:06   0:25 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
+root        3956  0.0  0.0   3312  1760 pts/1    S+   16:06   0:00 grep --color=auto train.py
+root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# tail -f /workspace/UniAD-6epo/UniAD/resume_train_epoch5.log
+        (1): ReLU()
+        (2): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1))
+      )
+    )
+  )
+)
+======
+Loading NuScenes tables for version v1.0-trainval...
+======
+Loading NuScenes tables for version v1.0-trainval...
+23 category,
+8 attribute,
+4 visibility,
+64386 instance,
+12 sensor,
+10200 calibrated_sensor,
+2631083 ego_pose,
+68 log,
+850 scene,
+34149 sample,
+2631083 sample_data,
+1166187 sample_annotation,
+4 map,
+Done loading in 37.641 seconds.
+======
+Reverse indexing ...
+23 category,
+8 attribute,
+4 visibility,
+64386 instance,
+12 sensor,
+10200 calibrated_sensor,
+2631083 ego_pose,
+68 log,
+850 scene,
+34149 sample,
+2631083 sample_data,
+1166187 sample_annotation,
+4 map,
+Done loading in 41.576 seconds.
+======
+Reverse indexing ...
+Done reverse indexing in 7.2 seconds.
+======
+Done reverse indexing in 8.2 seconds.
+======
+======
+Loading NuScenes tables for version v1.0-trainval...
+======
+Loading NuScenes tables for version v1.0-trainval...
+23 category,
+8 attribute,
+4 visibility,
+64386 instance,
+12 sensor,
+10200 calibrated_sensor,
+2631083 ego_pose,
+68 log,
+850 scene,
+34149 sample,
+2631083 sample_data,
+1166187 sample_annotation,
+4 map,
+Done loading in 36.788 seconds.
+======
+Reverse indexing ...
+23 category,
+8 attribute,
+4 visibility,
+64386 instance,
+12 sensor,
+10200 calibrated_sensor,
+2631083 ego_pose,
+68 log,
+850 scene,
+34149 sample,
+2631083 sample_data,
+1166187 sample_annotation,
+4 map,
+Done loading in 39.238 seconds.
+======
+Reverse indexing ...
+Done reverse indexing in 7.0 seconds.
+======
+Done reverse indexing in 7.6 seconds.
+======
+2026-07-30 16:08:28,874 - mmdet - INFO - load checkpoint from local path: projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth
+2026-07-30 16:08:40,983 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.0.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,986 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.1.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,988 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.2.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,990 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.3.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,993 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.4.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,995 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.5.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,997 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.6.conv2 is upgraded to version 2.
+2026-07-30 16:08:40,999 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.7.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,002 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.8.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,004 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.9.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,006 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.10.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,008 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.11.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,010 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.12.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,013 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.13.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,015 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.14.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,017 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.15.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,019 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.16.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,022 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.17.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,024 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.18.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,026 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.19.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,028 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.20.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,031 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.21.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,033 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.22.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,035 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.0.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,038 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.1.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,040 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.2.conv2 is upgraded to version 2.
+2026-07-30 16:08:41,606 - mmdet - INFO - resumed epoch 4, iter 56260
+2026-07-30 16:08:41,606 - mmdet - INFO - resumed epoch 4, iter 56260
+2026-07-30 16:08:41,624 - mmdet - INFO - Start running, host: root@fe3ccbe45eeb, work_dir: /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep
+2026-07-30 16:08:41,624 - mmdet - INFO - Start running, host: root@fe3ccbe45eeb, work_dir: /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep
+2026-07-30 16:08:41,625 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) DistSamplerSeedHook                
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+2026-07-30 16:08:41,625 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) CustomDistEvalHook                 
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) DistSamplerSeedHook                
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+(VERY_LOW    ) TensorboardLoggerHook              
+ -------------------- 
+2026-07-30 16:08:41,625 - mmdet - INFO - workflow: [('train', 1)], max: 6 epochs
+2026-07-30 16:08:41,625 - mmdet - INFO - workflow: [('train', 1)], max: 6 epochs
+2026-07-30 16:08:41,625 - mmdet - INFO - Checkpoints will be saved to /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep by HardDiskBackend.
+2026-07-30 16:08:41,625 - mmdet - INFO - Checkpoints will be saved to /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep by HardDiskBackend.

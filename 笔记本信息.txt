@@ -1,240 +1,114 @@
-root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# nohup bash tools/uniad_dist_train.sh projects/configs/stage2_e2e/base_e2e_full_6ep.py 2 --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth > /workspace/UniAD-6epo/UniAD/resume_train_epoch5.log 2>&1 &
-[1] 3838
-root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# disown
-root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# ps aux | grep train.py
-root        3844 29.3  0.0 5060876 366648 pts/1  Sl   16:06   0:07 /usr/bin/python3.9 /usr/local/bin/torchrun --nproc_per_node=2 --master_addr=127.0.0.1 --master_port=28596 --nnodes=1 --node_rank=0 tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
-root        3913 98.7  0.9 42069172 5125028 pts/1 Rl  16:06   0:25 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
-root        3914 98.1  0.9 42069168 5125192 pts/1 Rl  16:06   0:25 /usr/bin/python3.9 -u tools/train.py projects/configs/stage2_e2e/base_e2e_full_6ep.py --launcher pytorch --resume-from projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth --deterministic --work-dir projects/work_dirs/stage2_e2e/base_e2e_full_6ep/
-root        3956  0.0  0.0   3312  1760 pts/1    S+   16:06   0:00 grep --color=auto train.py
-root@fe3ccbe45eeb:/workspace/UniAD-6epo/UniAD# tail -f /workspace/UniAD-6epo/UniAD/resume_train_epoch5.log
-        (1): ReLU()
-        (2): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1))
-      )
-    )
-  )
-)
-======
-Loading NuScenes tables for version v1.0-trainval...
-======
-Loading NuScenes tables for version v1.0-trainval...
-23 category,
-8 attribute,
-4 visibility,
-64386 instance,
-12 sensor,
-10200 calibrated_sensor,
-2631083 ego_pose,
-68 log,
-850 scene,
-34149 sample,
-2631083 sample_data,
-1166187 sample_annotation,
-4 map,
-Done loading in 37.641 seconds.
-======
-Reverse indexing ...
-23 category,
-8 attribute,
-4 visibility,
-64386 instance,
-12 sensor,
-10200 calibrated_sensor,
-2631083 ego_pose,
-68 log,
-850 scene,
-34149 sample,
-2631083 sample_data,
-1166187 sample_annotation,
-4 map,
-Done loading in 41.576 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 7.2 seconds.
-======
-Done reverse indexing in 8.2 seconds.
-======
-======
-Loading NuScenes tables for version v1.0-trainval...
-======
-Loading NuScenes tables for version v1.0-trainval...
-23 category,
-8 attribute,
-4 visibility,
-64386 instance,
-12 sensor,
-10200 calibrated_sensor,
-2631083 ego_pose,
-68 log,
-850 scene,
-34149 sample,
-2631083 sample_data,
-1166187 sample_annotation,
-4 map,
-Done loading in 36.788 seconds.
-======
-Reverse indexing ...
-23 category,
-8 attribute,
-4 visibility,
-64386 instance,
-12 sensor,
-10200 calibrated_sensor,
-2631083 ego_pose,
-68 log,
-850 scene,
-34149 sample,
-2631083 sample_data,
-1166187 sample_annotation,
-4 map,
-Done loading in 39.238 seconds.
-======
-Reverse indexing ...
-Done reverse indexing in 7.0 seconds.
-======
-Done reverse indexing in 7.6 seconds.
-======
-2026-07-30 16:08:28,874 - mmdet - INFO - load checkpoint from local path: projects/work_dirs/stage2_e2e/base_e2e_full_6ep/latest.pth
-2026-07-30 16:08:40,983 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.0.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,986 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.1.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,988 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.2.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,990 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.3.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,993 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.4.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,995 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.5.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,997 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.6.conv2 is upgraded to version 2.
-2026-07-30 16:08:40,999 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.7.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,002 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.8.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,004 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.9.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,006 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.10.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,008 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.11.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,010 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.12.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,013 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.13.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,015 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.14.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,017 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.15.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,019 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.16.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,022 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.17.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,024 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.18.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,026 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.19.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,028 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.20.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,031 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.21.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,033 - root - INFO - ModulatedDeformConvPack img_backbone.layer3.22.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,035 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.0.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,038 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.1.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,040 - root - INFO - ModulatedDeformConvPack img_backbone.layer4.2.conv2 is upgraded to version 2.
-2026-07-30 16:08:41,606 - mmdet - INFO - resumed epoch 4, iter 56260
-2026-07-30 16:08:41,606 - mmdet - INFO - resumed epoch 4, iter 56260
-2026-07-30 16:08:41,624 - mmdet - INFO - Start running, host: root@fe3ccbe45eeb, work_dir: /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep
-2026-07-30 16:08:41,624 - mmdet - INFO - Start running, host: root@fe3ccbe45eeb, work_dir: /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep
-2026-07-30 16:08:41,625 - mmdet - INFO - Hooks will be executed in the following order:
-before_run:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) CustomDistEvalHook                 
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_epoch:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) DistSamplerSeedHook                
-(NORMAL      ) CustomDistEvalHook                 
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_iter:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CustomDistEvalHook                 
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_train_iter:
-(ABOVE_NORMAL) OptimizerHook                      
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) CustomDistEvalHook                 
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_train_epoch:
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) CustomDistEvalHook                 
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_epoch:
-(NORMAL      ) DistSamplerSeedHook                
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_epoch:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_run:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-2026-07-30 16:08:41,625 - mmdet - INFO - Hooks will be executed in the following order:
-before_run:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) CustomDistEvalHook                 
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_epoch:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) DistSamplerSeedHook                
-(NORMAL      ) CustomDistEvalHook                 
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_train_iter:
-(VERY_HIGH   ) CosineAnnealingLrUpdaterHook       
-(NORMAL      ) CustomDistEvalHook                 
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_train_iter:
-(ABOVE_NORMAL) OptimizerHook                      
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) CustomDistEvalHook                 
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_train_epoch:
-(NORMAL      ) CheckpointHook                     
-(NORMAL      ) CustomDistEvalHook                 
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_epoch:
-(NORMAL      ) DistSamplerSeedHook                
-(LOW         ) IterTimerHook                      
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-before_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_iter:
-(LOW         ) IterTimerHook                      
- -------------------- 
-after_val_epoch:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-after_run:
-(VERY_LOW    ) TextLoggerHook                     
-(VERY_LOW    ) TensorboardLoggerHook              
- -------------------- 
-2026-07-30 16:08:41,625 - mmdet - INFO - workflow: [('train', 1)], max: 6 epochs
-2026-07-30 16:08:41,625 - mmdet - INFO - workflow: [('train', 1)], max: 6 epochs
-2026-07-30 16:08:41,625 - mmdet - INFO - Checkpoints will be saved to /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep by HardDiskBackend.
-2026-07-30 16:08:41,625 - mmdet - INFO - Checkpoints will be saved to /workspace/UniAD-6epo/UniAD/projects/work_dirs/stage2_e2e/base_e2e_full_6ep by HardDiskBackend.
+root@fe3ccbe45eeb:/# grep -n "Epoch \[6\]\[14060\|Epoch \[6\]\[14065\|Saving checkpoint\|Traceback\|Error" /workspace/UniAD-6epo/UniAD/resume_train_epoch5.log | tail -40
+5290:2026-07-31 22:22:04,655 - mmdet - INFO - Saving checkpoint at 5 epochs
+5291:2026-07-31 22:22:04,655 - mmdet - INFO - Saving checkpoint at 5 epochs
+8102:2026-08-01 13:53:06,487 - mmdet - INFO - Epoch [6][14060/14065]	lr: 1.358e-05, eta: 0:00:29, time: 3.860, data_time: 0.067, memory: 11921, track.frame_0_loss_cls_0: 0.2465, track.frame_0_loss_bbox_0: 0.4304, track.frame_0_loss_past_trajs_0: 0.6559, track.frame_0_loss_cls_1: 0.2022, track.frame_0_loss_bbox_1: 0.3802, track.frame_0_loss_past_trajs_1: 0.5778, track.frame_0_loss_cls_2: 0.1804, track.frame_0_loss_bbox_2: 0.3797, track.frame_0_loss_past_trajs_2: 0.5405, track.frame_0_loss_cls_3: 0.1694, track.frame_0_loss_bbox_3: 0.3780, track.frame_0_loss_past_trajs_3: 0.5139, track.frame_0_loss_cls_4: 0.1690, track.frame_0_loss_bbox_4: 0.3766, track.frame_0_loss_past_trajs_4: 0.5060, track.frame_0_loss_cls_5: 0.1671, track.frame_0_loss_bbox_5: 0.3838, track.frame_0_loss_past_trajs_5: 0.5177, track.frame_1_loss_cls_0: 0.2870, track.frame_1_loss_bbox_0: 0.8149, track.frame_1_loss_past_trajs_0: 0.6609, track.frame_1_loss_cls_1: 0.2411, track.frame_1_loss_bbox_1: 0.7936, track.frame_1_loss_past_trajs_1: 0.6286, track.frame_1_loss_cls_2: 0.2251, track.frame_1_loss_bbox_2: 0.7793, track.frame_1_loss_past_trajs_2: 0.5811, track.frame_1_loss_cls_3: 0.2107, track.frame_1_loss_bbox_3: 0.7795, track.frame_1_loss_past_trajs_3: 0.5675, track.frame_1_loss_cls_4: 0.2029, track.frame_1_loss_bbox_4: 0.7833, track.frame_1_loss_past_trajs_4: 0.5654, track.frame_1_loss_cls_5: 0.2093, track.frame_1_loss_bbox_5: 0.7821, track.frame_1_loss_past_trajs_5: 0.5932, track.frame_2_loss_cls_0: 0.2584, track.frame_2_loss_bbox_0: 0.6739, track.frame_2_loss_past_trajs_0: 0.5897, track.frame_2_loss_cls_1: 0.2289, track.frame_2_loss_bbox_1: 0.6178, track.frame_2_loss_past_trajs_1: 0.5138, track.frame_2_loss_cls_2: 0.2116, track.frame_2_loss_bbox_2: 0.6076, track.frame_2_loss_past_trajs_2: 0.4892, track.frame_2_loss_cls_3: 0.2011, track.frame_2_loss_bbox_3: 0.5725, track.frame_2_loss_past_trajs_3: 0.4556, track.frame_2_loss_cls_4: 0.1982, track.frame_2_loss_bbox_4: 0.5604, track.frame_2_loss_past_trajs_4: 0.4543, track.frame_2_loss_cls_5: 0.1951, track.frame_2_loss_bbox_5: 0.5635, track.frame_2_loss_past_trajs_5: 0.4752, map.loss_cls: 0.3705, map.loss_bbox: 0.4561, map.loss_iou: 1.2406, map.loss_mask_things: 0.8724, map.loss_mask_stuff: 0.0097, map.d0.loss_mask_things_f: 0.9613, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.9048, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8902, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.8777, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0131, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0109, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0108, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0107, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0107, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0106, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.5128, map.d0.loss_bbox: 0.4813, map.d0.loss_iou: 1.2615, map.d1.loss_cls: 0.4090, map.d1.loss_bbox: 0.4566, map.d1.loss_iou: 1.2343, map.d2.loss_cls: 0.3750, map.d2.loss_bbox: 0.4558, map.d2.loss_iou: 1.2371, map.d3.loss_cls: 0.3622, map.d3.loss_bbox: 0.4534, map.d3.loss_iou: 1.2425, map.d4.loss_cls: 0.3640, map.d4.loss_bbox: 0.4555, map.d4.loss_iou: 1.2381, motion.loss_traj: 0.3602, motion.l_class: 1.1026, motion.l_reg: -0.9325, motion.min_ade: 0.5762, motion.min_fde: 1.1009, motion.mr: 0.1549, motion.d0.loss_traj: 0.4257, motion.d0.l_class: 1.1210, motion.d0.l_reg: -0.8403, motion.d0.min_ade: 0.6423, motion.d0.min_fde: 1.1413, motion.d0.mr: 0.1629, motion.d1.loss_traj: 0.3920, motion.d1.l_class: 1.1030, motion.d1.l_reg: -0.8917, motion.d1.min_ade: 0.5957, motion.d1.min_fde: 1.1452, motion.d1.mr: 0.1549, occ.loss_dice: 0.2602, occ.loss_mask: 0.0422, occ.loss_aux_dice: 0.3400, occ.loss_aux_mask: 0.0528, planning.loss_collision_0: 0.7014, planning.loss_collision_1: 0.7960, planning.loss_collision_2: 0.3875, planning.loss_ade: 0.6694, planning.loss_kinematic: 1.1285, loss: 47.0924, grad_norm: 518.7575
+8103:2026-08-01 13:53:06,487 - mmdet - INFO - Epoch [6][14060/14065]	lr: 1.358e-05, eta: 0:00:29, time: 3.860, data_time: 0.067, memory: 11921, track.frame_0_loss_cls_0: 0.2465, track.frame_0_loss_bbox_0: 0.4304, track.frame_0_loss_past_trajs_0: 0.6559, track.frame_0_loss_cls_1: 0.2022, track.frame_0_loss_bbox_1: 0.3802, track.frame_0_loss_past_trajs_1: 0.5778, track.frame_0_loss_cls_2: 0.1804, track.frame_0_loss_bbox_2: 0.3797, track.frame_0_loss_past_trajs_2: 0.5405, track.frame_0_loss_cls_3: 0.1694, track.frame_0_loss_bbox_3: 0.3780, track.frame_0_loss_past_trajs_3: 0.5139, track.frame_0_loss_cls_4: 0.1690, track.frame_0_loss_bbox_4: 0.3766, track.frame_0_loss_past_trajs_4: 0.5060, track.frame_0_loss_cls_5: 0.1671, track.frame_0_loss_bbox_5: 0.3838, track.frame_0_loss_past_trajs_5: 0.5177, track.frame_1_loss_cls_0: 0.2870, track.frame_1_loss_bbox_0: 0.8149, track.frame_1_loss_past_trajs_0: 0.6609, track.frame_1_loss_cls_1: 0.2411, track.frame_1_loss_bbox_1: 0.7936, track.frame_1_loss_past_trajs_1: 0.6286, track.frame_1_loss_cls_2: 0.2251, track.frame_1_loss_bbox_2: 0.7793, track.frame_1_loss_past_trajs_2: 0.5811, track.frame_1_loss_cls_3: 0.2107, track.frame_1_loss_bbox_3: 0.7795, track.frame_1_loss_past_trajs_3: 0.5675, track.frame_1_loss_cls_4: 0.2029, track.frame_1_loss_bbox_4: 0.7833, track.frame_1_loss_past_trajs_4: 0.5654, track.frame_1_loss_cls_5: 0.2093, track.frame_1_loss_bbox_5: 0.7821, track.frame_1_loss_past_trajs_5: 0.5932, track.frame_2_loss_cls_0: 0.2584, track.frame_2_loss_bbox_0: 0.6739, track.frame_2_loss_past_trajs_0: 0.5897, track.frame_2_loss_cls_1: 0.2289, track.frame_2_loss_bbox_1: 0.6178, track.frame_2_loss_past_trajs_1: 0.5138, track.frame_2_loss_cls_2: 0.2116, track.frame_2_loss_bbox_2: 0.6076, track.frame_2_loss_past_trajs_2: 0.4892, track.frame_2_loss_cls_3: 0.2011, track.frame_2_loss_bbox_3: 0.5725, track.frame_2_loss_past_trajs_3: 0.4556, track.frame_2_loss_cls_4: 0.1982, track.frame_2_loss_bbox_4: 0.5604, track.frame_2_loss_past_trajs_4: 0.4543, track.frame_2_loss_cls_5: 0.1951, track.frame_2_loss_bbox_5: 0.5635, track.frame_2_loss_past_trajs_5: 0.4752, map.loss_cls: 0.3705, map.loss_bbox: 0.4561, map.loss_iou: 1.2406, map.loss_mask_things: 0.8724, map.loss_mask_stuff: 0.0097, map.d0.loss_mask_things_f: 0.9613, map.d0.loss_iou_f: 0.0000, map.d0.loss_bbox_f: 0.0000, map.d0.loss_cls_f: 0.0000, map.d1.loss_mask_things_f: 0.9048, map.d1.loss_iou_f: 0.0000, map.d1.loss_bbox_f: 0.0000, map.d1.loss_cls_f: 0.0000, map.d2.loss_mask_things_f: 0.8902, map.d2.loss_iou_f: 0.0000, map.d2.loss_bbox_f: 0.0000, map.d2.loss_cls_f: 0.0000, map.d3.loss_mask_things_f: 0.8777, map.d3.loss_iou_f: 0.0000, map.d3.loss_bbox_f: 0.0000, map.d3.loss_cls_f: 0.0000, map.d0.loss_mask_stuff_f: 0.0131, map.d0.loss_cls_stuff_f: 0.0000, map.d1.loss_mask_stuff_f: 0.0109, map.d1.loss_cls_stuff_f: 0.0000, map.d2.loss_mask_stuff_f: 0.0108, map.d2.loss_cls_stuff_f: 0.0000, map.d3.loss_mask_stuff_f: 0.0107, map.d3.loss_cls_stuff_f: 0.0000, map.d4.loss_mask_stuff_f: 0.0107, map.d4.loss_cls_stuff_f: 0.0000, map.d5.loss_mask_stuff_f: 0.0106, map.d5.loss_cls_stuff_f: 0.0000, map.d0.loss_cls: 0.5128, map.d0.loss_bbox: 0.4813, map.d0.loss_iou: 1.2615, map.d1.loss_cls: 0.4090, map.d1.loss_bbox: 0.4566, map.d1.loss_iou: 1.2343, map.d2.loss_cls: 0.3750, map.d2.loss_bbox: 0.4558, map.d2.loss_iou: 1.2371, map.d3.loss_cls: 0.3622, map.d3.loss_bbox: 0.4534, map.d3.loss_iou: 1.2425, map.d4.loss_cls: 0.3640, map.d4.loss_bbox: 0.4555, map.d4.loss_iou: 1.2381, motion.loss_traj: 0.3602, motion.l_class: 1.1026, motion.l_reg: -0.9325, motion.min_ade: 0.5762, motion.min_fde: 1.1009, motion.mr: 0.1549, motion.d0.loss_traj: 0.4257, motion.d0.l_class: 1.1210, motion.d0.l_reg: -0.8403, motion.d0.min_ade: 0.6423, motion.d0.min_fde: 1.1413, motion.d0.mr: 0.1629, motion.d1.loss_traj: 0.3920, motion.d1.l_class: 1.1030, motion.d1.l_reg: -0.8917, motion.d1.min_ade: 0.5957, motion.d1.min_fde: 1.1452, motion.d1.mr: 0.1549, occ.loss_dice: 0.2602, occ.loss_mask: 0.0422, occ.loss_aux_dice: 0.3400, occ.loss_aux_mask: 0.0528, planning.loss_collision_0: 0.7014, planning.loss_collision_1: 0.7960, planning.loss_collision_2: 0.3875, planning.loss_ade: 0.6694, planning.loss_kinematic: 1.1285, loss: 47.0924, grad_norm: 518.7575
+8104:2026-08-01 13:53:27,278 - mmdet - INFO - Saving checkpoint at 6 epochs
+8105:2026-08-01 13:53:27,278 - mmdet - INFO - Saving checkpoint at 6 epochs
+Traceback (most recent call last):     
+8252:TypeError: list indices must be integers or slices, not str
+8254:Traceback (most recent call last):
+8266:    raise ChildFailedError(
+8267:torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+root@fe3ccbe45eeb:/# grep -n "" /workspace/UniAD-6epo/UniAD/resume_train_epoch5.log | tail -150 | head -100
+8133:Results writes to val/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/Thu_Jul_30_16_08_28_2026/results_nusc_det.json
+8134:Initializing nuScenes detection evaluation
+8135:Loaded results from val/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/Thu_Jul_30_16_08_28_2026/results_nusc_det.json. Found detections for 6019 samples.
+8136:Loading annotations for val split from nuScenes version: v1.0-trainval
+100%|██████████| 6019/6019 [00:07<00:00, 754.16it/s] 
+8138:Loaded ground truth annotations for 6019 samples.
+8139:Filtering predictions
+8140:=> Original number of boxes: 1298453
+8141:=> After distance based filtering: 1298021
+8142:=> After LIDAR and RADAR points based filtering: 1298021
+8143:=> After bike rack filtering: 1297490
+8144:Filtering ground truth annotations
+8145:=> Original number of boxes: 187528
+8146:=> After distance based filtering: 134565
+8147:=> After LIDAR and RADAR points based filtering: 121871
+8148:=> After bike rack filtering: 121861
+8149:Accumulating metric data...
+8150:Calculating metrics...
+8151:Saving metrics to: val/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/Thu_Jul_30_16_08_28_2026/det
+8152:mAP: 0.3093
+8153:mATE: 0.7467
+8154:mASE: 0.7079
+8155:mAOE: 0.4112
+8156:mAVE: 0.4745
+8157:mAAE: 0.1961
+8158:NDS: 0.4010
+8159:Eval time: 165.0s
+8160:
+8161:Per-class results:
+8162:Object Class        	AP    	ATE   	ASE   	AOE   	AVE   	AAE   
+8163:car                 	0.511 	0.503 	0.748 	0.074 	0.445 	0.184 
+8164:truck               	0.276 	0.789 	0.791 	0.095 	0.426 	0.186 
+8165:bus                 	0.329 	0.804 	0.852 	0.120 	0.912 	0.332 
+8166:trailer             	0.121 	1.049 	0.839 	0.665 	0.427 	0.109 
+8167:construction_vehicle	0.096 	1.092 	0.671 	1.033 	0.145 	0.359 
+8168:pedestrian          	0.359 	0.746 	0.334 	0.472 	0.398 	0.187 
+8169:motorcycle          	0.331 	0.686 	0.789 	0.514 	0.659 	0.199 
+8170:bicycle             	0.290 	0.634 	0.809 	0.576 	0.384 	0.013 
+8171:traffic_cone        	0.429 	0.531 	0.359 	nan   	nan   	nan   
+8172:barrier             	0.349 	0.635 	0.887 	0.151 	nan   	nan   
+8173:======
+8174:Loading NuScenes tables for version v1.0-trainval...
+8175:23 category,
+8176:8 attribute,
+8177:4 visibility,
+8178:64386 instance,
+8179:12 sensor,
+8180:10200 calibrated_sensor,
+8181:2631083 ego_pose,
+8182:68 log,
+8183:850 scene,
+8184:34149 sample,
+8185:2631083 sample_data,
+8186:1166187 sample_annotation,
+8187:4 map,
+8188:Done loading in 32.817 seconds.
+8189:======
+8190:Reverse indexing ...
+8191:Done reverse indexing in 6.7 seconds.
+8192:======
+8193:Initializing nuScenes tracking evaluation
+8194:Loaded results from val/projects/work_dirs/stage2_e2e/base_e2e_full_6ep/Thu_Jul_30_16_08_28_2026/results_nusc.json. Found detections for 6019 samples.
+8195:Loading annotations for val split from nuScenes version: v1.0-trainval
+100%|██████████| 6019/6019 [00:05<00:00, 1063.61it/s]
+8197:Loaded ground truth annotations for 6019 samples.
+8198:Filtering tracks
+8199:=> Original number of boxes: 106798
+8200:=> After distance based filtering: 106789
+8201:=> After LIDAR and RADAR points based filtering: 106789
+8202:=> After bike rack filtering: 106713
+8203:Filtering ground truth tracks
+8204:=> Original number of boxes: 142261
+8205:=> After distance based filtering: 103564
+8206:=> After LIDAR and RADAR points based filtering: 93885
+8207:=> After bike rack filtering: 93875
+8208:Accumulating metric data...
+8209:Computing metrics for class bicycle...
+8210:
+Traceback (most recent call last):     
+8212:  File "/workspace/UniAD-6epo/UniAD/tools/train.py", line 260, in <module>
+8213:    main()
+8214:  File "/workspace/UniAD-6epo/UniAD/tools/train.py", line 247, in main
+8215:    custom_train_model(
+8216:  File "/workspace/UniAD-6epo/UniAD/projects/mmdet3d_plugin/uniad/apis/train.py", line 21, in custom_train_model
+8217:    custom_train_detector(
+8218:  File "/workspace/UniAD-6epo/UniAD/projects/mmdet3d_plugin/uniad/apis/mmdet_train.py", line 197, in custom_train_detector
+8219:    runner.run(data_loaders, cfg.workflow)
+8220:  File "/usr/local/lib/python3.9/dist-packages/mmcv/runner/epoch_based_runner.py", line 136, in run
+8221:    epoch_runner(data_loaders[i], **kwargs)
+8222:  File "/usr/local/lib/python3.9/dist-packages/mmcv/runner/epoch_based_runner.py", line 58, in train
+8223:    self.call_hook('after_train_epoch')
+8224:  File "/usr/local/lib/python3.9/dist-packages/mmcv/runner/base_runner.py", line 317, in call_hook
+8225:    getattr(hook, fn_name)(self)
+8226:  File "/usr/local/lib/python3.9/dist-packages/mmcv/runner/hooks/evaluation.py", line 271, in after_train_epoch
+8227:    self._do_evaluate(runner)
+8228:  File "/workspace/UniAD-6epo/UniAD/projects/mmdet3d_plugin/core/evaluation/eval_hooks.py", line 87, in _do_evaluate
+8229:    key_score = self.evaluate(runner, results)
+8230:  File "/usr/local/lib/python3.9/dist-packages/mmcv/runner/hooks/evaluation.py", line 367, in evaluate
+8231:    eval_res = self.dataloader.dataset.evaluate(
+8232:  File "/workspace/UniAD-6epo/UniAD/projects/mmdet3d_plugin/datasets/nuscenes_e2e_dataset.py", line 1427, in evaluate
+root@fe3ccbe45eeb:/# 

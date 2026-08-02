@@ -14,6 +14,28 @@
 
 ---
 
+> ## ⚠️ 预习提示（如果你觉得某些公式/概念看不懂，请先补这些前置知识）
+>
+> 本文档默认你已经掌握了 UniAD 全链路的基础知识。此外，以下概念在本文中出现频率很高，
+> 如果你发现自己"知道这个词但说不清具体是什么"，请先补课：
+>
+> | 本文中的概念 | 你需要的前置知识 | 去哪补 |
+> |---|---|---|
+> | DDPM 前向/反向过程、$\bar\alpha_t$ | DDPM 的加噪-去噪范式 | `05_FOUNDATIONS_GENERATIVE_MODELS.md` 第 2 节 |
+> | Flow Matching 的 $z(t) = tx_1 + (1-t)x_0$ | Flow Matching 的直线路径与速度场 | 同上第 3 节 |
+> | 速度场预测 vs 噪声预测 | DDPM vs Flow Matching 的区别 | 同上第 3.2 节对比表 |
+> | AdaLN、AdaLN-Zero | DiT 的条件注入机制 | 同上第 4.3 节 |
+> | $\mathbb{E}[\cdot]$、$\mathcal N(0,I)$ | 期望与高斯分布 | `02_FOUNDATIONS_CNN_AND_PROB.md` 第 2.2-2.3 节 |
+> | MSE 损失、梯度裁剪 | 损失函数与训练稳定性 | `01_FOUNDATIONS_DL_BASICS.md` 第 2-3 节 |
+> | Cross-Attention、Self-Attention | Transformer 注意力机制 | `03_FOUNDATIONS_TRANSFORMER.md` 第 2-4 节 |
+> | 多模态预测、回归 vs 生成 | 生成式模型的动机 | `05_FOUNDATIONS_GENERATIVE_MODELS.md` 第 1 节 |
+> | 归一化（轨迹标准差） | 归一化的原理与必要性 | `02_FOUNDATIONS_CNN_AND_PROB.md` 第 3 节 |
+>
+> **建议阅读顺序**：先完成 `01~05_FOUNDATIONS_*.md` 五份基础文档 + `UniAD-learning.md` 的学习，
+> 再回来精读本文。
+
+---
+
 ## 目录
 
 1. [为什么要改造：原版回归式规划头的局限](#1-为什么要改造原版回归式规划头的局限)

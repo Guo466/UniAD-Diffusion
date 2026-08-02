@@ -1,11 +1,11 @@
 # Line Search（线搜索）从零学起：公式推导 + 代码对应 + 逻辑流程
 
 > 参考资料：[《Line Search方法》学城文档](https://km.sankuai.com/collabpage/2777844970)
-> 对应代码：`modules/planning/common/math/solver/solver.h`（iLQR 内层求解器）
+> 对应模块：迭代式轨迹优化求解器（iLQR）内层求解逻辑
 >
-> 姊妹文档：[`clothoid_path_optimizer_learning_notes.md`](./clothoid_path_optimizer_learning_notes.md) 讲的是 AL-iLQR 整体算法框架（Backward Pass / Forward Pass 是什么）；**本文专门深入 Forward Pass 里"线搜索"这一步到底在做什么、为什么这么设计**，把学城的数值优化理论和 `solver.h` 里的真实代码逐行对应起来。
+> 本文聚焦于 AL-iLQR 算法 Forward Pass 里"线搜索"这一步到底在做什么、为什么这么设计，把数值优化理论和求解器的实现逻辑逐段对应起来。
 >
-> 本文同样假设你是**完全零基础**的小白，不需要任何优化理论背景。
+> 本文假设你是**完全零基础**的小白，不需要任何优化理论背景，仅凭本文内容即可完整理解线搜索机制，无需查阅其他资料。
 
 ---
 
@@ -19,7 +19,7 @@
 6. [回溯法（Backtracking）：工程上最常用的简化方案](#6-回溯法backtracking工程上最常用的简化方案)
 7. [线搜索方法的收敛性：为什么这样做能保证算法不失败](#7-线搜索方法的收敛性为什么这样做能保证算法不失败)
 8. [牛顿法/拟牛顿法的全局收敛性](#8-牛顿法拟牛顿法的全局收敛性)
-9. [代码总览：`solver.h` 里的一次迭代做了什么](#9-代码总览solverh-里的一次迭代做了什么)
+9. [代码总览：求解器里的一次迭代做了什么](#9-代码总览求解器里的一次迭代做了什么)
 10. [逐段代码对应：Backward Pass 里的下降方向从哪来](#10-逐段代码对应backward-pass-里的下降方向从哪来)
 11. [逐段代码对应：Forward Pass 里的回溯线搜索](#11-逐段代码对应forward-pass-里的回溯线搜索)
 12. [逐段代码对应：正则化 mu 如何充当"信赖域"](#12-逐段代码对应正则化-mu-如何充当信赖域)
@@ -79,7 +79,7 @@ $$
 
 这是因为正定矩阵的逆也是正定的，而正定矩阵夹在任何非零向量两边做内积，结果必然大于 0（这是正定矩阵的定义），所以加上负号后必然小于 0。**这就保证了只要 $B_k$ 正定，$p_k$ 就一定是下降方向**——这是后面第 8 节"牛顿法全局收敛性"的理论基石。
 
-> **对应到代码**：在 `clothoid_path_optimizer` 用的 iLQR 里，方向 $p_k$ 就是 Backward Pass 算出来的 $(K_k, d_k)$（也就是前面姊妹文档第 8.3 节讲的反馈增益和前馈修正），第 10 节会详细对应代码。
+> **对应到实现**：在 iLQR 求解器里，方向 $p_k$ 就是 Backward Pass 算出来的 $(K_k, d_k)$（反馈增益和前馈修正），第 10 节会详细对应实现逻辑。
 
 ---
 
@@ -256,18 +256,26 @@ $$
 
 ---
 
-## 9. 代码总览：`solver.h` 里的一次迭代做了什么
+## 9. 代码总览：求解器里的一次迭代做了什么
 
 现在有了理论基础，来看 `Solver::Solve` 主循环（这是驱动 Clothoid 路径优化底层 iLQR 求解的核心函数）。每一次外层 `for` 循环迭代，做的事情严格对应"选方向 → 选步长"两大步：
 
-```675:791:modules/planning/common/math/solver/solver.h
-for (; iter < max_num_iter_; ++iter) {
-  ...
+```cpp
+// iLQR 求解器主循环：每轮迭代 = 选方向（Backward Pass）+ 选步长（Forward Pass + 线搜索）
+// 变量说明：x_trajectory, u_trajectory = 当前轨迹；meta = 迭代元信息（含正则化 mu、下降方向等）
+//           alpha_values_ = 预计算的候选步长表 [1.0, 0.5, 0.25, 0.125, 0.0625, 0.031, 0.016, 0.008, 0.004, 0.001]
+//           cost_history = 历史代价记录；max_mu_ = 正则化上限
+for (int iter = 0; iter < max_num_iter_; ++iter) {
+
   // ① Backward Pass：计算下降方向 (k_trajectory, K_trajectory)，对应第2、10节
   bool is_backward_succeeded = false;
   while (meta.mu < max_mu_) {
-    is_backward_succeeded = BackwardIteration(problem, x_trajectory, u_trajectory, action_limit, &meta);
-    if (is_backward_succeeded) { meta.is_backward_succeeded = true; break; }
+    is_backward_succeeded = BackwardIteration(
+        problem, x_trajectory, u_trajectory, action_limit, &meta);
+    if (is_backward_succeeded) {
+      meta.is_backward_succeeded = true;
+      break;
+    }
     IncreaseRegularization(&meta);  // 方向求解失败，加大正则化 mu 再试
   }
 
@@ -278,18 +286,24 @@ for (; iter < max_num_iter_; ++iter) {
     break;
   }
 
-  // ② Forward Pass + 回溯线搜索：在①算出的方向上，找一个合适的步长 alpha，对应第6、11节
+  // ② Forward Pass + 回溯线搜索：在①算出的方向上，找一个合适的步长 alpha
   bool is_forward_succeeded = false;
   if (is_backward_succeeded) {
     for (double alpha : alpha_values_) {
-      ...
+      meta.alpha = alpha;
+      // 用当前 alpha 做 Forward Pass，滚动出候选轨迹
       ForwardIteration(problem, meta, x_trajectory, u_trajectory, action_limit,
                        &x_trajectory_updated, &u_trajectory_updated);
-      cost_updated = ComputeCost(...);
-      meta.cost_improvement = cost_history.back() - cost_updated;
-      meta.expected_cost_improvement = -meta.alpha * (meta.dV[0] + meta.alpha * meta.dV[1]);
-      // 计算"实际下降/预期下降"的比值，判断这个 alpha 是否可接受（第11节详解）
-      ...
+      // 计算候选轨迹的真实总代价
+      double cost_updated = ComputeCost(problem, x_trajectory_updated, u_trajectory_updated);
+      meta.cost_improvement = cost_history.back() - cost_updated;               // 实际下降量
+      meta.expected_cost_improvement = -meta.alpha * (meta.dV[0] + meta.alpha * meta.dV[1]); // 预期下降量
+      // 计算"实际下降/预期下降"的比值（即 Armijo 充分下降条件的比值化实现）
+      if (meta.expected_cost_improvement > min_expect_cost_improvement_threshold_) {
+        meta.cost_improvement_ratio = meta.cost_improvement / meta.expected_cost_improvement;
+      } else {
+        meta.cost_improvement_ratio = (meta.cost_improvement > 0) ? 1.0 : -1.0;  // 预期下降量太小时的兜底
+      }
       if (meta.cost_improvement_ratio > line_search_min_cost_improvement_ratio_) {
         is_forward_succeeded = true;
         break;   // 找到合适的 alpha，接受这次更新
@@ -301,7 +315,7 @@ for (; iter < max_num_iter_; ++iter) {
   if (is_forward_succeeded) {
     x_trajectory = std::move(x_trajectory_updated);
     u_trajectory = std::move(u_trajectory_updated);
-    ...
+    cost_history.push_back(ComputeCost(problem, x_trajectory, u_trajectory));  // 记录新代价
     ReduceRegularization(&meta);   // 成功了，放松一点正则化，下次更接近牛顿法
   } else {
     IncreaseRegularization(&meta); // 失败了，加大正则化，下次方向更保守
@@ -316,17 +330,46 @@ for (; iter < max_num_iter_; ++iter) {
 
 ## 10. 逐段代码对应：Backward Pass 里的下降方向从哪来
 
-对应第 2 节的"方向选择"。`BackwardIteration` 函数（对应姊妹文档里的 Backward Pass）算出来的 $(k_i, K_i)$，就是这一轮的"下降方向"：
+对应第 2 节的"方向选择"。`BackwardIteration` 函数（实现的正是 Backward Pass 这一步）算出来的 $(k_i, K_i)$，就是这一轮的"下降方向"：
 
-```286:344:modules/planning/common/math/solver/solver.h
+```cpp
+// Backward Pass：从最后一个时间步往前递推，计算每一步的下降方向 (前馈项 d_k, 反馈增益 K_k)
+// 变量说明：num_steps = 轨迹步数 N；V_xx = 下一时刻价值函数的 Hessian 近似（P_{k+1}）
+//           l_x, l_u = 当前步代价的梯度；l_xx, l_uu, l_ux = 当前步代价的 Hessian 分块
+//           f_x = 动力学雅可比 A_k, f_u = 动力学雅可比 B_k
+//           MatUU = 控制维度×控制维度的矩阵类型（这里 U=1，所以是 1×1）
 for (int i = num_steps - 1; i >= 0; --i) {
-  ...
-  MatUU Q_uu_reg = l_uu + f_u.transpose() * V_xx * f_u + meta->mu * MatUU::Identity();
-  // 求解 Q_uu_reg * du = -Q_u，即牛顿方向
-  ...
-  meta->k_trajectory[i] = -Q_uu_reg_inv * Q_u;     // 前馈项 d_k（对应姊妹文档8.3节）
-  meta->K_trajectory[i] = -Q_uu_reg_inv * Q_ux;    // 反馈增益 K_k
-  ...
+  // 从下一步的价值函数 V_{k+1} 和当前步的代价展开，计算 Q-function 的各个分块
+  VecU Q_u  = l_u + f_u.transpose() * V_x;              // Q_u = ℓ_u + B^T p'
+  VecX Q_x  = l_x + f_x.transpose() * V_x;              // Q_x = ℓ_x + A^T p'
+  MatXU Q_ux = l_ux + f_u.transpose() * V_xx * f_x;     // Q_ux = ℓ_ux + B^T P' A
+  MatUU Q_uu = l_uu + f_u.transpose() * V_xx * f_u;     // Q_uu = ℓ_uu + B^T P' B
+  MatXX Q_xx = l_xx + f_x.transpose() * V_xx * f_x;     // Q_xx = ℓ_xx + A^T P' A
+
+  // 在 Q_uu 上加正则化 mu*I，保证矩阵正定可逆（这就是第8.2节说的"控制条件数"）
+  MatUU Q_uu_reg = Q_uu + meta->mu * MatUU::Identity();
+
+  // 尝试 Cholesky 分解求逆（如果失败说明 Q_uu_reg 不正定，需要更大 mu）
+  Eigen::LLT<MatUU> llt_of_Q_uu_reg(Q_uu_reg);
+  if (llt_of_Q_uu_reg.info() == Eigen::NumericalIssue) {
+    return false;  // 分解失败，外层会加大 mu 再试
+  }
+  MatUU Q_uu_reg_inv = MatUU(llt_of_Q_uu_reg.solve(MatUU::Identity()));
+
+  // 求解前馈项 d_k 和反馈增益 K_k（即 p_k = -B_k^{-1} ∇f_k 的分解形式）
+  meta->k_trajectory[i] = -Q_uu_reg_inv * Q_u;     // 前馈项 d_k = -(Q_uu+ρI)^{-1} Q_u
+  meta->K_trajectory[i] = -Q_uu_reg_inv * Q_ux;    // 反馈增益 K_k = -(Q_uu+ρI)^{-1} Q_ux
+
+  // 递推更新价值函数近似，供下一步（i-1）使用
+  V_x = Q_x + meta->K_trajectory[i].transpose() * Q_uu * meta->k_trajectory[i]
+            + meta->K_trajectory[i].transpose() * Q_u + Q_ux.transpose() * meta->k_trajectory[i];
+  V_xx = Q_xx + meta->K_trajectory[i].transpose() * Q_uu * meta->K_trajectory[i]
+              + meta->K_trajectory[i].transpose() * Q_ux
+              + Q_ux.transpose() * meta->K_trajectory[i];
+
+  // 记录预期代价下降量 ΔV(α) 的系数（供线搜索时计算 expected_cost_improvement）
+  meta->dV[0] += meta->k_trajectory[i].transpose() * Q_u;                 // 一阶项 ∑α d_k^T Q_u
+  meta->dV[1] += 0.5 * meta->k_trajectory[i].transpose() * Q_uu * meta->k_trajectory[i];  // 二阶项
 }
 ```
 
@@ -342,7 +385,7 @@ for (int i = num_steps - 1; i >= 0; --i) {
 
 对应第 6 节"回溯法"。先看预先算好的候选步长表：
 
-```97:108:modules/planning/common/math/solver/solver.h
+```cpp
 // Values computed by "np.power(10,np.linspace(0,-3,11))"
 std::vector<double> alpha_values_{1.,
                                   0.50118723,
@@ -361,35 +404,63 @@ std::vector<double> alpha_values_{1.,
 
 ### 11.1 Forward Pass：给定 $\alpha$，滚动出候选轨迹
 
-```239:262:modules/planning/common/math/solver/solver.h
-void Solver<X, U, Problem>::ForwardIteration(...) const {
-  ...
+```cpp
+// Forward Pass：给定步长 alpha 和 Backward Pass 算出的 (d_k, K_k)，正向滚动出候选轨迹
+// 变量说明：x_trajectory, u_trajectory = 旧轨迹（参考线）
+//           context.alpha = 当前尝试的步长因子
+//           context.k_trajectory[i] = 第 i 步的前馈修正 d_k
+//           context.K_trajectory[i] = 第 i 步的反馈增益 K_k
+void ForwardIteration(const Problem& problem, const IterationMeta& context,
+                      const Trajectory& x_trajectory, const Trajectory& u_trajectory,
+                      const ActionLimit& action_limit,
+                      Trajectory* x_trajectory_updated,
+                      Trajectory* u_trajectory_updated) const {
+  (*x_trajectory_updated)[0] = x_trajectory[0];  // 起点状态固定不变
+  const int num_steps = u_trajectory.size();
   for (int i = 0; i < num_steps; ++i) {
+    // 更新公式：ū_k = u_k + K_k(x̄_k - x_k) + α * d_k
+    //   其中 K_k(x̄_k - x_k) 是反馈项（根据实际状态偏差实时修正），α * d_k 是前馈项（步长缩放的固定修正）
     (*u_trajectory_updated)[i] =
         u_trajectory[i] + context.alpha * context.k_trajectory[i] +
         context.K_trajectory[i] * ((*x_trajectory_updated)[i] - x_trajectory[i]);
-    ...
+    // 控制量截断（物理限制，比如方向盘最大转速）
+    (*u_trajectory_updated)[i] = ClampControl((*u_trajectory_updated)[i], action_limit);
+    // 用真实非线性动力学模型正推到下一步状态（不使用线性近似，保证动力学约束严格满足）
     (*x_trajectory_updated)[i + 1] =
         problem.dynamic_model(i).Evaluate((*x_trajectory_updated)[i], (*u_trajectory_updated)[i]);
   }
 }
 ```
 
-这正是姊妹文档 9.2 节的公式 $\bar u_k = u_k + K_k(\bar x_k-x_k) + \alpha d_k$（这里 `k_trajectory` 就是 $d_k$，`K_trajectory` 就是 $K_k$）——**$\alpha$ 只缩放前馈项 $d_k$，不缩放反馈项**，这是标准 iLQR 线搜索的做法（反馈项负责实时修正状态偏差，不需要也不应该被步长衰减）。
+这正是更新公式 $\bar u_k = u_k + K_k(\bar x_k-x_k) + \alpha d_k$ 的具体实现（这里 `k_trajectory` 就是 $d_k$，`K_trajectory` 就是 $K_k$）——**$\alpha$ 只缩放前馈项 $d_k$，不缩放反馈项**，这是标准 iLQR 线搜索的做法（反馈项负责实时修正状态偏差，不需要也不应该被步长衰减）。
 
 ### 11.2 判断这个 $\alpha$ 是否可接受：本质是 Armijo 条件的变体
 
-```713:751:modules/planning/common/math/solver/solver.h
+```cpp
+// 回溯线搜索：遍历候选步长表 alpha_values_，第一个满足 Armijo 充分下降条件的 alpha 就采用
+// 变量说明：alpha_values_ = 预计算步长表 [1.0, 0.501, 0.251, 0.126, 0.063, 0.031, 0.016, 0.008, 0.004, 0.001]
+//           meta.dV[0], meta.dV[1] = Backward Pass 算出的预期下降量系数
+//           line_search_min_cost_improvement_ratio_ = Armijo 阈值（对应 c_1 的角色）
+bool is_forward_succeeded = false;
 for (double alpha : alpha_values_) {
-  ...
   meta.alpha = alpha;
-  ForwardIteration(...);           // 用当前 alpha 滚动出候选轨迹
-  cost_updated = ComputeCost(...); // 算出候选轨迹的真实代价 f(x_k+alpha*p_k)
-  meta.cost_improvement = cost_history.back() - cost_updated;               // 实际下降量
-  meta.expected_cost_improvement = -meta.alpha * (meta.dV[0] + meta.alpha * meta.dV[1]); // 预期下降量
+  // 用当前 alpha 做 Forward Pass，滚动出候选轨迹
+  ForwardIteration(problem, meta, x_trajectory, u_trajectory, action_limit,
+                   &x_trajectory_updated, &u_trajectory_updated);
+  // 计算候选轨迹的真实总代价
+  double cost_updated = ComputeCost(problem, x_trajectory_updated, u_trajectory_updated);
+  // 实际下降量 = 旧代价 - 新代价
+  meta.cost_improvement = cost_history.back() - cost_updated;
+  // 预期下降量 = -ΔV(α) = -α * (dV[0] + α * dV[1])
+  //   其中 dV[0] = ∑ d_k^T Q_u（一阶项），dV[1] = ½∑ d_k^T Q_uu d_k（二阶项）
+  meta.expected_cost_improvement = -meta.alpha * (meta.dV[0] + meta.alpha * meta.dV[1]);
+  // 计算"实际下降/预期下降"的比值（Armijo 充分下降条件的比值化实现）
   if (meta.expected_cost_improvement > min_expect_cost_improvement_threshold_) {
     meta.cost_improvement_ratio = meta.cost_improvement / meta.expected_cost_improvement;
-  } else ...
+  } else {
+    // 预期下降量太小（接近 0）时直接看实际下降是否为正
+    meta.cost_improvement_ratio = (meta.cost_improvement > 0) ? 1.0 : -1.0;
+  }
   if (meta.cost_improvement_ratio > line_search_min_cost_improvement_ratio_) {
     is_forward_succeeded = true;
     break;   // 接受这个 alpha
@@ -404,7 +475,7 @@ for (double alpha : alpha_values_) {
 | `cost_history.back()` | $f(x_k)$，走这一步之前的代价 |
 | `cost_updated` | $f(x_k+\alpha p_k)$，走这一步之后的代价 |
 | `meta.cost_improvement` | 实际下降量 $f(x_k) - f(x_k+\alpha p_k)$ |
-| `meta.dV[0] + alpha*meta.dV[1]` | 由 Backward Pass 预测出的、该步长下"理论上应该下降多少"（对应姊妹文档 9.2 节 $\Delta V(\alpha)=\sum\alpha d_k^TQ_u+\frac12\alpha^2d_k^TQ_{uu}d_k$） |
+| `meta.dV[0] + alpha*meta.dV[1]` | 由 Backward Pass 预测出的、该步长下"理论上应该下降多少"（对应公式 $\Delta V(\alpha)=\sum\alpha d_k^TQ_u+\frac12\alpha^2d_k^TQ_{uu}d_k$） |
 | `meta.expected_cost_improvement` | 预期下降量 $-\Delta V(\alpha)$ |
 | `meta.cost_improvement_ratio` | 就是学城 AL-iLQR 文档里的 $z=\dfrac{\text{实际下降}}{\text{预期下降}}$（本质上是 Wolfe/Armijo 条件的"比值"版本：既要求下降（分子>0），也隐含约束下降不能偏离预期太多） |
 | `line_search_min_cost_improvement_ratio_` | 判定阈值，$z$ 超过它才接受这个 $\alpha$（对应 Armijo 条件里的常数 $c_1$ 扮演的角色——"至少要下降到预期的多少比例才算数"） |
@@ -419,7 +490,7 @@ for (double alpha : alpha_values_) {
 
 ## 12. 逐段代码对应：正则化 mu 如何充当"信赖域"
 
-```351:364:modules/planning/common/math/solver/solver.h
+```cpp
 template <int X, int U, typename Problem>
 void Solver<X, U, Problem>::IncreaseRegularization(IterationMeta* meta) const {
   meta->delta_mu = std::max(delta_mu_factor_, meta->delta_mu * delta_mu_factor_);
@@ -462,7 +533,7 @@ void Solver<X, U, Problem>::ReduceRegularization(IterationMeta* meta) const {
   │
   ├─② Forward Pass + 回溯线搜索（选步长，第11节）
   │    │
-  │    └─ 遍历 alpha_values_ = [1, 0.5, 0.25, ..., 0.001]
+  │    └─ 遍历 alpha_values_ = [1, 0.5, 0.25, 0.125, 0.0625, 0.031, 0.016, 0.008, 0.004, 0.001]
   │         ├─ 用当前 alpha 做 ForwardIteration，得到候选轨迹
   │         ├─ 计算 cost_improvement_ratio = 实际下降/预期下降
   │         ├─ 满足阈值 → 接受这个 alpha，break（对应 Armijo 条件）
@@ -489,7 +560,7 @@ void Solver<X, U, Problem>::ReduceRegularization(IterationMeta* meta) const {
 
 **Q3：如果 `alpha_values_` 里所有步长都不满足条件，会发生什么？**
 
-对应代码里 `is_forward_succeeded` 保持 `false`，回到主循环会执行 `IncreaseRegularization`，把 `mu` 调大后回到 Backward Pass 重新计算一个更保守的方向，再重新做一遍线搜索。如果 `mu` 最终超过了 `max_mu_` 还是不行，则认为这个问题在当前设置下"无法进一步优化"，`solution.is_solved = false`，求解失败，上层代码（`ClothoidPathOptimizer`）会走 Fallback 逻辑（复用上一帧路径等，详见姊妹文档第 14 节）。
+对应实现里 `is_forward_succeeded` 保持 `false`，回到主循环会执行 `IncreaseRegularization`，把 `mu` 调大后回到 Backward Pass 重新计算一个更保守的方向，再重新做一遍线搜索。如果 `mu` 最终超过了 `max_mu_` 还是不行，则认为这个问题在当前设置下"无法进一步优化"，`solution.is_solved = false`，求解失败，上层调用方通常会走 Fallback 逻辑（例如复用上一帧路径等）。
 
 **Q4：`min_alpha_` 这个配置项是干什么的？**
 
@@ -524,6 +595,6 @@ void Solver<X, U, Problem>::ReduceRegularization(IterationMeta* meta) const {
 ## 建议学习路径
 
 1. 先读第 1~8 节，把"方向"和"步长"这两个独立的概念、以及 Wolfe 条件的三种变体理解清楚（不用死记公式，记住"为什么需要它"）。
-2. 再读第 9~13 节，对照 `solver.h` 源码，把每一行代码和前面的理论概念连起来看。
-3. 最后建议实际调试一次 `ClothoidPathOptimizer`，把 `verbose_level` 调高，观察日志里打印的 `alpha`、`cost_improvement_ratio`、`mu` 等字段是如何随迭代变化的，会对"正则化收紧/放松、线搜索接受/拒绝"这套机制有更直观的体感。
-4. 如果还想深入，可以结合姊妹文档 [`clothoid_path_optimizer_learning_notes.md`](./clothoid_path_optimizer_learning_notes.md) 的第 8、9 节，理解 Backward Pass 里 $Q_{uu}, Q_{ux}, Q_u$ 是怎么算出来的，从而更完整地打通"从约束、代价函数，到方向、步长，再到最终路径"的全链路。
+2. 再读第 9~13 节，把每一段实现逻辑和前面的理论概念连起来看，理解"选方向 → 选步长 → 调整正则化"这一整套迭代机制。
+3. 结合第 13 节的完整迭代流程图，在脑海中模拟一遍 `alpha`、`cost_improvement_ratio`、`mu` 等关键量在迭代过程中是如何变化的，会对"正则化收紧/放松、线搜索接受/拒绝"这套机制有更直观的体感。
+4. 如果还想深入，可以结合第 2 部分"下降方向"的推导，理解 Backward Pass 里 $Q_{uu}, Q_{ux}, Q_u$ 是怎么算出来的，从而更完整地打通"从约束、代价函数，到方向、步长，再到最终路径"的全链路。

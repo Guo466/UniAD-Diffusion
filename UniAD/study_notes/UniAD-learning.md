@@ -8,6 +8,28 @@
 
 ---
 
+> ## ⚠️ 预习提示（如果你觉得某些公式/概念看不懂，请先补这些前置知识）
+>
+> 本文档默认你已经具备以下知识。如果你在阅读过程中发现某个概念"好像在哪见过但说不清
+> 到底是什么"，说明前置知识还有缺口，请先去读对应的基础文档再回来：
+>
+> | 本文中的概念 | 你需要的前置知识 | 去哪补 |
+> |---|---|---|
+> | softmax、线性变换 $W^Q/W^K/W^V$ | Self-Attention 的 Q/K/V 机制 | `03_FOUNDATIONS_TRANSFORMER.md` 第 2 节 |
+> | Deformable Attention 公式 | 标准 Attention → Deformable 变体 | 同上第 7 节 |
+> | `nn.Embedding`、BEV Query | DETR 的 Object Query 思想 | 同上第 6 节 |
+> | 残差连接 Add & Norm | Transformer 的 Encoder/Decoder 结构 | 同上第 4 节 |
+> | MSE / L2 损失、$\mathbb{E}[\cdot]$ | 损失函数与期望的直觉含义 | `01_FOUNDATIONS_DL_BASICS.md` 第 2-3 节 + `02_FOUNDATIONS_CNN_AND_PROB.md` 第 2.3 节 |
+> | 高斯分布 $\mathcal N(\mu, \sigma^2)$、NLL 损失 | 高斯分布与最大似然 | `02_FOUNDATIONS_CNN_AND_PROB.md` 第 2.2-2.4 节 |
+> | 卷积、特征图、下采样 | CNN 的基本操作 | 同上第 1 节 |
+> | BEV、端到端、3D 检测 | 自动驾驶领域背景 | `04_FOUNDATIONS_AUTONOMOUS_DRIVING.md` |
+> | grad_norm、梯度裁剪、学习率 | 训练稳定性与优化器 | `01_FOUNDATIONS_DL_BASICS.md` 第 3-5 节 |
+>
+> **建议阅读顺序**：先完成 `01~04` 四份基础文档的学习和自检，
+> 再回来精读本文。你会发现之前"卡住"的地方现在都能顺畅读下去了。
+
+---
+
 ## 目录
 
 1. [整体设计哲学：Planning-oriented](#1-整体设计哲学planning-oriented)

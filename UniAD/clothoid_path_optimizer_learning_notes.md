@@ -1,7 +1,7 @@
 # ClothoidPathOptimizer 从零学起：公式推导 + 代码对应 + 逻辑流程
 
 > 参考资料：[《AL-iLQR》学城文档](https://km.sankuai.com/collabpage/2778214068)
-> 对应代码：`modules/planning/path/clothoid_path_optimizer/`
+> 对应模块：ClothoidPathOptimizer 模块
 >
 > 本文假设你是**完全零基础**的小白：不知道什么是轨迹优化，没学过最优控制，甚至连"状态""控制量"这些词都觉得陌生。我们会从最直觉的例子开始，一步步搭到能看懂代码的程度。
 
@@ -19,9 +19,9 @@
 8. [非线性怎么办：iLQR（迭代 LQR）](#8-非线性怎么办ilqr迭代-lqr)
 9. [AL + iLQR 合体：Backward Pass / Forward Pass](#9-al--ilqr-合体backward-pass--forward-pass)
 10. [代码总览：一次 `ComputePath` 调用做了什么](#10-代码总览一次computepath调用做了什么)
-11. [逐个文件对应：state/control/dynamics](#11-逐个文件对应statecontroldynamics)
-12. [逐个文件对应：约束（constraints）](#12-逐个文件对应约束constraints)
-13. [逐个文件对应：代价函数（cost_functions & utils）](#13-逐个文件对应代价函数cost_functions--utils)
+11. [逐模块对应：state/control/dynamics](#11-逐模块对应statecontroldynamics)
+12. [逐模块对应：约束（constraints）](#12-逐模块对应约束constraints)
+13. [逐模块对应：代价函数（cost_functions & utils）](#13-逐模块对应代价函数cost_functions--utils)
 14. [从"猜一条初始路径"到"求解"的全流程](#14-从猜一条初始路径到求解的全流程)
 15. [常见疑问 FAQ](#15-常见疑问-faq)
 
@@ -83,9 +83,9 @@ $$
 
 ### 3.2 Clothoid 路径的状态空间模型
 
-对应代码 `clothoid_path_optimizer_common.h`：
+对应代码（状态/控制索引定义模块）：
 
-```19:31:modules/planning/path/clothoid_path_optimizer/clothoid_path_optimizer_common.h
+```cpp
 struct ClothoidPathStateIndex {
   static constexpr int kX = 0;
   static constexpr int kY = 1;
@@ -135,9 +135,9 @@ $$
 - **曲率变化率 = $\dot\kappa$**（定义）。
 - **$\dot\kappa$ 的变化率 = 控制量 $u$**（我们主动控制的就是这个"曲率加速度"）。
 
-这几乎是逐字对应到代码 `clothoid_path_dynamic.cc` 的 `Evaluate` 函数：
+这几乎是逐字对应到动力学模型模块的 `Evaluate` 函数：
 
-```11:19:modules/planning/path/clothoid_path_optimizer/clothoid_path_dynamic.cc
+```cpp
 ClothoidPathDynamic::VecX ClothoidPathDynamic::Evaluate(const VecX& x, const VecU& u) const {
   VecX x_dot;
   x_dot(ClothoidPathStateIndex::kX) = math::Cos(x(ClothoidPathStateIndex::kTheta));
@@ -166,9 +166,9 @@ $$
 A = \frac{\partial f}{\partial x}, \quad B = \frac{\partial f}{\partial u}
 $$
 
-对应代码：
+对应代码（动力学模型模块的 `EvaluateJacobians` 函数）：
 
-```21:33:modules/planning/path/clothoid_path_optimizer/clothoid_path_dynamic.cc
+```cpp
 ClothoidPathDynamic::Jacobians ClothoidPathDynamic::EvaluateJacobians(const VecX& x,
                                                                       const VecU& u) const {
   Jacobians jacobians = Jacobians::Zero();
@@ -218,9 +218,9 @@ $$
 
 这里的 $f_d$ 就是"从 $x_k$ 出发，沿着动力学方程 $f$ 走一小步 $\Delta s$ 后到达的状态"，具体走法用**数值积分**（比如四阶龙格库塔 RK4）来近似求解这一小段的微分方程。
 
-对应代码里：
+对应代码（主优化器类的 `GetDynamicModelAtSample` 函数）：
 
-```536:547:modules/planning/path/clothoid_path_optimizer/clothoid_path_optimizer.cc
+```cpp
 std::unique_ptr<
     DynamicModel<ClothoidPathOptimizer::kNumStates, ClothoidPathOptimizer::kNumControls>>
 ClothoidPathOptimizer::GetDynamicModelAtSample(int index) const {
@@ -280,7 +280,7 @@ $$
 - **动力学约束**：必须严格满足，因为这是"物理规律"（车不可能瞬移）。
 - **不等式约束** $g_k \le 0$：曲率限制、方向盘转速限制、车道边界、避障等。
 
-在代码里，这些约束和代价分别对应 `constraints/` 和 `cost_functions/` 文件夹下的类，之后第 12、13 节详细讲。
+在代码里，这些约束和代价分别对应约束模块和代价函数模块下的类，之后第 12、13 节详细讲。
 
 求解这个问题的核心算法是 **AL-iLQR**（增强拉格朗日 + 迭代LQR），下面几节专门讲它。
 
@@ -335,27 +335,34 @@ $$
 4. **检查是否收敛**（约束违反程度是否小于容忍值）。
 5. 没收敛就回到第 1 步。
 
-这就是为什么代码里 `ALSolver::Solve` 会有一个 `for (int iter = 0; iter < config_.max_outer_iterations; ++iter)` 的外层循环——这正是上面 1~5 步的循环：
+这个"外层循环"用示意代码表达就是这样（变量含义：`lambda` 是拉格朗日乘子数组，`mu` 是罚因子数组，`x, u` 是当前轨迹，`max_outer_iterations` 是外层最多迭代次数，`constraint_tolerance` 是约束违反的容忍阈值）：
 
-```156:205:modules/planning/common/math/solver/augmented_lagrangian/al_solver.h
-ALSolver<X, U, C1, C2>::Solve(
-    const ConstrainedProblem<X, U, C1, C2>& constrained_problem) const {
-  ALProblem problem(constrained_problem);
-  ResetDuals(&problem);      // 初始化 lambda
-  ResetPenalties(&problem);  // 初始化 mu
-  ...
-  for (int iter = 0; iter < config_.max_outer_iterations; ++iter) {
-    const IlqrSolution inner_solution = ilqr_solver_.Solve(problem, ...);  // 第1步：内层iLQR求解
-    UpdateStatus(problem, inner_solution, solve_start_time, &status);
-    const State state = CheckTerminationCondition(status);   // 第4步：检查收敛
-    ...
-    if (state != State::kUnsolved) {
-      return Solution{...};   // 收敛了，返回结果
+```cpp
+// 增强拉格朗日外层求解：反复"求解 + 更新乘子/罚因子"直到约束被满足
+Solution ALSolver::Solve(const Problem& problem) const {
+  std::vector<double> lambda = InitDuals(problem);      // 第0步：lambda 全部初始化为 0
+  std::vector<double> mu = InitPenalties(problem);      // 第0步：mu 初始化为一个较小的正数
+
+  Trajectory x, u = InitialGuess(problem);              // 初始猜测轨迹
+
+  for (int iter = 0; iter < max_outer_iterations; ++iter) {
+    // 第1步：固定 lambda, mu，用 iLQR 内层求解一条使增强拉格朗日代价最小的轨迹
+    IlqrResult inner_result = SolveInnerIlqr(problem, lambda, mu, x, u);
+    x = inner_result.x_trajectory;
+    u = inner_result.u_trajectory;
+
+    // 第4步：检查约束是否已被满足
+    double max_violation = ComputeMaxConstraintViolation(problem, x, u);
+    if (max_violation < constraint_tolerance) {
+      return Solution{x, u, /*is_solved=*/true};        // 收敛，返回结果
     }
-    UpdateDuals(inner_solution, &problem);     // 第2步：更新 lambda
-    UpdatePenalties(&problem);                 // 第3步：更新 mu
-    ...
+
+    // 第2步：更新乘子 lambda（第 6.3 节公式）
+    UpdateDuals(problem, x, u, mu, &lambda);
+    // 第3步：更新罚因子 mu（乘以放大系数 phi）
+    for (double& mu_i : mu) { mu_i *= penalty_scaling_factor; }
   }
+  return Solution{x, u, /*is_solved=*/false};           // 超过最大迭代次数仍未收敛
 }
 ```
 
@@ -556,44 +563,43 @@ AL 外层循环（更新 λ, μ）
 
 ---
 
-## 10. 代码总览：一次 `ComputePath` 调用做了什么
+## 10. 代码总览：路径规划的整体入口做了什么
 
-现在有了理论基础，我们来看 `clothoid_path_optimizer.cc` 里最核心的入口函数 `ComputePathCurve`，按顺序梳理它做的事情（对应第 5 节讲的"问题构造 → 求解"两大步骤）：
+现在有了理论基础，来看整体求解入口的示意实现，按顺序梳理它做的事情（对应第 5 节讲的"问题构造 → 求解"两大步骤）：
 
-```109:222:modules/planning/path/clothoid_path_optimizer/clothoid_path_optimizer.cc
-base::Optional<math::Curve2d> ClothoidPathOptimizer::ComputePathCurve(...) const {
-  ...
+```cpp
+// 路径求解总入口：把现实世界的路况信息，一步步翻译成 AL-iLQR 能求解的数学问题，再解出来
+Curve2d ComputePathCurve(const RoadInfo& road_info, const VehicleState& vehicle_state) {
   // ① 生成 s 采样点（哪些弧长位置需要考虑车道边界/避障约束）
-  const std::vector<double> restriction_and_repulsiton_s_samples =
-      GenerateRestrictionAndRepulsionSSample();
+  std::vector<double> s_samples = GenerateSSamples(road_info);
 
-  // ② 根据车道边界、避障需求、box collision 生成对应的代价/约束参数
-  GenerateRestrictionAndRepulsionCostParams(...);
+  // ② 根据车道边界、避障需求，在这些采样点上生成对应的代价/约束参数
+  RestrictionParams restriction_params = GenerateRestrictionParams(road_info, s_samples);
 
-  // ③ 生成引导线 guide_line（大致想让路径贴近的曲线）
-  const std::vector<Eigen::Vector2d> guide_line = ...;
+  // ③ 生成引导线 guide_line（大致想让路径贴近的曲线，没有专门指定时取车道中心线）
+  std::vector<Point2d> guide_line = GenerateGuideLine(road_info);
 
-  // ④ 生成初始猜测路径（warm start，见第14节）
-  *initial_path_set = GenerateInitialPaths(&reference_path);
+  // ④ 生成初始猜测路径（warm start，见第14节），得到满足动力学约束的初始 (x, u) 轨迹
+  ClothoidPath initial_path = GenerateInitialPaths(vehicle_state, guide_line, s_samples);
 
-  // ⑤（可选）先解一个简化的"可行性"问题，保证初始猜测满足运动学约束
-  if (config_->enable_two_stage_solve()) {
-    const Solver::Solution feasible_solution = GenerateFeasiblePath(...);
-    ...
+  // ⑤（可选）先解一个简化的"可行性"问题，把初始猜测调整到更贴近可行域的位置
+  if (enable_two_stage_solve) {
+    initial_path = GenerateFeasiblePath(initial_path, restriction_params);
   }
 
-  // ⑥ 生成完整的约束集合和代价函数集合
-  ConstraintAndCostSet constraint_and_cost_set = GenerateConstraintsAndCosts(...);
+  // ⑥ 生成完整的约束集合和代价函数集合（每个采样点一组）
+  ConstraintAndCostSet constraint_and_cost_set =
+      GenerateConstraintsAndCosts(restriction_params, guide_line, road_info);
 
-  // ⑦ 组装成 AL 求解器能识别的 PathProblem
-  const PathProblem path_problem = ConstructPathProblem(*initial_path_set, &constraint_and_cost_set);
+  // ⑦ 组装成 AL 求解器能识别的问题描述
+  PathProblem path_problem = ConstructPathProblem(initial_path, constraint_and_cost_set);
 
   // ⑧ 调用 AL-iLQR 求解器求解（就是第6~9节讲的算法！）
-  const Solver solver(al_solver_config_, ilqr_solver_config_);
-  const Solver::Solution solution = solver.Solve(path_problem);
+  ALSolver solver(al_solver_config, ilqr_solver_config);
+  Solution solution = solver.Solve(path_problem);
 
   // ⑨ 把解出来的离散状态轨迹转换回连续曲线
-  return ConvertToCurve(solution.ilqr_solution.x_trajectory);
+  return ConvertToCurve(solution.x_trajectory);
 }
 ```
 
@@ -601,23 +607,20 @@ base::Optional<math::Curve2d> ClothoidPathOptimizer::ComputePathCurve(...) const
 
 ---
 
-## 11. 逐个文件对应：state/control/dynamics
+## 11. 逐模块对应：state/control/dynamics
 
-| 文件 | 数学对应 | 作用 |
+| 模块 | 数学对应 | 作用 |
 |---|---|---|
-| `clothoid_path_optimizer_common.h` | 定义 $x=(x,y,\theta,\kappa,\dot\kappa)$，$u=(\ddot\kappa)$ 的下标 | 状态/控制向量的"字典"，其他所有文件都靠这几个下标去存取状态里的哪个分量 |
-| `clothoid_path_dynamic.h/.cc` | $\dot x=f(x,u)$ 及其雅可比 $A,B$（第 3 节） | 描述车辆沿弧长演化的物理规律，供 iLQR 的 Backward Pass 用来算 $Q_{xx},Q_{uu}$ 等 |
-| `clothoid_path_optimizer.h/.cc` | 整体优化问题的构造与求解（第 5、10 节） | "总指挥"：把约束、代价拼起来，调用求解器，转换结果 |
+| 状态/控制索引定义（即前面的 `ClothoidPathStateIndex` / `ClothoidPathControlIndex`） | 定义 $x=(x,y,\theta,\kappa,\dot\kappa)$，$u=(\ddot\kappa)$ 的下标 | 状态/控制向量的"字典"，其他所有模块都靠这几个下标去存取状态里的哪个分量 |
+| 动力学模型（即前面的 `ClothoidPathDynamic`） | $\dot x=f(x,u)$ 及其雅可比 $A,B$（第 3 节） | 描述车辆沿弧长演化的物理规律，供 iLQR 的 Backward Pass 用来算 $Q_{xx},Q_{uu}$ 等 |
+| 整体求解入口（即第 10 节的 `ComputePathCurve`） | 整体优化问题的构造与求解（第 5、10 节） | "总指挥"：把约束、代价拼起来，调用求解器，转换结果 |
 
-`ClothoidPath` 结构体（在 `clothoid_path_optimizer_common.h` 里）：
+轨迹本身用一个简单结构体表示就够了（`Vector5d` 是 5 维状态向量类型，`Vector1d` 是 1 维控制量类型）：
 
-```38:45:modules/planning/path/clothoid_path_optimizer/clothoid_path_optimizer_common.h
+```cpp
 struct ClothoidPath {
-  using VectorOfVecX = ...;
-  using VectorOfVecU = ...;
-
-  VectorOfVecX x_trajectory;   // 对应 x_0, x_1, ..., x_N
-  VectorOfVecU u_trajectory;   // 对应 u_0, u_1, ..., u_{N-1}
+  std::vector<Vector5d> x_trajectory;   // 对应 x_0, x_1, ..., x_N
+  std::vector<Vector1d> u_trajectory;   // 对应 u_0, u_1, ..., u_{N-1}
 };
 ```
 
@@ -625,11 +628,11 @@ struct ClothoidPath {
 
 ---
 
-## 12. 逐个文件对应：约束（constraints）
+## 12. 逐模块对应：约束（constraints）
 
 约束对应第 5 节里的不等式 $g_k(x_k,u_k) \le 0$。**注意所有约束都被写成"$\le 0$"的标准形式**，这是为了让求解器统一处理。
 
-### 12.1 曲率约束 `clothoid_curvature_constraint.cc`
+### 12.1 曲率约束（ClothoidCurvatureConstraint）
 
 数学上：曲率不能超过车辆最大转弯能力 $\kappa_{max}$，即 $-\kappa_{max} \le \kappa \le \kappa_{max}$。
 
@@ -639,7 +642,7 @@ $$
 g_1 = \kappa - \kappa_{max} \le 0, \quad g_2 = -\kappa - \kappa_{max} \le 0
 $$
 
-```10:16:modules/planning/path/clothoid_path_optimizer/constraints/clothoid_curvature_constraint.cc
+```cpp
 ClothoidCurvatureConstraint::VecC ClothoidCurvatureConstraint::Evaluate(const VecX& x,
                                                                         const VecU& u) const {
   VecC c(kDimension);
@@ -651,7 +654,7 @@ ClothoidCurvatureConstraint::VecC ClothoidCurvatureConstraint::Evaluate(const Ve
 
 雅可比也很直白：$\partial g_1/\partial \kappa = 1$，$\partial g_2 /\partial \kappa=-1$，其余偏导都是 0，对应代码里 `jacobians.dcdx(0, kKappa) = 1.0; jacobians.dcdx(1, kKappa) = -1.0;`。
 
-### 12.2 转向速率约束 `clothoid_steering_rate_constraint.cc`
+### 12.2 转向速率约束（ClothoidSteeringRateConstraint）
 
 方向盘转动速度不能太快。根据阿克曼转向几何，前轮转角 $\delta$ 与曲率关系为 $\delta = \arctan(\kappa L)$（$L$ 是轴距 wheel_base）。对时间求导，并把 $ds/dt$ 换成参考车速 $v$，可以得到转向速率：
 
@@ -661,7 +664,7 @@ $$
 
 约束：$-\dot\delta_{max} \le \dot\delta \le \dot\delta_{max}$，同样拆成两条：
 
-```10:19:modules/planning/path/clothoid_path_optimizer/constraints/clothoid_steering_rate_constraint.cc
+```cpp
 ClothoidSteeringRateConstraint::VecC ClothoidSteeringRateConstraint::Evaluate(const VecX& x,
                                                                               const VecU& u) const {
   const double kappa_wheelbase = x(ClothoidPathStateIndex::kKappa) * wheel_base_;
@@ -677,24 +680,24 @@ ClothoidSteeringRateConstraint::VecC ClothoidSteeringRateConstraint::Evaluate(co
 
 对应关系一目了然：`kappa_wheelbase` $=\kappa L$，`steering_rate` $=\dot\delta$，分母 `kappa_wheelbase * kappa_wheelbase + 1.0` $=(\kappa L)^2+1$。雅可比部分是对 $\dot\delta$ 关于 $\kappa$ 和 $\dot\kappa$ 求偏导（用商法则展开），细节不必逐行推，只要理解"这是链式法则+商法则的直接展开"即可。
 
-### 12.3 其他约束/代价生成器（utils 文件夹）
+### 12.3 其他约束/代价生成器
 
-| 文件 | 对应的现实需求 |
+| 生成器 | 对应的现实需求 |
 |---|---|
-| `restriction_constraint_and_cost_generator.*` | 车道边界（不能压出边界之外） |
-| `box_collision_constraint_and_cost_generator.*` | 车身包络盒不能与障碍物边界碰撞 |
-| `obstacle_constraint_and_cost_generator.*` | 具体障碍物（车辆、行人）的避让约束/代价 |
-| `kinematic_constraint_and_cost_generator.*` | 把上面第 12.1、12.2 节的运动学约束和二次代价打包生成 |
+| RestrictionConstraintAndCostGenerator | 车道边界（不能压出边界之外） |
+| BoxCollisionConstraintAndCostGenerator | 车身包络盒不能与障碍物边界碰撞 |
+| ObstacleConstraintAndCostGenerator | 具体障碍物（车辆、行人）的避让约束/代价 |
+| KinematicConstraintAndCostGenerator | 把上面第 12.1、12.2 节的运动学约束和二次代价打包生成 |
 
-这些生成器本质上都是"根据感知/决策的输入，在每个采样点 $k$ 上，实例化一批 `InequalityConstraint`/`CostFunction` 对象"，最终汇总到 `ConstraintAndCostSet` 结构体里（见 `clothoid_path_optimizer_common.h` 55~67 行）。
+这些生成器本质上都是"根据感知/决策的输入，在每个采样点 $k$ 上，实例化一批 `InequalityConstraint`/`CostFunction` 对象"，最终汇总到 `ConstraintAndCostSet` 结构体里（在公共定义模块中定义）。
 
 ---
 
-## 13. 逐个文件对应：代价函数（cost_functions & utils）
+## 13. 逐模块对应：代价函数（cost_functions & utils）
 
 代价函数对应第 5 节的 $\ell_k(x_k,u_k)$，它们不是硬性约束，而是"软性偏好"：不满足也不会直接判失败，但会让总代价变高，求解器会尽量避免。
 
-### 13.1 侧向加速度代价 `clothoid_lateral_acceleration_cost_function.cc`
+### 13.1 侧向加速度代价（ClothoidLateralAccelerationCostFunction）
 
 物理关系：侧向加速度 $a_{lat} = \kappa v^2$（转弯半径越小/车速越快，侧向加速度越大，这就是你坐车过弯时感觉到的"离心力"）。
 
@@ -708,28 +711,36 @@ $$
 \end{cases}
 $$
 
-```12:32:modules/planning/path/clothoid_path_optimizer/cost_functions/clothoid_lateral_acceleration_cost_function.cc
-double ClothoidLateralAccelerationCostFunction::EvaluateCost(...) const {
+```cpp
+// 侧向加速度代价：分段二次罚函数，只在超过舒适阈值时才产生代价
+// 输入：x = 当前状态向量，reference_speed_ = 参考车速，
+//       lateral_acceleration_limit_ = 舒适侧向加速度阈值，
+//       lateral_acceleration_weight_ = 代价权重 w
+double ClothoidLateralAccelerationCostFunction::EvaluateCost(const VecX& x, const VecU& u) const {
   const double kappa = x(ClothoidPathStateIndex::kKappa);
   const double lateral_acceleration = kappa * reference_speed_ * reference_speed_;
   double cost = 0.0;
   if (lateral_acceleration > lateral_acceleration_limit_) {
-    const double delta_lateral_acceleration = lateral_acceleration - lateral_acceleration_limit_;
-    cost = 0.5 * lateral_acceleration_weight_ * delta_lateral_acceleration * delta_lateral_acceleration;
+    // 正向超限：a_lat > +a_lim → 罚 ½w(a_lat - a_lim)²
+    const double delta = lateral_acceleration - lateral_acceleration_limit_;
+    cost = 0.5 * lateral_acceleration_weight_ * delta * delta;
   } else if (lateral_acceleration < -lateral_acceleration_limit_) {
-    ...
+    // 负向超限：a_lat < -a_lim → 罚 ½w(a_lat + a_lim)²
+    const double delta = lateral_acceleration + lateral_acceleration_limit_;
+    cost = 0.5 * lateral_acceleration_weight_ * delta * delta;
   }
-  ...
+  // 否则在舒适范围内，cost = 0（死区，不罚）
+  return cost;
 }
 ```
 
 `EvaluateDerivatives` 函数则是手动算出这个分段二次函数对状态 $x$ 的一阶导（`dfdx`）和二阶导（`d2fdxdx`），这是 iLQR 做二阶展开时必须的信息（第 8.2 节的 $\ell_x,\ell_{xx}$）。因为只有 $\kappa$ 这一维有关，其余分量导数都是 0。
 
-### 13.2 侧向加加速度（Jerk）代价 `clothoid_lateral_jerk_cost_function.cc`
+### 13.2 侧向加加速度（Jerk）代价（ClothoidLateralJerkCostFunction）
 
 原理完全一样，只是把 $\kappa v^2$（加速度）换成 $\dot\kappa v^3$（加加速度，jerk），衡量的是"侧向力变化有多剧烈"，让乘坐体验更平顺。数学结构和 13.1 一模一样，只是作用在状态的 `kDKappa` 分量上而不是 `kKappa`。
 
-### 13.3 引导线代价 `guide_line_cost_generator.cc`
+### 13.3 引导线代价（GuideLineCostGenerator）
 
 对应"路径要贴近参考引导线"这个软约束。核心思路：
 1. 把引导线在起点、终点各自延长一段（`ExtendGuideLine`），避免路径首尾因为找不到最近点而出问题。
@@ -737,29 +748,64 @@ double ClothoidLateralAccelerationCostFunction::EvaluateCost(...) const {
 3. 用"点到折线距离"的平方作为代价（对最后一个点用纯二次代价，中间点用 Huber 代价——即距离较小时是二次代价、距离较大时退化成线性代价，防止个别异常点把梯度带偏，这是鲁棒统计里常见的手法）。
 4. 同时为车辆后轴中心和前保险杠中心各生成一条代价（`is_front` 参数），让车头和车身整体都尽量贴合引导线，而不只是后轴。
 
-```17:73:modules/planning/path/clothoid_path_optimizer/utils/guide_line_cost_generator.cc
-CostFunctionSet GuideLineCostGenerator::GenerateCostFunction(...) const {
-  ...
+```cpp
+// 引导线代价生成：为每个采样点生成"到引导线距离"的代价函数
+// 输入：guide_line = 参考引导线折线，num_path_points = 路径采样点数
+// 输出：cost_function_set[k] = 第 k 个采样点上的代价函数列表
+CostFunctionSet GuideLineCostGenerator::GenerateCostFunction(
+    const Polyline2d& guide_line, int num_path_points) const {
+  CostFunctionSet cost_function_set(num_path_points);
+  // 先延长引导线首尾，避免路径端点找不到最近点
+  Polyline2d extended_guide_line = ExtendGuideLine(guide_line);
+
+  // 从第 1 个点开始（第 0 个点是起点，固定不需要优化）
   for (int i = 1; i < num_path_points; ++i) {
     cost_function_set[i].reserve(2);
-    generate_single_cost_function(i, false);  // 后轴中心 to 引导线
-    generate_single_cost_function(i, true);   // 车头中心 to 引导线
+    // 后轴中心到引导线的距离代价（中间点用 Huber 代价，终点用纯二次代价）
+    generate_single_cost_function(i, /*is_front=*/false);
+    // 车头中心到引导线的距离代价（同样的 Huber/二次结构）
+    generate_single_cost_function(i, /*is_front=*/true);
   }
   return cost_function_set;
 }
 ```
 
-### 13.4 运动学代价打包 `kinematic_constraint_and_cost_generator.cc`
+### 13.4 运动学代价打包（KinematicConstraintAndCostGenerator）
 
-这个文件把第 12.1/12.2 节的**硬约束**（曲率、转向速率不能超限）和第 13.1/13.2 节的**软代价**（超过舒适阈值才罚）、以及一个基础的二次型正则代价（惩罚 $\dot\kappa,\ddot\kappa$ 过大，让路径整体更平滑，对应第 7 节 LQR 里的 $x^TQx+u^TRu$）打包在一起，按采样点位置生成对应的 `ConstraintSet` 和 `CostFunctionSet`：
+这个模块把第 12.1/12.2 节的**硬约束**（曲率、转向速率不能超限）和第 13.1/13.2 节的**软代价**（超过舒适阈值才罚）、以及一个基础的二次型正则代价（惩罚 $\dot\kappa,\ddot\kappa$ 过大，让路径整体更平滑，对应第 7 节 LQR 里的 $x^TQx+u^TRu$）打包在一起，按采样点位置生成对应的 `ConstraintSet` 和 `CostFunctionSet`：
 
-```31:58:modules/planning/path/clothoid_path_optimizer/utils/kinematic_constraint_and_cost_generator.cc
-CostFunctionSet KinematicConstraintAndCostGenerator::GenerateCostFunction(...) const {
-  ...
-  cost_function_set[i].push_back(std::make_unique<ClothoidLateralAccelerationCostFunction>(...));
-  cost_function_set[i].push_back(std::make_unique<ClothoidLateralJerkCostFunction>(...));
-  cost_function_set[i].push_back(std::make_unique<QuadCostType>(x_weight, u_weight, x_target));
-  ...
+```cpp
+// 运动学代价打包生成：把硬约束（曲率/转向速率上限）和软代价（舒适阈值/平滑正则）统一打包
+// 输入：num_path_points = 采样点数，kinematic_params = 运动学参数（kappa_max, steering_rate_max 等）
+// 输出：cost_function_set[k] = 第 k 个采样点上的代价函数列表
+CostFunctionSet KinematicConstraintAndCostGenerator::GenerateCostFunction(
+    int num_path_points, const KinematicParams& kinematic_params) const {
+  CostFunctionSet cost_function_set(num_path_points);
+  // 二次正则代价的权重和目标值（惩罚 dkappa、ddkappa 过大，让路径更平滑）
+  VecX x_weight = VecX::Zero();
+  x_weight(ClothoidPathStateIndex::kDKappa) = kinematic_params.dkappa_weight;
+  VecU u_weight = VecU::Zero();
+  u_weight(ClothoidPathControlIndex::kDdKappa) = kinematic_params.ddkappa_weight;
+  VecX x_target = VecX::Zero();  // 目标是 dkappa=0, 即曲率尽量不变化
+
+  for (int i = 0; i < num_path_points; ++i) {
+    // 侧向加速度软代价（超过舒适阈值才罚，见第13.1节）
+    cost_function_set[i].push_back(
+        std::make_unique<ClothoidLateralAccelerationCostFunction>(
+            kinematic_params.reference_speed,
+            kinematic_params.lateral_acceleration_limit,
+            kinematic_params.lateral_acceleration_weight));
+    // 侧向 Jerk 软代价（和13.1同理，作用于 dkappa 分量）
+    cost_function_set[i].push_back(
+        std::make_unique<ClothoidLateralJerkCostFunction>(
+            kinematic_params.reference_speed,
+            kinematic_params.lateral_jerk_limit,
+            kinematic_params.lateral_jerk_weight));
+    // 基础二次正则代价：½(x-x_target)^T Q (x-x_target) + ½ u^T R u
+    cost_function_set[i].push_back(
+        std::make_unique<QuadCostType>(x_weight, u_weight, x_target));
+  }
+  return cost_function_set;
 }
 ```
 
@@ -771,32 +817,51 @@ CostFunctionSet KinematicConstraintAndCostGenerator::GenerateCostFunction(...) c
 
 iLQR/AL-iLQR 是**局部优化算法**，需要一个初始猜测轨迹（"名义轨迹"）才能开始做 Backward/Forward Pass。初始猜测的好坏直接影响能否收敛、收敛到哪个局部最优。这就是 `GenerateInitialPaths` 函数要做的事：
 
-```549:650:modules/planning/path/clothoid_path_optimizer/clothoid_path_optimizer.cc
+```cpp
+// 生成初始猜测轨迹：先沿参考线"抄"出大致方向，再投影到动力学可行空间
+// 输入：reference_path = 参考路径（上一帧结果或车道中心线），可能为空
+//       steps_ = 各段步长向量 {ds_0, ds_1, ..., ds_{N-1}}，nullable_reference_path_curve_ = 参考曲线（可空）
+// 输出：包含一条满足动力学约束的初始轨迹 (x_trajectory, u_trajectory)
 std::vector<ClothoidPath> ClothoidPathOptimizer::GenerateInitialPaths(
     ClothoidPath* reference_path) const {
-  ...
+  const int num_samples = steps_.size() + 1;
+  ClothoidPath initial_path;
+  initial_path.x_trajectory.resize(num_samples);
+  initial_path.u_trajectory.resize(num_samples - 1);
+
   // ① 把参考路径（上一帧结果或车道中心线）采样成初始的 x_trajectory
+  //    逐点从参考曲线上取坐标、朝向、曲率、曲率导数
   for (int i = 1; i < num_samples; ++i) {
-    ...
-    reference_path->x_trajectory[i](0) = position.x;
-    reference_path->x_trajectory[i](1) = position.y;
-    reference_path->x_trajectory[i](2) = nullable_reference_path_curve_->Heading(s);
-    reference_path->x_trajectory[i](3) = nullable_reference_path_curve_->SignedCurvature(s);
-    reference_path->x_trajectory[i](4) = nullable_reference_path_curve_->SignedCurvatureDerivative(s);
-    ...
+    const double s = std::accumulate(steps_.begin(), steps_.begin() + i, 0.0);  // 累积弧长
+    Point2d position = nullable_reference_path_curve_->Evaluate(s);
+    reference_path->x_trajectory[i](ClothoidPathStateIndex::kX) = position.x;
+    reference_path->x_trajectory[i](ClothoidPathStateIndex::kY) = position.y;
+    reference_path->x_trajectory[i](ClothoidPathStateIndex::kTheta) =
+        nullable_reference_path_curve_->Heading(s);
+    reference_path->x_trajectory[i](ClothoidPathStateIndex::kKappa) =
+        nullable_reference_path_curve_->SignedCurvature(s);
+    reference_path->x_trajectory[i](ClothoidPathStateIndex::kDKappa) =
+        nullable_reference_path_curve_->SignedCurvatureDerivative(s);
   }
+
   // ② 这条 reference_path 只是"点位"上贴合参考线，但不一定满足动力学方程（不连续、不可行）
   //    于是再用一个独立的 FeasibleTrajectoryGenerator，在满足动力学约束的前提下，
   //    生成一条尽量贴近 reference_path 的"可行"初始轨迹 initial_path
-  const FeasibleTrajectoryGenerator<...> feasible_path_generator(...);
-  const base::Optional<...> initial_u_trajectory = feasible_path_generator.Generate(
-      steps_, reference_path->x_trajectory, reference_path->u_trajectory);
-  ...
+  //    （内部也是一个小型 iLQR，代价函数只惩罚"离参考点太远"）
+  FeasibleTrajectoryGenerator feasible_path_generator(
+      dynamic_model,            // Clothoid 动力学模型
+      feasibility_ilqr_config);  // 可行性求解器的 iLQR 配置（迭代次数少、代价简单）
+  bool success = feasible_path_generator.Generate(
+      steps_, reference_path->x_trajectory, reference_path->u_trajectory,
+      &initial_path.u_trajectory);  // 输出：满足动力学的控制序列
+
   // ③ 用真实动力学模型把 u_trajectory 滚动出对应的 x_trajectory（保证一定满足动力学约束）
+  initial_path.x_trajectory[0] = reference_path->x_trajectory[0];  // 起点固定
   for (int i = 1; i < num_samples; ++i) {
-    ...
+    auto dynamic_model = GetDynamicModelAtSample(i - 1);  // 获取第 i-1 段的离散动力学模型
     initial_path.x_trajectory[i] =
-        dynamic_model->Evaluate(initial_path.x_trajectory[i - 1], initial_path.u_trajectory[i - 1]);
+        dynamic_model->Evaluate(initial_path.x_trajectory[i - 1],
+                                initial_path.u_trajectory[i - 1]);
   }
   return {initial_path};
 }
@@ -852,4 +917,4 @@ Huber 代价是一种"分段"代价：误差较小时是二次函数（梯度平
 | 前馈修正 | $d_k=-(Q_{uu}+\rho I)^{-1}Q_u$ |
 | 线搜索判据 | $z=\dfrac{J(X,U)-J(\bar X,\bar U)}{-\Delta V(\alpha)}\in[10^{-4},10]$ |
 
-祝学习顺利！建议阅读顺序：先通读一遍本文抓住"是什么问题、为什么这样设计"，再对照代码把每个公式的变量名和代码变量名对应起来读一遍源码，最后可以尝试自己在纸上，对着 `clothoid_path_dynamic.cc` 手推一遍雅可比矩阵，加深理解。
+祝学习顺利！建议阅读顺序：先通读一遍本文抓住"是什么问题、为什么这样设计"，再把每个公式的变量名和代码变量名对应起来理解实现细节，最后可以尝试自己在纸上手推一遍雅可比矩阵，加深理解。

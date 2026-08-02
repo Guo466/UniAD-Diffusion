@@ -26,6 +26,7 @@
 
 import math
 import copy
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -34,6 +35,9 @@ from torch.utils.checkpoint import checkpoint as grad_checkpoint
 from mmdet.models.builder import HEADS, build_loss
 # HEADS: mmdetection 的模型注册表，用 @HEADS.register_module() 注册后，
 #        可以在 config 中用 type='DiffusionPlanningHead' 字符串实例化模型
+from .planning_head_plugin import CollisionNonlinearOptimizer
+# CollisionNonlinearOptimizer: 与 PlanningHeadSingleMode 完全相同的碰撞避免后处理优化器
+# （基于 CasADi 的非线性轨迹优化），用于保证与 baseline 评测条件一致
 
 
 # ============================================================
@@ -642,6 +646,14 @@ class DiffusionPlanningHead(nn.Module):
         self.use_col_optim             = use_col_optim
         self.embed_dims                = embed_dims
 
+        # ---- 碰撞避免优化器参数（与 PlanningHeadSingleMode 完全对齐）----
+        # bev_h/bev_w：BEV 网格尺寸，碰撞优化时把 occ_mask 的像素坐标转换为 ego 坐标系（米）需要用到
+        self.bev_h              = bev_h
+        self.bev_w              = bev_w
+        self.occ_filter_range   = col_optim_args['occ_filter_range']  # 障碍物感知范围（5m）
+        self.sigma              = col_optim_args['sigma']             # 碰撞代价高斯扩散半径
+        self.alpha_collision    = col_optim_args['alpha_collision']   # 碰撞代价权重
+
         # ---- 桥接层（UniAD格式 → DiT格式）----
         self.bev_track_bridge = BEVToContextBridge(
             bev_in_dim=embed_dims, track_in_dim=embed_dims, out_dim=embed_dims,
@@ -896,6 +908,102 @@ class DiffusionPlanningHead(nn.Module):
         # traj:  [d0, d0+d1, d0+d1+d2, ...]  ← 相对于自车当前位置的累积距离
         traj    = torch.cumsum(delta, dim=1)        # (B, T, output_dim)
         return traj
+
+    # ------------------------------------------------------------------
+    # 【碰撞避免后处理】与 PlanningHeadSingleMode.collision_optimization 完全一致
+    # ------------------------------------------------------------------
+    # 目的：确保 DiT 与 baseline 在评测时使用相同的后处理流程（use_col_optim=True 时），
+    #      避免因为"baseline 做了碰撞优化、DiT 没做"而导致两者碰撞率指标不可比。
+    def collision_optimization(self, sdc_traj_all, occ_mask):
+        """测试时对规划轨迹做碰撞避免非线性优化（逻辑与 PlanningHeadSingleMode 完全相同）。
+
+        核心思想：
+        1. 从 OccFlow 的占用预测中提取每个时间步的障碍物位置（BEV 坐标）
+        2. 只保留与自车预测位置距离在 occ_filter_range（5m）以内的障碍物（减少噪声）
+        3. 使用 CollisionNonlinearOptimizer（基于 CasADi 的数值优化器）：
+           - 以初始规划轨迹为参考，在满足碰撞避免约束的情况下最小化与参考轨迹的偏差
+           - 碰撞代价使用高斯核函数：cost = alpha × exp(-dist²/(2σ²))
+
+        Args:
+            sdc_traj_all (torch.Tensor): 初始规划轨迹 (1, planning_steps, 2)
+                坐标为 ego 坐标系，单位米
+            occ_mask (torch.Tensor): 占用预测掩码 (B, T, [1,] H, W)
+                B=1（batch），T=未来帧数（5帧），H×W=BEV网格（200×200）
+                值为 1 的位置表示该格子被障碍物占据
+
+        Returns:
+            torch.Tensor: 优化后的规划轨迹 (1, planning_steps, 2)
+                如果没有有效障碍物（valid_occupancy_num==0），直接返回原始轨迹
+        """
+        pos_xy_t = []            # 各时间步的障碍物位置列表（ego坐标系，单位米）
+        valid_occupancy_num = 0  # 当前帧附近有效障碍物的总数量
+
+        # occ_mask 有时含冗余维度 (B, T, 1, H, W)，需要压缩
+        if occ_mask.shape[2] == 1:
+            occ_mask = occ_mask.squeeze(2)  # (B, T, H, W)
+        occ_horizon = occ_mask.shape[1]  # 占用预测的时间跨度（T=5帧）
+        assert occ_horizon == 5          # 确认是5帧（0.5s, 1.0s, 1.5s, 2.0s, 2.5s）
+
+        # 对每个规划步骤，从对应时间的 occ_mask 中提取障碍物位置
+        for t in range(self.planning_steps):  # t = 0, 1, 2, 3, 4, 5（6步规划）
+            # 映射规划步到占用帧：规划步 t 对应 occ 帧 t+1（偏移1帧）
+            # 当 t >= occ_horizon-1 时，用最后一帧的 occ（占用预测覆盖不到那么远）
+            cur_t = min(t + 1, occ_horizon - 1)   # occ 帧索引 (1~4)
+
+            # 提取 occ_mask 中值为 1（有障碍物）的网格坐标（像素坐标）
+            # pos_xy: (N, 2)，格式为 [row, col]（PyTorch nonzero 输出行列格式）
+            pos_xy = torch.nonzero(occ_mask[0][cur_t], as_tuple=False)  # (N, 2)
+
+            # 交换行列顺序：从 [row, col] → [col, row]，使得：
+            # pos_xy[:, 0] = col（对应 x 轴，即横向位置）
+            # pos_xy[:, 1] = row（对应 y 轴，即纵向位置）
+            pos_xy = pos_xy[:, [1, 0]]   # (N, 2)，现在是 [col, row] = [x_pix, y_pix]
+
+            # 将像素坐标转换为 ego 坐标系（米）
+            # BEV 网格以自车为中心：第 bev_h//2 行 = y=0，第 bev_w//2 列 = x=0
+            # 分辨率为 0.5m/格，+0.25 是格子中心偏移
+            pos_xy[:, 0] = (pos_xy[:, 0] - self.bev_h // 2) * 0.5 + 0.25  # x: 像素→米
+            pos_xy[:, 1] = (pos_xy[:, 1] - self.bev_w // 2) * 0.5 + 0.25  # y: 像素→米
+
+            # 距离过滤：只保留与当前规划点距离 < occ_filter_range(5m) 的障碍物
+            # 原因：距离太远的障碍物对当前时刻的规划几乎无影响，过滤掉减少噪声
+            keep_index = torch.sum(
+                (sdc_traj_all[0, t, :2][None, :] - pos_xy[:, :2]) ** 2, axis=-1
+            ) < self.occ_filter_range ** 2   # 欧式距离平方 < 5² = 25
+
+            pos_xy_t.append(pos_xy[keep_index].cpu().detach().numpy())  # 转 numpy 备用
+            valid_occupancy_num += torch.sum(keep_index > 0)            # 统计有效障碍物数
+
+        # 如果附近没有任何障碍物，直接返回原始轨迹（无需优化）
+        if valid_occupancy_num == 0:
+            return sdc_traj_all
+
+        # ---- 非线性轨迹优化 ----
+        # CollisionNonlinearOptimizer 使用 CasADi 数值优化框架：
+        # 目标函数：minimize ||traj - ref_traj||² + alpha_collision × Σ collision_cost(t)
+        # 其中 collision_cost 使用高斯核：exp(-dist²/(2σ²))
+        col_optimizer = CollisionNonlinearOptimizer(
+            self.planning_steps,    # 规划步数=6
+            0.5,                    # 每步时间间隔=0.5s
+            self.sigma,             # 高斯核标准差（碰撞代价扩散范围）
+            self.alpha_collision,   # 碰撞代价权重（越大越保守）
+            pos_xy_t                # 各时间步的障碍物位置列表
+        )
+        # 设置参考轨迹（网络预测的初始轨迹，优化从这里出发）
+        col_optimizer.set_reference_trajectory(sdc_traj_all[0].cpu().detach().numpy())
+
+        # 求解优化问题
+        sol = col_optimizer.solve()
+
+        # 提取优化后的轨迹坐标（x 序列 + y 序列 → 按列堆叠为 (6, 2)）
+        sdc_traj_optim = np.stack(
+            [sol.value(col_optimizer.position_x), sol.value(col_optimizer.position_y)],
+            axis=-1
+        )  # (6, 2)
+
+        # 转回 Tensor，保持与原始轨迹相同的 device 和 dtype
+        return torch.tensor(sdc_traj_optim[None], device=sdc_traj_all.device, dtype=sdc_traj_all.dtype)
+        # 返回: (1, 6, 2)
 
     # ------------------------------------------------------------------
     # 【核心方法③】训练前向传播
@@ -1264,8 +1372,8 @@ class DiffusionPlanningHead(nn.Module):
           推理：用 Euler ODE 积分（n_steps=5 次 DiT 前向），质量更高
 
         outs_occflow：OccFlow 头的输出（占用预测），
-                      在原版 PlanningHeadSingleMode 推理时用于碰撞优化，
-                      DiffusionPlanningHead 不使用（接口兼容性保留）
+                      当 self.use_col_optim=True 时，与 PlanningHeadSingleMode
+                      完全一致地用于碰撞避免后处理（保证两者评测条件公平可比）。
 
         Returns:
             dict: {'sdc_traj': (1, T, 2), 'sdc_traj_all': (1, T, 2)}
@@ -1302,7 +1410,14 @@ class DiffusionPlanningHead(nn.Module):
                                        n_steps=self.sample_steps)
         # pred_traj: (B, T, 2)，已完成反归一化 + 累积求和，单位：米
 
+        # ⑤ 碰撞避免后处理（仅测试时且 use_col_optim=True，与 PlanningHeadSingleMode 完全对齐）
+        if self.use_col_optim and not self.training:
+            assert outs_occflow is not None and 'seg_out' in outs_occflow, \
+                "use_col_optim=True 时必须提供 outs_occflow['seg_out']（OccFlow 占用预测结果）"
+            occ_mask = outs_occflow['seg_out']
+            pred_traj = self.collision_optimization(pred_traj, occ_mask)
+
         return {
-            'sdc_traj':     pred_traj,   # (B, T, 2)，最终规划轨迹
+            'sdc_traj':     pred_traj,   # (B, T, 2)，最终规划轨迹（可能经过碰撞优化）
             'sdc_traj_all': pred_traj,   # 保留两个 key，与接口兼容
         }

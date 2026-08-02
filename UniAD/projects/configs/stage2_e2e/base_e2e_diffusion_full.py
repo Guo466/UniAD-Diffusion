@@ -67,11 +67,10 @@ model = dict(
         loss_planning=None,        # 不使用原 ADE 损失（被 FM loss 替代）
         loss_kinematic=None,       # 不使用运动学损失（DiT 学习分布隐式保证平滑性）
         planning_eval=True,        # 与原版一致：训练时同步评估规划指标
-        # 注意：DiffusionPlanningHead.forward_test 当前实现中并未真正调用
-        # CasADi 碰撞优化后处理（outs_occflow 参数只做接口兼容，未使用），
-        # 无论此处设为 True/False 都不影响推理结果，如实设为 False 避免误导。
-        # 如需真正对齐 UniAD 的碰撞优化后处理，需要在 forward_test 中补充实现。
-        use_col_optim=False,
+        # DiffusionPlanningHead.forward_test 已实现与 PlanningHeadSingleMode 完全相同的
+        # CasADi 碰撞避免后处理（collision_optimization），此处设为 True 以与
+        # base_e2e.py（baseline，use_col_optim=True）保持评测条件一致，确保公平对比。
+        use_col_optim=True,
         with_adapter=True,         # 与原版一致：启用 BEV Adapter
         n_commands=3,              # 3 类驾驶命令（右转/直行/左转）
 

@@ -1,0 +1,34 @@
+[Planning][] Add clothoid path optimizer producer
+工作内容总结
+项目背景
+在自动驾驶系统（Walle）中，为 Clothoid 路径优化器（Clothoid Path Optimizer） 开发了完整的可视化调试工具链，集成到内部可视化平台 mviz 中。
+核心工作：开发 ClothoidPathOptimizer 的 mviz 可视化模块
+技术背景： Clothoid（回旋曲线）路径优化器是规划模块的核心算法，基于 iLQR/AL 求解器对路径进行曲率平滑优化，涉及车道边界约束、道路限制、碰撞边界和斥力场等多类约束。
+1. 新增 ClothoidPathOptimizerProducer（3D 场景可视化）
+从规划模块的 PlannedResult 消息中读取 ClothoidPathOptimizerDebug proto 数据
+实现了 6 类 3D 场景可视化元素的渲染：
+路径可视化：参考路径（红色）、初始路径（橙色）、最优路径（绿色）
+引导线（Guide Lines）可视化，带箭头方向指示
+车道边界（Lane Boundaries）可视化（青色）
+限制区域（Restrictions）可视化（蓝色）
+碰撞边界框（Box Collision Bounds）可视化（品红色）
+斥力场（Repulsions）可视化（红色）
+实现了坐标系变换，支持本地坐标到全局坐标的转换（适配高精地图本地化模式）
+实现了 SolverLog 信息面板，实时展示求解器的各阶段耗时（construction_time、solve_time、feasible_solve_time、total_time）及求解状态标志
+在 mviz 菜单路径 /Widgets/PNC/Clothoid Path Optimizer 中注册 Widget
+2. 新增 ClothoidPathOptimizerChartProducer（曲线图表可视化）
+实现了 5 个路径参数折线图，基于弧长 s 展示：
+速度剖面（reference_speed_profile）、偏航角 theta、曲率 kappa、曲率变化率 dkappa、曲率二阶导数 ddkappa、支持自动缩放（auto_scale），初始化时自动将视野拟合到数据范围
+在 mviz 菜单路径 /ChartTable/PNC/Clothoid Path Optimizer Chart 中注册
+3. 优化 ChartPanel 组件（通用 ImPlot 图表面板增强）
+新增 一次性自动坐标轴拟合（SetNextAxisToFit）功能：图表有数据后首帧自动 fit，之后保持用户的缩放/平移状态不变
+新增 value chart 类型下图例自动放置到右侧（ImPlotLocation_NorthEast）
+新增 auto_scale 配置项，区分固定范围轴和自动缩放轴的渲染逻辑
+4. 增强 VizMessageWidgetGroupTextRenderer（Widget 文本渲染器）
+新增 ANSI 颜色转义码支持：解析 SGR 颜色序列（\033[31m 等），在 ImGui 中渲染带颜色的调试文本
+新增树形节点样式标签解析器（ParseNodeDisplayAttrs）：支持 [INLINE]、[COLOR:...] 等内嵌展示提示，实现同行排列和节点着色
+支持树形节点与 3D 场景实体联动（TREE_WITH_3D_ENTITY 类型）
+5. 修复 VizMessageWidgetUIRenderer（Widget 关闭按钮功能）
+为 Widget 窗口的 ×（关闭）按钮添加回调逻辑，点击关闭时通知上层持久化 UI 状态（同步更新菜单栏勾选项的可见性）
+技术亮点（简历用语）
+为自动驾驶规划模块的 Clothoid 路径优化器设计并实现了完整的 mviz 可视化调试工具链，包括 3D 场景路径渲染（多约束类型、箭头方向、坐标系变换）、求解器状态面板、5维路径参数折线图等模块，累计新增约 700 行 C++ 代码；同期对 ImPlot 图表框架进行通用增强（自动坐标轴拟合、ANSI 彩色文本渲染、树形节点内嵌样式），提升了 PNC 算法工程师的调试效率。

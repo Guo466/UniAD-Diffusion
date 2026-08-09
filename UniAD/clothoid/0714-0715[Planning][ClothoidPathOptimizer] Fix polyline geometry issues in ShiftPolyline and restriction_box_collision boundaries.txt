@@ -1,0 +1,29 @@
+PR 汇总：修复 ClothoidPathOptimizer 折线几何处理中的两处缺陷（ShiftPolyline 翻转自交 + restriction/box_collision 右转锐角）
+背景
+clothoid_path_optimizer 中大量约束/代价（车道边界、restriction 限制区域、box_collision 碰撞盒边界等）都依赖对折线（polyline）做几何变换与采样后生成，其中两个核心工具函数分别是：
+- ShiftPolyline：将一条折线沿法向整体平移指定距离，用于生成带偏移量的边界/参考线。
+- BuildAndSimplifyBoxCollisionPolyline / BuildAndSimplifyRestrictionPolyline：沿参考线采样生成 box_collision、restriction 边界折线，再做道格拉斯-普克抽稀。
+这两个 PR 是同一复现分支（shansen/blocked_range_by_circle）下连续排查折线几何异常问题时先后修复的两处相关缺陷，均属于"折线在尖锐拐角处的几何处理不健壮"这一类问题。
+
+问题一：ShiftPolyline 在偏移超限时线段翻转自交（PR https://dev.sankuai.com/code/repo-detail/walle/walle2/pr/72681/overview）
+根因：原实现对每个顶点独立用"角平分线方向+偏移量"计算偏移后位置。当拐角非常尖锐（夹角很小）且偏移距离较大时，某段偏移量会被放大到超过原始线段长度的临界值，导致该线段偏移后发生方向翻转（偏移后起点落在终点之后）。原实现只能检测到"超过临界值"，一旦检测到就直接放弃本次整体平移、返回原始未偏移折线，导致本该正常生成的偏移边界整体失效（仿真中偏移折线与原折线完全重合）。
+修复：重写核心算法，为每条原始线段计算一条"沿法向偏移后的射线"（DirectedLine），用一个栈（kept_segments）顺序处理：新射线与栈顶射线求交点，若交点相对栈顶线段方向发生翻转，说明栈顶线段在当前偏移距离下已被"吃掉"，将其弹出继续向前求交，直到找到不翻转的交点或栈为空，再压入当前线段；最终折线由栈中保留线段的交点加末段终点组成。该栈式偏移算法可正确处理单个及连续多个尖锐拐角在大偏移量下相继被"吞并"的级联情况，不再在超限时整体放弃偏移。
+单测覆盖：单个拐角翻转退化为交点、连续多个拐角翻转级联收敛到同一交点、偏移距离小于临界值时行为不变、共线/近似共线折返顶点（夹角趋近0°）不产生 NaN/Inf。
+
+问题二：restriction 和 box_collision 折线中的右转锐角（PR https://dev.sankuai.com/code/repo-detail/walle/walle2/pr/72703/overview）
+根因：在参考线曲率变化较大、或障碍物边缘走向不规则的路段，采样得到的 restriction/box_collision 折线会出现局部内角非常小的右转锐角顶点，给下游依赖折线几何特性的计算（包括上面的 ShiftPolyline 偏移、约束/代价采样）带来数值不稳定或不合理结果，仿真表现为车辆右前方 box_collision_boundaries_0 边界折线在障碍物边缘附近走向异常、出现尖锐拐角。
+修复：新增 ChamferAcuteAnglesOnPolyline 函数，对折线做统一的锐角切角（chamfer）预处理，并在两处折线生成入口（先于道格拉斯-普克抽稀）调用：
+1. 仅对内角小于90°的右转顶点（叉积判转向、点积算夹角余弦）做切角，左转/钝角/平角顶点不变；
+2. 按 leg = 0.5 × base_length / sin(夹角/2) 计算两侧退让距离，使切出斜边长度精确等于目标 base_length；
+3. 当两侧线段长度不足以支撑退让量时钳制为线段长度本身（相邻切角共享同一线段、退让量之和超过该线段长度一半时按比例整体缩放），避免产生非法折线；
+4. 用两个新点替换原顶点，因连续锐角切角后可能产生新的锐角，以最多10次迭代重复处理直至收敛，最后对距离过近的重复点去重合并。
+单测覆盖：单侧线段足够长时精确切出目标斜边、单侧线段过短时退让量被钳制、非锐角/左转锐角保持不变、连续多个锐角迭代收敛、极短折线不处理、相邻锐角共享短线段的比例缩放、夹角趋近0°时不产生 NaN/Inf。
+
+评测结果
+两个 PR 均在闭环仿真复现分支 shansen/blocked_range_by_circle 上验证问题复现与修复效果；General 仿真回归集合（QA-regression 等全量 tag）比对：
+- ShiftPolyline 修复：new success 14 个，new fail 1 个（0 flaky），该 diff case 经确认未调用 ClothoidPathOptimizer，属无关 diff。
+- 锐角切角修复：new success 7 个，new fail 3 个，逐一核查确认均未调用 ClothoidPathOptimizer 或为仿真/validator 自身问题，与本次改动无关。
+两个 PR 结论均为 no diff，评测通过。
+
+技术亮点（简历用语）
+针对自动驾驶路径规划模块中折线几何处理在尖锐拐角场景下的不健壮问题，连续定位并修复两处缺陷：1）重构折线偏移算法 ShiftPolyline，将原先逐点角平分线偏移改为基于偏移射线与栈式回退合并的经典算法，解决了尖锐拐角大偏移量下线段翻转自交、导致整体平移被放弃的问题，可正确处理单个及连续多拐角级联翻转场景；2）设计并实现通用折线锐角切角算法 ChamferAcuteAnglesOnPolyline，通过夹角几何关系精确计算退让长度、对退让不足场景做钳制/等比例缩放、多轮迭代收敛处理连续锐角级联，修复了 restriction/box_collision 边界折线的异常右转锐角问题。两处修复均补充了覆盖级联翻转、极端共线退化等边界场景的单元测试，并通过全量仿真回归验证无功能回退。

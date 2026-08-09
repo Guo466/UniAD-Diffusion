@@ -1,0 +1,33 @@
+PR: add_drag_pathpoint（路径点车辆轮廓可视化 & 滑块增强）
+核心工作内容
+1. 新增 AddVehicleOutlinesToEntity：在路径上叠加车辆轮廓
+本 PR 最核心的功能是在 3D 场景中沿路径的每个采样点绘制实际尺寸的车辆矩形轮廓，让调试人员直观看到车辆在每个路径点的精确占用区域。
+几何计算逻辑：
+对路径上每个点 (x, y, theta)，用车辆实际参数（ra_to_front、ra_to_rear、half_width）计算 4 个角点坐标：
+plain text
+
+Apply
+左前角: (x + front_x + lat_x,  y + front_y + lat_y)
+右前角: (x + front_x - lat_x,  y + front_y - lat_y)
+右后角: (x + rear_x  - lat_x,  y + rear_y  - lat_y)
+左后角: (x + rear_x  + lat_x,  y + rear_y  + lat_y)
+其中 lat_x = -sin(θ) * half_width、front_x = cos(θ) * ra_to_front 等通过旋转矩阵从车体坐标系变换到全局坐标系，最后连成 7 点闭合折线（回到左后角形成完整矩形）渲染为 Line3D。
+渲染线宽 2.0f，render_z_relative = 0.03f（略高于路径线防遮挡），同步应用坐标系变换（local→global）
+参数化为模板函数，同时支持 reference_path、initial_path、optimal_path 三条路径
+2. 路径采样点可视化（点云叠加）
+在原有折线渲染基础上，对三条路径额外叠加路径采样点点云（points_list）：
+点大小 15.0f，render_z_relative = 0.02f（位于折线和车辆轮廓之间）
+使得每个离散采样点位置可见，配合后续的"拖拽路径点"交互
+3. 树形节点结构重构（hierarchical 展示）
+将原来平铺的三条路径节点改为二级树形结构：
+每条路径（optimal_path / reference_path / initial_path）作为父节点，带颜色标注
+在每条路径下挂载 contour（车辆轮廓）子节点，可独立控制显示/隐藏
+新增三组 vehicles component 名（*_vehicles）与原路径 component 并列注册到 SceneLayer，实现分层可见性控制。
+4. 增强 Widget 滑块：兼容无折线状态
+原来滑块仅在存在折线（polyline_indices 非空）时才显示，导致路径点模式下无法操作。本 PR 修复了这一问题：
+降级策略：折线索引为空时，自动用 max(reference_path_size, initial_path_size, optimal_path_size) - 1 作为滑块上限
+动态标签：有折线时显示 "Polyline Index"，无折线时显示 "Path Point"，语义更清晰
+显示文字修正：将 Current Index 显示的值从 polyline_indices[current_vehicle_index_] 改为直接显示 current_vehicle_index_，避免折线模式下的索引混淆
+技术亮点（简历用语）
+在 mviz 可视化工具中为 Clothoid 路径优化器新增了沿路径逐点绘制车辆实际尺寸轮廓的功能，基于车辆参数（前悬、后悬、半车宽）和路径点偏航角通过旋转矩阵计算四角点坐标，渲染为 3D 闭合矩形轮廓线；同步增加路径采样点点云叠加、树形节点分层展示，并增强了 Widget 调试滑块的降级兼容逻辑，显著提升了路径优化器的调试可视化体验。
+

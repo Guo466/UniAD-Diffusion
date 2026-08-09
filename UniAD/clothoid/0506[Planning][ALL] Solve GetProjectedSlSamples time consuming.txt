@@ -1,0 +1,15 @@
+PR: change_insert_into_pushback（修复 coredump）
+问题背景
+GetProjectedSlSamples 函数负责将路径上的采样点投影到参考线的 Frenet 坐标系（s, l），其中有一段逻辑需要在车辆当前位置之后（behind）向前追溯若干个采样点，并将它们前插到 monotonic_s_samples / l_samples / point_samples 三个 vector 的头部。
+问题根因
+原来的实现在循环中每次迭代都直接调用 insert(...begin(), ...) 将元素插入 vector 头部。每次在 vector 头部插入单个元素，时间复杂度为 O(n)（需要将所有已有元素整体右移），循环 N 次总复杂度为 O(N²)。更严重的是，insert 可能触发 vector 扩容（realloc），导致已有迭代器/指针失效，在多处持有指针或引用的场景下引发 coredump。
+修复方案
+将逐个 insert 改为先用临时 vector 收集、再一次性批量插入：
+预先声明三个临时 vector（behind_s_samples、behind_l_samples、behind_point_samples），并按 num_behind_potential_samples 做 reserve，避免额外扩容
+循环中改为 push_back 追加到临时 vector，均摊 O(1)
+循环结束后用反向迭代器（rbegin()/rend()）一次性批量插入到原 vector 头部——因为采样是从近到远逆向遍历的，用反向迭代器可自动纠正为正序，无需额外 reverse
+修复效果
+修复前，每次循环都触发一次头部插入，最多扩容 N 次，时间复杂度 O(N²)，且多次扩容使外部指针失效，触发 coredump。修复后，临时 vector 独立存储，原 vector 最多扩容一次，内存安全，时间复杂度降至 O(N)。
+技术亮点（简历用语）
+定位并修复了规划模块路径采样函数 GetProjectedSlSamples 中因循环内频繁在 vector 头部 insert 导致的 coredump 问题，将 O(N²) 的逐元素头插重构为"临时 vector 收集 + 反向迭代器一次性批量插入"方案，消除了重复扩容引起的迭代器失效风险，同时将时间复杂度降至 O(N)。
+

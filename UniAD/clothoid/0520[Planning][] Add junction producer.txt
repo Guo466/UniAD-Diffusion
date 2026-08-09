@@ -1,0 +1,12 @@
+PR: add junction producer（路口最优轨迹 Producer 可视化）
+背景
+在路口轨迹可视化模块 JunctionTrajectoryProducer 中，原本只有合法轨迹（valid）和被淘汰轨迹（invalid）两个渲染通道。配合上一个 PR 向 valid_trajectory_info 中写入了最优轨迹数据后，本 PR 将其接入 Producer，在 mviz 的 3D 场景中独立渲染出最终被选中的路口轨迹。
+核心工作内容
+1. 注册新 Topic：/pnc/selected_junction_trajectory
+在 viz_topic_name.h 中新增 kVizTopicSelectedJunctionTrajectory，对应话题路径为 /pnc/selected_junction_trajectory，与已有的 valid/invalid 两个 topic 并列，构成路口轨迹可视化的完整三路输出。
+2. 注册 Layer 配置
+在 BuildProducerConfig 中为新 topic 调用 add_viz_layer_config，注册图层名为 "Selected Junction Trajectory"，归入 PnC / Trajectory 分类，使其可在 mviz 图层菜单中独立开关。
+3. 实现最优轨迹渲染逻辑
+在 OnRenderUpdate 中，从 junction_debug.valid_trajectory_info(0) 取出代价最小的轨迹（按上一个 PR 的约定，下标 0 即为最优），调用已有的 GenerateEgoTrajectoryLineObject 以亮绿色（kColorLawnGreen）渲染轨迹线，显示名称格式为 {trajectory_key}:{confidence:.2f}，直观呈现选中轨迹的置信度。
+技术亮点（简历用语）
+在 mviz 路口轨迹可视化 Producer 中新增最优轨迹渲染通道，注册独立 viz topic 和图层配置，从 valid_trajectory_info(0) 读取代价排序后的最优轨迹，以亮绿色独立渲染，与合法轨迹（彩色）、被淘汰轨迹（按淘汰类型着色）共同构成路口决策的三层可视化体系。

@@ -1,0 +1,11 @@
+PR 汇总：用全局搜索替换局部搜索（FindSByPosition vs FindSByPositionLocally）
+两个函数的根本差异
+FindSByPositionLocally(point, s_hint, ...) 是局部爬山搜索：从 s_hint 对应的索引出发，每步只向左或向右扩展一格，找到局部最近邻后即停止。其时间复杂度是 O(偏移距离)，依赖 s_hint 必须在真实最近点附近——一旦初始猜测偏离过远，搜索会提前陷入局部极小值，返回一个错误的投影结果。
+FindSByPosition(point, ...) 是全局遍历搜索：先对所有采样点做一遍线性扫描找到全局最近邻，再以此为起点做局部精化，确保一定找到全局最优投影。代价是 O(n) 的全量扫描，但结果正确性有保障。
+两处 Bug 及修复
+PR1（ReturnLastPath）：在 ReturnLastPath 函数中，用 FindSByPositionLocally(vehicle_state_->position(), 0.0, ...) 在上一帧路径上定位车辆位置，初始 hint 固定为 0.0（即路径起点）。当车辆已行驶到路径中段或末尾时，从起点出发的局部爬山会停在距离 0.0 最近的局部极值，返回错误的弧长 s，导致 sampling_start_s 计算偏差，fallback 路径的起始采样段出现错位，最终引发规划抖动或 coredump。
+PR2（GenerateReferencePathCurve）：在 GenerateReferencePathCurve 中同样以 FindSByPositionLocally(vehicle_state_->position(), curve.min_s(), ...) 判断车辆是否已在参考路径覆盖范围内，hint 固定为 curve.min_s()。当参考路径曲线存在弯曲或车辆侧向偏移较大时，从起点出发的局部搜索可能在错误位置收敛，导致 s >= curve.min_s() && s + path_length_ < curve.max_s() 的边界判断失误，误判覆盖范围，触发不必要的路径延伸或跳过延伸，输出错误的参考路径曲线。
+两处修复方式一致：将 FindSByPositionLocally 替换为 FindSByPosition，以全局扫描消除对初始 hint 的依赖，确保在任意车辆位置下都能得到正确的投影弧长。
+
+技术亮点（简历用语）
+定位并修复了 Clothoid 路径优化器中两处因 FindSByPositionLocally 初始猜测偏离导致的局部搜索收敛错误问题：在 ReturnLastPath 和 GenerateReferencePathCurve 函数中，固定以曲线起点作为 hint 的局部爬山搜索在车辆偏离起点较远时会陷入局部极小值，返回错误弧长，引发 fallback 路径采样起点偏移和参考路径覆盖范围误判；将两处替换为全局搜索 FindSByPosition，从根本上消除了对初始猜测的依赖。

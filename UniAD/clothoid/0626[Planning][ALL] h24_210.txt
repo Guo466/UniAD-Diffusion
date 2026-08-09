@@ -1,0 +1,19 @@
+PR 汇总：路口/参考线起点前路径点插入（Insert radial intersection point）
+问题背景
+在 Clothoid 路径优化器的 GenerateProjectedFrenetCurve 函数中，需要将当前帧或上一帧的路径曲线投影到参考线的 Frenet 坐标系（s, l）。当路径的起点位于参考线的起点（min_s）之前时——典型场景是退路（fallback path）或车辆已接近参考线起点——逆向追溯采样点在投影时会落到参考线有效范围之外，导致投影结果的起始段缺失一个合理的锚点，造成 Frenet 曲线在起点处不连续或方向跳变。
+解决方案（三个 PR 递进完成）
+PR1：Insert radial intersection point（核心算法实现）
+新增辅助函数 IntersectRayWithLine：计算从路径第一个有效采样点出发、沿路径切线方向的射线与参考线起点处法线（垂直切线方向的直线）的交点。具体地：
+以参考线 min_s 处的位置为基准点、切线方向为约束方向，构造一条垂直于参考线的直线
+以路径末端两个采样点（point_samples[0] 和 point_samples[1]）的差向量作为射线方向
+求解射线与该直线的交点（参数化方程求解，若平行或交点在射线反方向则返回 none）
+当采样点跑到参考线起点之前（s < min_s）且启用了 force_insert_point_before_start_s 时，用该交点作为补插锚点，将其 l 值投影后 clamp 到合理范围，强制在 behind_s_samples 中插入一个位于参考线起点处、l 值平滑过渡的采样点。
+在 MakeProjectedCurve 和 GetProjectedSlSamples 接口上增加 force_insert_point_before_start_s 参数（默认 false），仅在 GenerateProjectedFrenetCurve 调用时传入 true，同时将 sampling_start_path_s 从 base::none 改为车辆当前在路径上的弧长 s_on_path，确保从车辆位置向后追溯时的采样起点准确。
+PR2：Refine fallback path（fallback 路径的曲率感知外推）
+在 fallback 路径生成（GenerateFallbackPath）中，原来直接在路径终点之前向后等距采样 kNumBackwardPoints 个点。本 PR 将外推逻辑改为曲率感知的圆弧外推：根据路径终点处的曲率 κ，若曲率接近零则直线外推，否则沿对应圆弧推算点位（pos + normal * r * (1 - cos(dθ)) + backward_dir * r * sin(dθ)），使 fallback 路径在起点前的延伸段与路径曲率保持几何一致。同时强制将车辆位置插入路径中，确保 fallback 路径严格经过车辆当前位置，并将 Curve2d::Create 改为 Curve2d::CreateFromUniformPoints（以 s0 = -kNumBackwardPoints * s_step 作为起始弧长），使新生成的 Curve2d 的 s 参数化与车辆位置对齐。
+此外，当 IntersectRayWithLine 求交失败（射线平行于参考线法线）时，补充默认兜底逻辑：直接将参考线 min_s 处的点和 l=0 作为后备锚点插入，避免起点段完全缺失。
+PR3：fix the direction of the patch point（修正射线方向 bug）
+PR1 中 IntersectRayWithLine 的射线方向写反了：原代码传入的是 (point_samples[1] - point_samples[0]).Normalized()（即从后往前的方向），实际应传入 (point_samples[0] - point_samples[1]).Normalized()（即路径向后延伸的方向，对应车辆行驶的反方向），修正后交点才能正确落在参考线起点附近而非反向延伸处。
+
+技术亮点（简历用语）
+针对 Clothoid 路径优化器在参考线起点前路径投影缺失锚点的问题，设计并实现了基于射线与参考线法线求交的补插算法（IntersectRayWithLine），将路径在参考线起点处的 Frenet 坐标连续性问题从几何层面彻底解决；同步将 fallback 路径的向后外推逻辑升级为曲率感知圆弧外推，并强制 fallback 路径过车辆当前位置，修复了退路场景下路径起点段不连续导致的规划抖动问题。

@@ -1,0 +1,18 @@
+PR 汇总：修复 U-turn 场景下参考线平滑器边界生成的 coredump
+背景
+ReferenceLineSmootherBoundaryGenerator::Compute 函数以 1m 为步长沿路线采样，对每个采样点进行两项有效性检查，任意一项失败则触发 pop_back 链式回退，清空 output.boundary，最终导致后续 solution_points.size() == 1，在传入 Curve2d::Create 时触发断言 coredump。
+两项检查的含义如下：
+boundary_valid：上一个横截面线段与当前横截面线段不相交，且夹角不在 60°~120° 之间（即不发生骤转）
+center_line_valid：last → current → next 三个中心线点的方向不反折（内积 ≥ 0，即前进方向保持一致）
+问题根因
+U-turn（掉头）场景下，车道本身存在大曲率弯折，这两项检查均会被路况的正常几何特征误触发为"异常"，导致大量采样点被 pop_back 丢弃：
+第一个 Bug（center_line_valid 误判）：U-turn 车道在弯折处，last → current → next 三点由于弯道曲率过大，相邻向量内积为负，IsReverse 函数误判为"方向反折"，将正常弯道点过滤掉，最终 boundary 被清空触发 CHECK。
+第二个 Bug（boundary_valid 误判）：U-turn 车道在弯折最深处，前后两个横截面线段之间的夹角超过 60°，触发 has_large_heading_diff = true，进而检查两线段是否相交。由于 U-turn 弯道的横截面在拐角处方向变化剧烈，两线段确实相交，导致 boundary_valid = false，同样触发 pop_back 链式清空。
+修复方案
+两处修复思路一致：在执行几何有效性检查前，先判断当前车道是否为 U-turn 类型，若是则直接跳过该检查，认为有效。
+PR1：在 center_line_valid 条件前短路——检测当前 lane_waypoint 的 TurnType 是否为 U_TURN，若是则 center_line_valid = true，跳过 IsReverse 计算
+PR2：将 boundary_valid 条件同样加入 U-turn 短路——在原有 !has_large_heading_diff || !HasIntersect 的基础上前置 is_uturn_lane ||，确保 U-turn 场景下横截面有效性检查不被触发
+两个 PR 均使用 lane_waypoint.lane->GetTurnType() == hdmap::Lane::U_TURN 统一判断（第二个 PR 同步修正了第一个 PR 中 IsUturnLane() 接口调用方式的变更）。
+
+技术亮点（简历用语）
+定位并修复了自动驾驶参考线平滑器在 U-turn 场景下的 coredump 问题：ReferenceLineSmootherBoundaryGenerator 的两项采样点有效性检查（boundary_valid 横截面不相交检查、center_line_valid 方向反折检查）均因 U-turn 车道本身的大曲率正常几何特征被误触发，导致 output.boundary 链式清空后传入 Curve2d::Create 时触发断言；通过在两项检查前增加 U-turn 类型短路判断，从根本上解决了该场景下的规划 coredump。

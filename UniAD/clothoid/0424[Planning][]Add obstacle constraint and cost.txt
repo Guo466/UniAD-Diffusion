@@ -1,0 +1,33 @@
+PR: Add obstacle constraint and cost（障碍物约束与代价函数）
+核心工作内容
+1. 新增 ObstacleConstraintAndCostGenerator（核心模块）
+这是本 PR 的主体，实现了将障碍物绕行决策（ObstacleDecision）转化为 iLQR 求解器所需的约束函数和代价函数的完整流程。
+核心算法逻辑（GenerateConstraintAndCost）：
+对每个障碍物多边形先做 Douglas-Peucker 简化（精度 0.05m），降低计算量
+对轨迹上每个采样点，分别针对车辆前角点（front corner）和后轮中心（rear wheel）两个控制点各生成一对约束+代价：
+根据绕行方向（左绕行/右绕行）确定侧向偏置 lateral_offset = ±half_width
+使用 PointTranslator 将车辆位姿平移到对应角点坐标系
+调用 SamplePolylineWithHeadingCheck 根据行驶方向从障碍物多边形（CCW 顺序）中选取靠近车辆的边
+分别以 constraint_buffer 和 cost_buffer（+ 决策附加 buffer）对选取边做偏移，生成最终约束/代价多边形
+约束：CornerSmoothPolylineConstraint / RearWheelSmoothPolylineConstraint（硬约束，强制不穿越）
+代价：CornerSmoothPolylineCostFunction / RearWheelSmoothPolylineCostFunction（软代价，引导远离障碍物）
+2. 扩展数据结构
+decision_input.h：新增 ObstacleDecision 结构体（包含障碍物指针、buffer 距离、绕行方向），并添加到 DecisionInput 输入集合
+clothoid_path_optimizer_common.h：在 ConstraintAndCostSet 中新增 obstacle_constraint_set 和 obstacle_cost_function_set 字段
+3. 接入优化器主流程
+clothoid_path_optimizer.cc：在 ComputePath / ComputePathCurve 中调用 ObstacleConstraintAndCostGenerator，将生成的障碍物约束和代价函数注入到 iLQR 求解器的每个时间步
+4. Proto 定义扩展
+clothoid_path_optimizer_config.proto：新增 obstacle_decision_constraint_config（buffer）和 obstacle_decision_cost_config（buffer、weight、sample_distance）两组配置字段
+clothoid_path_optimizer_debug.proto：新增 obstacle_constraints / obstacle_costs 调试字段，用于可视化回放
+5. 调试与可视化接入
+clothoid_path_optimizer_debugger.cc：将障碍物约束/代价数据写入 debug proto
+walle/mviz/components/clothoid_path_optimizer_component.cc：在 mviz 中渲染 _obs_constraint 和 _obs_cost 图层
+6. 配置落地
+config/vehicle_type/big/planning/planner_config.pb.txt：为大车型写入初始调参数值（constraint_buffer=0.05，cost_buffer=0.7，weight=0.5，sample_distance=5.0m）
+7. 完整单元测试（293 行）
+构造了一个包含两个障碍物（左侧障碍 A 右绕、右侧障碍 B 左绕）的测试场景，验证了：
+每个轨迹点的约束/代价个数与预期一致（每障碍物每点 2 个：前角+后轮）
+约束集与代价集数量始终对齐
+代价函数数值与手动构造的 CornerSmoothPolylineCostFunction 计算结果完全一致（精度 kEpsilon）
+技术亮点（简历用语）
+为自动驾驶 Clothoid 路径优化器实现了障碍物约束与代价函数生成器，将上游绕行决策（nudge direction）转换为 iLQR 求解器的硬约束（SmoothPolylineConstraint）和软代价（SmoothPolylineCostFunction），覆盖车辆前角点与后轮中心双控制点，支持基于 Douglas-Peucker 简化的障碍物多边形处理和方向感知采样；完整接入优化器主流程、调试可视化和 proto 配置，并编写 293 行单元测试验证数值正确性。

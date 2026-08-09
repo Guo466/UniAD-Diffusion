@@ -1,0 +1,19 @@
+PR: add junction trajectory visual（路口轨迹可视化增强）
+背景
+路口场景（junction）的轨迹选择器（StraightGuidanceTrajectorySelector）会从多条候选轨迹中经过可行性筛选和代价排序，最终选出一条最优轨迹。本 PR 的目标是将筛选过程的中间结果（被哪种 checker 淘汰、最终被选中的轨迹）完整地写入 debug 数据，并在 mviz 中实时渲染出被选中的轨迹，方便工程师调试路口决策逻辑。
+核心工作内容
+1. 重构 FeasibilityCheck 接口，透传淘汰原因
+原来的 FeasibilityCheck 函数内部创建并丢弃了 status 向量（记录每条轨迹被哪个 checker 淘汰），外部无法得知被淘汰的原因。本 PR 将 status 改为输出参数（std::vector<base::Optional<Checker>>*），由调用方持有，以便后续写入 debug 信息。
+2. 扩展 FillJunctionDebug，填充被淘汰轨迹的淘汰原因
+原来 FillJunctionDebug 只接受 selected_trajectory 指针，仅能标记哪条轨迹被选中。本 PR 将其签名改为接收全量 candidate_trajectories 和 feasibility_status，新增逻辑：遍历所有候选轨迹，对 feasibility_status 中有值（即被淘汰）的条目，根据淘汰来源（kSmoothness 或 kTTCStationary）将对应的 InvalidType 写入 invalid_trajectory_info，从而在可视化中区分每条轨迹的淘汰原因。
+3. 填充 valid_trajectory_info，支持最优轨迹可视化
+在 FillJunctionDebug 中新增对 valid_trajectory_info 的填充：将代价排序后的所有合法轨迹依次写入，并将 is_selected 的判断逻辑从指针比较（trajectory == selected_trajectory）改为位置比较（i == 0，排序后第一个即为最优），更简洁准确。
+4. 扩展 Proto 定义
+在 junction_debug.proto 的 InvalidTrajectoryInfo::InvalidType 枚举中新增两个类型：kSmoothnessFeasible（平滑性检查未通过）和 kTTCStationaryFeasible（TTC静止障碍物检查未通过），使得这两类可行性过滤原因可在可视化层面被识别和展示。
+5. mviz 中渲染被选中轨迹
+在 JunctionModelWidget 中新增"Selected Trajectory"面板：
+从 junction_debug.valid_trajectory_info(0) 取出最优轨迹（代价最小的第一条），用亮绿色（kColorLawnGreen）渲染为实线轨迹对象
+在 ImGui 中以可折叠树节点（默认展开）呈现，并提供 Checkbox 允许单独开关显示
+每帧刷新时先 clear 上一帧缓存，再重新构建，保证与规划输出实时同步
+技术亮点（简历用语）
+为自动驾驶路口轨迹选择模块设计并实现了完整的调试可视化链路：将可行性筛选阶段的淘汰原因（平滑性/TTC静止障碍物）透传至 debug proto，同时将代价排序后的最优轨迹写入 valid_trajectory_info；在 mviz 中新增"Selected Trajectory"面板，以亮绿色实时渲染最终选中轨迹，并扩展 proto 枚举支持新淘汰类型的区分展示，完整覆盖路口决策的数据链路。

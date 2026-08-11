@@ -1,0 +1,39 @@
+PR 汇总：优化 ClothoidPathOptimizer Initial Path 求解参数（后轴坐标系对齐 + 求解器代价权重与收敛参数调优）
+背景
+ClothoidPathOptimizer 在正式求解最优路径前，需要先用 FeasibleTrajectoryGenerator 基于参考路径生成一条满足动力学约束的可行初始轨迹（initial guess），其质量直接影响后续 iLQR/AL 求解器的收敛速度与最终解质量。本次工作源于复现分支 case_debug/0731_LBR060001528_initial_guess 上发现的一起 initial path 求解异常问题（reference_path 的 kappa/dkappa/ddkappa 出现跳变），排查后定位到两处根因问题，并在修复过程中同步对相关求解器接口做了精简重构、对代价权重与收敛参数做了多轮调优（学城PR文档：https://km.sankuai.com/collabpage/2779127568 ，对应 PR：https://dev.sankuai.com/code/repo-detail/walle/walle2/pr/73717/overview）。
+
+问题一：FeasibleTrajectoryGenerator 拟合目标中 Theta/Kappa/DKappa 本身不可信
+根因：`FeasibleTrajectoryGenerator::Generate` 在求解可行初始轨迹时，参考轨迹状态量中只有 X/Y 是沿参考曲线按弧长采样得到的可信值；Theta/Kappa/DKappa 是对离散采样点做一阶到三阶数值微分估计出来的，精度随求导阶数升高迅速恶化，本身并不可信，不适合直接作为二次代价的拟合目标（QuadCost 的 target）去逼近，这会把不可信的高阶噪声引入优化目标，间接导致 reference_path 的 kappa/dkappa/ddkappa 产生跳变。
+修复：新增独立的 `target_x_trajectory` 参数，与原有 `reference_x_trajectory`（用于动力学模型线性化展开点）解耦；构造 target 时只保留 X/Y 两个可信分量，Theta/Kappa/DKappa 三个分量清零（不参与目标状态约束，仅由对应代价权重置零或弱化生效）。
+
+问题二：参考路径几何中心与优化器后轴坐标系不一致导致恒定纵向偏移
+根因：上游传入的 `reference_path_points` 描述的是车辆几何中心的轨迹，而 clothoid 优化器内部的定位基准全部以后轴中心为基准。原实现直接把几何中心点集喂给 `math::Curve2d::Create` 构建参考曲线，未做任何坐标系转换，导致参考曲线相对于优化器真正需要对齐的后轴轨迹，存在一个恒定的纵向偏移 `0.5 * (ra_to_front - ra_to_rear)`，是造成 reference_path 的 kappa/dkappa/ddkappa 跳变的另一根因。
+修复：新增 `ConvertCenterPointsToRearAxlePoints`，在构建参考曲线之前先做一次坐标转换——用几何中心点集构造临时曲线，沿曲线采样各点朝向（heading），再沿朝向反方向平移 `ra_to_center_offset = 0.5 * (ra_to_front - ra_to_rear)` 距离，把每个几何中心位置换算成对应的后轴中心位置；用换算后的点集替代原始输入去构建 `nullable_reference_path_curve_`，使参考曲线与优化器内部全程使用的后轴坐标系保持一致。修复后 chart 数据跳变明显减小。
+
+commit 时间线
+1. dca8a0bd3a35060727b241de89351acf4a921e07（08-06 16:56，shift ref path point to rear wheel center）
+   - 核心修复提交：`FeasibleTrajectoryGenerator::Generate` 新增 `target_x_trajectory` 入参，QuadCost 的拟合目标从 `reference_x_trajectory[i]` 改为 `target_x_trajectory[i]`，`Generate`/构造函数签名同步更新，并补充 `DCHECK_EQ` 校验两者长度一致；
+   - `ClothoidPathOptimizer` 新增 `ConvertCenterPointsToRearAxlePoints`，在 `GenerateReferencePathCurve` 中对传入的几何中心点先做后轴转换，再用于构建参考曲线；
+   - `GenerateInitialPaths` 中构造 `target_x_trajectory`（拷贝 reference_x_trajectory 后将 theta/kappa/dkappa 三个分量清零）并传入 Generate；
+   - 该提交同时引入了一批用于问题定位的临时调试代码：静态计数器 `count_` 统计调用次数、`feasible_problem_solve_time` 超过 3ms 触发 CHECK 断言并打印调试日志、reference_path 与首条 initial_path 在各采样点的最大位置偏差超过 0.5m 触发 CHECK 断言、AL/iLQR 求解器 `verbose_level` 临时调为 3、`initial_u_trajectory` 求解失败时新增 CHECK(false) 强制中断（原逻辑为返回空 vector），用于在复现分支上快速捕获异常现场；同步调整 `penalty_scaling_factor=50`，代价权重调整为 `kPositionCostWeight=1.0`、`kDkappaCostWeight=20`、`kDDkappaCostWeight=30`。
+
+2. a8f7f45651d06c540cbf7a66a4d1e368843ab701（08-06 17:51，refine initial guess generation）
+   - 对 `FeasibleTrajectoryGenerator` 的构造函数与 `Generate` 接口做精简重构：`x_weight`/`u_weight` 参数类型从"每步独立取值"的 `VectorOfVecX`/`VectorOfVecU` 改为单一权重向量 `VecX`/`VecU`（在 `Generate` 内部按 `steps[i]` 统一缩放），去除不必要的逐步权重冗余设计；
+   - `ClothoidPathOptimizer::GenerateInitialPaths` 与单测同步适配新接口签名，代价权重收敛为 `kPositionCostWeight=2.0`、`kDkappaCostWeight=20`、`kDDkappaCostWeight=20`；
+   - AL 求解器收敛参数首次调整：`constraint_tolerance` 由 `1e-4` 收紧为 `1e-6`，`initial_penalty` 由 `1e6` 提高为 `1e8`；iLQR 侧 `min_cost_improvement_threshold`/`min_expect_cost_improvement_ratio_threshold` 由 `1e-5`/`1e-4` 放宽为 `1e-3`/`1e-3`；
+   - 单元测试 `feasible_trajectory_generator_test.cc` 同步改造：显式构造 `x_weight`/`u_weight` 与 `target_x_trajectory`（仅保留 X/Y 两个分量）传入 `Generate`，替代原来隐式使用 `reference_x_trajectory` 做拟合目标的方式。
+
+3. 28c883f3ffb4db3df35759d3561411ff10e278ef（08-07 21:38，decrease constraint_tolerance and increase cost_threshold）
+   - 继续收紧/调整 AL 与 iLQR 求解器参数：`constraint_tolerance` 由 `1e-4` 收紧为 `1e-6`，`initial_penalty` 由 `1e6` 提高为 `1e8`（`penalty_scaling_factor` 保持 50）；
+   - `min_cost_improvement_threshold` 由 `1e-5` 放宽为 `1e-3`，`min_expect_cost_improvement_ratio_threshold` 由 `1e-4` 放宽为 `1e-3`，代价权重 `kPositionCostWeight`/`kDkappaCostWeight`/`kDDkappaCostWeight` 暂维持 `1.0`/`20`/`30` 不变；本轮属于在复现分支上针对收敛稳定性与耗时的参数微调。
+
+4. 081c54a5eb0173dc3b422a4bce0184fe39b12182（08-10 15:48，change param to 2.0 20 20 5e-3）
+   - 代价权重与收敛阈值最终收敛为：`kPositionCostWeight=2.0`、`kDkappaCostWeight=20`、`kDDkappaCostWeight=20`、`kMinExpectCostImprovementRatioThreshold=5e-3`（`kMinCostImprovementThreshold` 维持 `1e-3`）；
+   - 同时清理/挪动了调试期间加入的耗时 CHECK 断言代码位置：将 `feasible_problem_solve_time` 超限检查从"reference_path 与 initial_path 偏差检查"之前移动到其后，使两处调试断言的判断顺序与阅读逻辑更清晰，便于后续按需保留或移除。
+
+评测结果
+在复现分支 case_debug/0731_LBR060001528_initial_guess 上，针对问题二（坐标系对齐）修改前后，通过 AI 仿真调参对比 kPositionCostWeight∈[0.01, 10]、kDkappaCostWeight∈[0, 100]、kDDkappaCostWeight∈[0.1, 100] 参数空间下按 avg_ms 升序排列的 top20 结果，确认修复后 chart 数据跳变明显减小。
+General 仿真回归集合（tags：QA-regression、QA-Accident-monitor、QA-CI-monitor、QA-MultiModule-monitor、qa-large-vehicle-monitor、QA-BP-monitor、qa-nudge-monitor、qa-parking-scene-monitor、qa-start-scene-monitor、qa-uturn-scene-monitor、pre-merge-pnc-3600、QA-PNC-monitor）比对：new success 14 个，new fail 2 个，diff case 已定位到具体用例（LBR600659213、LBR600741988）。
+
+技术亮点（简历用语）
+针对自动驾驶路径规划模块 ClothoidPathOptimizer 中 initial path（可行初始轨迹）求解异常导致的路径曲率跳变问题，定位并修复两处根因：1）识别出 FeasibleTrajectoryGenerator 二次代价函数中用于拟合的参考状态里 Theta/Kappa/DKappa 是由离散点数值微分估计得到、精度随阶数迅速恶化的不可信量，将拟合目标与动力学线性化展开点解耦，新增独立 target_x_trajectory 并仅保留可信的位置分量；2）定位到上游几何中心轨迹与优化器内部后轴坐标系之间存在由车辆前后悬参数决定的恒定纵向偏移，设计并实现基于曲线采样朝向的坐标系转换算法，将几何中心点集精确转换为后轴中心点集，从根源消除参考曲线的系统性偏差。修复过程中同步对 FeasibleTrajectoryGenerator 接口做精简重构（去除冗余的逐步权重设计），并结合复现分支与 AI 仿真调参对 AL/iLQR 求解器收敛容差、代价权重等多个参数做了多轮迭代调优，最终通过全量仿真回归验证功能正确性。

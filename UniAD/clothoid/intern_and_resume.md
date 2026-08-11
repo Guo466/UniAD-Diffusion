@@ -1,7 +1,7 @@
 # 实习经历总结（自动驾驶 Planning / ClothoidPathOptimizer 方向）
 
-> 汇总时间范围：2025-04-17 ~ 2025-07-15
-> 汇总依据：`.catpaw/WorkFinish_0702/` 目录下全部 10 份 PR 说明文件
+> 汇总时间范围：2025-04-17 ~ 2025-08-10
+> 汇总依据：`.catpaw/WorkFinish_0702/` 目录下全部 10 份 PR 说明文件 + 0714-0715 折线几何健壮性 PR + 0806-0810 Initial Path 求解参数优化 PR
 > 用途：离职复习、简历撰写素材库
 
 ---
@@ -31,7 +31,7 @@
 - **AL 外层 + iLQR 内层求解**：`ALSolver` 负责外层对偶变量与惩罚系数更新（`ConstraintPenalty`），`Solver`（iLQR）负责内层反向传播（backward pass，含正则化与 Cholesky 分解保证数值稳定）+ 前向传播（forward pass，含线搜索）求解每次迭代的最优轨迹增量。
 - **调试与可视化**：`ClothoidPathOptimizerDebugger` 将求解全过程（参考路径、初始路径、最优路径、各类约束/代价、求解器耗时与状态）写入 debug proto，供 `mviz`（内部可视化平台）实时渲染。
 
-在实习期间，我的工作横跨该项目的 **可视化调试工具链建设** → **核心算法功能开发（障碍物约束代价）** → **性能与数值稳定性问题修复** → **几何算法健壮性重构** 四个阶段，覆盖了从"看得见"到"跑得对"到"跑得稳"的完整工程闭环。
+在实习期间，我的工作横跨该项目的 **可视化调试工具链建设** → **核心算法功能开发（障碍物约束代价）** → **性能与数值稳定性问题修复** → **几何算法健壮性重构** → **求解器数值调优** 五个阶段，覆盖了从"看得见"到"跑得对"到"跑得稳"再到"跑得准"的完整工程闭环。
 
 ---
 
@@ -49,6 +49,7 @@
 | 06-29 | use FindSByPosition instead of FindSByPositionLocally | Bug修复/算法 | 修复局部爬山搜索初始猜测偏离导致的错误投影 |
 | 07-02 | Skip reference line boundary_valid/center_line_valid in U_turn | Bug修复/coredump | 修复 U-turn 场景下参考线平滑器边界生成断言 coredump |
 | 07-14~07-15 | Fix polyline geometry issues (ShiftPolyline + chamfer) | Bug修复/几何算法重构 | 折线偏移算法翻转自交重构 + 折线锐角切角通用算法 |
+| 08-06~08-10 | Optimize initial path generation（后轴对齐 + 求解器调参，4个commit） | Bug修复/算法调优 | Initial path 拟合目标解耦 + 几何中心转后轴坐标系 + 求解器代价权重与收敛参数多轮调优 |
 
 ---
 
@@ -204,9 +205,36 @@
 
 ---
 
+### 3.10 【08-06~08-10】Initial Path 求解参数优化（后轴坐标系对齐 + 求解器调参，4 个连续 commit）
+
+**背景**：ClothoidPathOptimizer 在正式求解最优路径前，需先用 `FeasibleTrajectoryGenerator` 基于参考路径生成一条满足动力学约束的可行初始轨迹（initial guess），其质量直接影响后续 iLQR/AL 求解器的收敛速度与最终解质量。在复现分支 `case_debug/0731_LBR060001528_initial_guess` 上发现 initial path 求解异常（reference_path 的 kappa/dkappa/ddkappa 出现跳变），排查后定位到两处根因问题（学城PR文档：https://km.sankuai.com/collabpage/2779127568 ，PR：https://dev.sankuai.com/code/repo-detail/walle/walle2/pr/73717/overview）。
+
+**问题一：拟合目标中 Theta/Kappa/DKappa 本身不可信**
+
+- **根因**：`FeasibleTrajectoryGenerator::Generate` 求解可行初始轨迹时，参考状态中只有 X/Y 是沿参考曲线按弧长采样得到的可信值；Theta/Kappa/DKappa 是对离散采样点做一阶到三阶数值微分估计出来的，精度随求导阶数升高迅速恶化，本身并不可信，却被直接用作二次代价（`QuadCost`）的拟合目标，把不可信的高阶噪声引入了优化目标。
+- **修复**：新增独立的 `target_x_trajectory` 参数，与原有用于动力学线性化展开点的 `reference_x_trajectory` 解耦；构造 target 时只保留可信的 X/Y 分量，Theta/Kappa/DKappa 三个分量清零。
+
+**问题二：几何中心轨迹与优化器后轴坐标系不一致，存在恒定纵向偏移**
+
+- **根因**：上游传入的 `reference_path_points` 描述的是车辆**几何中心**的轨迹，而 clothoid 优化器内部定位基准全部以**后轴中心**为基准。原实现直接用几何中心点集构建参考曲线，未做坐标转换，导致参考曲线相对优化器真正需要对齐的后轴轨迹存在恒定纵向偏移 `0.5 × (ra_to_front - ra_to_rear)`，是 kappa/dkappa/ddkappa 跳变的另一根因。
+- **修复**：新增 `ConvertCenterPointsToRearAxlePoints`：用几何中心点集构造临时曲线采样各点朝向（heading），再沿朝向反方向平移 `ra_to_center_offset` 距离，把几何中心位置换算为后轴中心位置，替代原始输入构建 `nullable_reference_path_curve_`，使参考曲线与优化器内部全程使用的后轴坐标系保持一致。修复后 chart 数据跳变明显减小。
+
+**4 个 commit 时间线**：
+
+1. `dca8a0bd`（08-06 16:56，shift ref path point to rear wheel center）：核心修复提交，同时补充 `target_x_trajectory`/`ConvertCenterPointsToRearAxlePoints`；并引入一批临时调试代码（静态计数器 `count_`、求解耗时超 3ms/参考路径与 initial_path 偏差超 0.5m 触发 `CHECK` 断言、`verbose_level=3`、求解失败时 `CHECK(false)` 强制中断）用于在复现分支快速捕获异常现场。
+2. `a8f7f45`（08-06 17:51，refine initial guess generation）：将 `FeasibleTrajectoryGenerator` 的 `x_weight`/`u_weight` 参数类型从逐步独立取值的 `VectorOfVecX`/`VectorOfVecU` 精简为单一权重向量 `VecX`/`VecU`（内部按 `steps[i]` 统一缩放），去除冗余设计；同步调整代价权重与 AL/iLQR 收敛参数（`constraint_tolerance: 1e-4→1e-6`、`initial_penalty: 1e6→1e8` 等）。
+3. `28c883f`（08-07 21:38，decrease constraint_tolerance and increase cost_threshold）：继续调整 AL 求解器收敛容差与 iLQR 代价改善阈值，针对收敛稳定性与求解耗时做参数微调。
+4. `081c54a`（08-10 15:48，change param to 2.0 20 20 5e-3）：代价权重与收敛阈值最终收敛为 `kPositionCostWeight=2.0`、`kDkappaCostWeight=20`、`kDDkappaCostWeight=20`、`kMinExpectCostImprovementRatioThreshold=5e-3`；同时清理调试期间加入的耗时 CHECK 断言代码位置，使调试逻辑顺序更清晰。
+
+**评测**：复现分支上通过 AI 仿真调参（kPositionCostWeight∈[0.01,10]、kDkappaCostWeight∈[0,100]、kDDkappaCostWeight∈[0.1,100]）对比 top20 结果确认修复后跳变明显减小；General 全量仿真回归（QA-regression 等 12 个 tag）比对 new success 14 个、new fail 2 个，diff case 已定位到具体用例。
+
+**涉及知识**：数值微分误差累积（高阶导数估计不可信）、优化问题中拟合目标与线性化展开点解耦设计、车辆几何中心与后轴坐标系转换（基于曲线采样朝向的坐标平移）、AL/iLQR 求解器收敛参数（constraint_tolerance/penalty/cost_improvement_threshold）调优方法论、AI 辅助仿真调参。
+
+---
+
 ## 4. 与 ClothoidPathOptimizer 项目的联系总结
 
-这十个 PR 并非孤立的任务，而是沿着 ClothoidPathOptimizer **"能看见 → 能算对 → 能算稳 → 能算得健壮"** 的工程成熟度曲线逐步推进的，可以映射到该项目的技术分层：
+这十二个 PR 并非孤立的任务，而是沿着 ClothoidPathOptimizer **"能看见 → 能算对 → 能算稳 → 能算得健壮 → 能算得准"** 的工程成熟度曲线逐步推进的，可以映射到该项目的技术分层：
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -232,6 +260,11 @@
 │  性能与内存安全 (跨层)                                          │
 │  05-06 vector头插O(N²)+野指针 —— 保障Frenet投影环节的实时性     │
 │  与内存安全，是所有上层功能正确运行的前提                        │
+├─────────────────────────────────────────────────────────────┤
+│  Initial Guess 生成层 (FeasibleTrajectoryGenerator)             │
+│  08-06~08-10 拟合目标解耦 + 后轴坐标系对齐 + 求解器参数调优      │
+│  直接决定 GenerateInitialPaths 产出的初始猜测轨迹质量，          │
+│  是 iLQR 主问题求解收敛速度与最终解质量的前置保障                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -245,13 +278,15 @@
 
 4. **与 iLQR/AL 求解器的接口关系**：04-24 新增的障碍物约束/代价最终都是通过 `CollectConstraintsAtSample`/`CollectCostsAtSample` 逐 stage 注入 `ConstrainedProblem`，交由 `ALSolver` 的外层对偶更新 + `Solver`（iLQR）内层反向/前向传播求解；06-26/06-29 修复的 Frenet 投影问题直接决定了 `GenerateInitialPaths` 产出的初始猜测轨迹是否合理，进而影响 iLQR 迭代的收敛速度和最终解的质量——错误的初值可能导致求解器多花几轮迭代甚至不收敛回退到 fallback。
 
+5. **从"能算得健壮"到"能算得准"的最后一环**：07-14/07-15 解决的是折线几何输入层面的健壮性问题，而 08-06~08-10 解决的则是更上游的 Initial Guess 生成质量问题——两者共同保证了 iLQR 主问题在拿到合法约束/代价折线的同时，也拿到一个数值可信、坐标系对齐的初始猜测，这是整条 ClothoidPathOptimizer 流水线能够稳定收敛到高质量解的最后一块拼图。
+
 ---
 
 ## 5. 实习经历汇总（叙事版）
 
 > 可直接用于面试自我介绍或实习总结报告的完整叙事段落。
 
-在美团自动驾驶 Planning 团队实习期间，我主要参与了 **ClothoidPathOptimizer（基于 iLQR/AL 求解器的回旋曲线路径优化器）** 的开发与维护工作，覆盖可视化工具建设、核心算法功能开发、性能优化、以及数值稳定性与几何健壮性修复四大方向，累计完成 10 个 PR 的开发与合入。
+在美团自动驾驶 Planning 团队实习期间，我主要参与了 **ClothoidPathOptimizer（基于 iLQR/AL 求解器的回旋曲线路径优化器）** 的开发与维护工作，覆盖可视化工具建设、核心算法功能开发、性能优化、几何健壮性重构、以及求解器数值调优五大方向，累计完成 12 个 PR（含多 commit 任务）的开发与合入。
 
 **可视化基础设施建设**方面，我从零搭建了 ClothoidPathOptimizer 在内部可视化平台 mviz 上的完整调试工具链，包括 3D 场景路径/约束/求解器状态渲染、多维路径参数折线图、沿路径的车辆真实轮廓渲染，以及路口决策模块的候选轨迹淘汰原因与最优轨迹可视化，为团队算法工程师提供了直观高效的调试手段，这也是我后续排查多个疑难 bug 的基础工具。
 
@@ -261,7 +296,9 @@
 
 **几何算法健壮性重构**方面，我重构了折线偏移算法 `ShiftPolyline`，将逐点角平分线偏移升级为基于射线求交与栈式回退合并的经典算法，解决了尖锐拐角大偏移量下的线段翻转自交问题；并设计实现了通用的折线锐角切角算法，通过精确的几何退让计算和多轮迭代收敛，解决了下游约束/代价折线在尖锐拐角处的数值不稳定问题。这两处修复都补充了覆盖边界退化场景的单元测试，并通过了全量仿真回归验证。
 
-通过这段实习，我系统学习并实践了工业级轨迹优化算法（iLQR + 增广拉格朗日法）的工程实现，深入理解了计算几何（多边形简化、线段偏移、射线求交、折线切角）在自动驾驶路径规划中的核心应用，并培养了从"发现问题→复现问题→定位根因→设计通用解→补充测试→仿真回归验证"的完整工程闭环能力。
+**求解器数值稳定性与参数调优**方面，我定位并修复了 Initial Path 求解异常问题：识别出优化目标中 Theta/Kappa/DKappa 是不可信的高阶数值微分估计量，将其与拟合目标解耦；设计了车辆几何中心到后轴坐标系的转换算法，消除了参考曲线相对优化器内部基准的恒定纵向偏移。修复过程中同步精简了求解器接口设计，并结合复现分支与 AI 辅助仿真调参，对 AL/iLQR 求解器的收敛容差、代价权重等参数完成多轮迭代调优。
+
+通过这段实习，我系统学习并实践了工业级轨迹优化算法（iLQR + 增广拉格朗日法）的工程实现，深入理解了计算几何（多边形简化、线段偏移、射线求交、折线切角）与数值优化（数值微分误差、求解器收敛参数调优）在自动驾驶路径规划中的核心应用，并培养了从"发现问题→复现问题→定位根因→设计通用解→补充测试→仿真回归验证"的完整工程闭环能力。
 
 ---
 
@@ -269,19 +306,20 @@
 
 ### 6.1 实习经历条目（简历格式）
 
-**美团 · 自动驾驶 Planning 团队 · 规划算法实习生**（2025.04 - 2025.07）
+**美团 · 自动驾驶 Planning 团队 · 规划算法实习生**（2025.04 - 2025.08）
 
-负责自动驾驶路径规划模块 ClothoidPathOptimizer（基于 iLQR + 增广拉格朗日法的回旋曲线路径优化器）的功能开发、可视化工具建设与稳定性维护，累计合入 10 个 PR：
+负责自动驾驶路径规划模块 ClothoidPathOptimizer（基于 iLQR + 增广拉格朗日法的回旋曲线路径优化器）的功能开发、可视化工具建设与稳定性维护，累计合入 12 个 PR（含多 commit 任务）：
 
 - 从零设计并搭建 ClothoidPathOptimizer 在内部可视化平台 mviz 的完整调试工具链，实现 3D 场景多约束渲染、求解器状态面板、多维参数折线图，并对图表框架（自动坐标轴拟合、ANSI 彩色文本渲染）做通用增强，显著提升团队算法调试效率；
 - 独立设计实现障碍物约束与代价函数生成器，将上游绕行决策转化为 iLQR 求解器的硬约束（`SmoothPolylineConstraint`）与软代价（`SmoothPolylineCostFunction`），覆盖车辆前角点/后轮中心双控制点，配套 293 行单元测试；
 - 定位并修复 Frenet 坐标投影函数中因 `vector` 头部逐元素插入导致的 O(N²) 性能问题及迭代器失效引发的 coredump，重构为"临时容器收集 + 反向迭代器批量插入"方案，复杂度降至 O(N)；
 - 定位并修复 U-turn 大曲率场景下参考线平滑器边界生成的断言 coredump，以及局部爬山搜索初始猜测偏离导致的错误弧长投影 bug；
 - 重构折线偏移算法 `ShiftPolyline`（射线求交+栈式回退合并），解决尖锐拐角大偏移量下的线段翻转自交问题；设计实现通用折线锐角切角算法 `ChamferAcuteAnglesOnPolyline`，解决约束边界折线在尖锐拐角处的数值不稳定问题，两项修复均通过全量仿真回归验证（no diff）。
+- 定位并修复 ClothoidPathOptimizer Initial Path 求解异常问题：识别出优化目标中 Theta/Kappa/DKappa 为不可信的高阶数值微分估计量并与拟合目标解耦；设计几何中心到车辆后轴坐标系的转换算法，消除参考曲线的恒定纵向偏移；同步精简求解器接口设计并完成 AL/iLQR 求解器多轮参数调优，通过全量仿真回归验证。
 
 ### 6.2 技术关键词标签（简历技能栏可用）
 
-`C++` `iLQR` `增广拉格朗日法（Augmented Lagrangian）` `轨迹优化` `Frenet坐标系` `计算几何` `Douglas-Peucker多边形简化` `线段偏移与折线处理` `射线求交算法` `数值稳定性` `Eigen` `Protobuf` `单元测试（GoogleTest）` `内存管理与迭代器失效排查` `仿真回归验证` `可视化调试工具开发（ImGui/ImPlot）` `自动驾驶路径规划`
+`C++` `iLQR` `增广拉格朗日法（Augmented Lagrangian）` `轨迹优化` `Frenet坐标系` `计算几何` `Douglas-Peucker多边形简化` `线段偏移与折线处理` `射线求交算法` `数值稳定性` `数值微分误差分析` `求解器收敛参数调优` `坐标系转换` `Eigen` `Protobuf` `单元测试（GoogleTest）` `内存管理与迭代器失效排查` `仿真回归验证` `AI辅助仿真调参` `可视化调试工具开发（ImGui/ImPlot）` `自动驾驶路径规划`
 
 ### 6.3 一句话项目介绍（用于简历项目栏抬头）
 
@@ -306,3 +344,8 @@
 - [ ] 断言（CHECK）导致 coredump 的常见排查思路：链式状态清空 → 边界数据缺失 → 断言触发
 - [ ] 障碍物绕行决策（nudge direction）如何转化为优化问题中的硬约束与软代价，两者的数学形式差异
 - [ ] 仿真回归验证的方法论：如何证明一个 bug 修复"无副作用"（diff case 逐一核查归因）
+- [ ] 为什么高阶数值微分（速度→加速度→加加速度）的误差会随阶数迅速放大：数值微分与噪声放大的关系
+- [ ] 优化问题中"拟合目标（cost target）"与"线性化展开点（reference trajectory）"为何要解耦、分别承担什么角色
+- [ ] 车辆几何中心与后轴中心坐标系转换的原理：为什么需要基于朝向做投影平移，以及 `0.5*(ra_to_front - ra_to_rear)` 偏移量的几何意义
+- [ ] AL 求解器参数 `constraint_tolerance`/`initial_penalty`/`penalty_scaling_factor` 分别控制什么、如何影响收敛速度与精度
+- [ ] iLQR 求解器 `min_cost_improvement_threshold`/`min_expect_cost_improvement_ratio_threshold` 的作用及调大/调小的权衡
